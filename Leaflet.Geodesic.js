@@ -1,29 +1,267 @@
+/** Extend Number object with method to convert numeric degrees to radians */
+if (typeof Number.prototype.toRadians == 'undefined') {
+    Number.prototype.toRadians = function() { return this * Math.PI / 180; }
+}
+
+/** Extend Number object with method to convert radians to numeric (signed) degrees */
+if (typeof Number.prototype.toDegrees == 'undefined') {
+    Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
+}
+
+
 L.Geodesic = L.MultiPolyline.extend({
     options: {
-	color:'blue'
+	color:'blue',
+	steps: 50
     },  
   
-    initialize: function(latlngs, options) {
+    initialize: function (latlngs, options) {
       this.options = this._merge_options(this.options, options);
-      L.MultiPolygon.prototype.initialize.call(this, latlngs, this.options);    
+      this._latlngs = latlngs;
+      this.datum = {};
+      this.datum.ellipsoid = { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 };
+      L.MultiPolyline.prototype.initialize.call(this, this._latlngs, this.options);    
     },
   
     setLatLngs: function (latlngs) {
-      L.MultiPolygon.prototype.setLatLngs.call(this, latlngs);
+      this._latlngs = this._generate_Geodesic(latlngs);
+      L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
+//      if(this._latlngs[0].length) {
+//	var res = this._vincenty_inverse(latlngs[0][0], latlngs[0][1]);
+//	L.MultiPolygon.prototype.setLatLngs.call(this, this._latlngs);
+  //    }
     },  
+    
+    
+    _generate_Geodesic: function (latlngs) {
+      var _geo = [];
+//      _geo = latlngs;		// bypass
 
+      for(poly=0; poly<latlngs.length;poly++) {
+	_geo[poly] = [];
+	for(points=0;points<(latlngs[poly].length-1);points++) {
+	  var inverse = this._vincenty_inverse(latlngs[poly][points], latlngs[poly][points+1]);
+	  for(s=0; s<=this.options.steps; s++) {
+	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
+	    _geo[poly].push(new L.LatLng(direct.lat, direct.lng));
+	  }
+	}
+//	  _geo.push(latlngs[poly]);
+      }
+/*      
+      if(latlngs.length) {
+	  var inverse = this._vincenty_inverse(latlngs[0][0], latlngs[0][1]);
+	  for(x=0; x<=this.options.steps; x++) {
+	    var direct = this._vincenty_direct(latlngs[0][0], inverse.initialBearing, inverse.distance/this.options.steps*x);
+	    _geo[0].push(new L.LatLng(direct.lat, direct.lng));
+	  }
+	}
+*/	
+      return _geo;
+    },
+    
+    
+    /**
+    * Vincenty direct calculation.
+    * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
+    *
+    * @private
+    * @param {number} initialBearing - Initial bearing in degrees from north.
+    * @param {number} distance - Distance along bearing in metres.
+    * @returns (Object} Object including point (destination point), finalBearing.
+    */
+    _vincenty_direct : function (p1, initialBearing, distance) {
+      var φ1 = p1.lat.toRadians(), λ1 = p1.lng.toRadians();
+      var α1 = initialBearing.toRadians();
+      var s = distance;
+
+      var a = this.datum.ellipsoid.a, b = this.datum.ellipsoid.b, f = this.datum.ellipsoid.f;
+
+      var sinα1 = Math.sin(α1);
+      var cosα1 = Math.cos(α1);
+
+      var tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;
+      var σ1 = Math.atan2(tanU1, cosα1);
+      var sinα = cosU1 * sinα1;
+      var cosSqα = 1 - sinα*sinα;
+      var uSq = cosSqα * (a*a - b*b) / (b*b);
+      var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
+      var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+
+      var σ = s / (b*A), σʹ, iterations = 0;
+      do {
+	  var cos2σM = Math.cos(2*σ1 + σ);
+	  var sinσ = Math.sin(σ);
+	  var cosσ = Math.cos(σ);
+	  var Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
+	      B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
+	  σʹ = σ;
+	  σ = s / (b*A) + Δσ;
+      } while (Math.abs(σ-σʹ) > 1e-12 && ++iterations);
+
+      var x = sinU1*sinσ - cosU1*cosσ*cosα1;
+      var φ2 = Math.atan2(sinU1*cosσ + cosU1*sinσ*cosα1, (1-f)*Math.sqrt(sinα*sinα + x*x));
+      var λ = Math.atan2(sinσ*sinα1, cosU1*cosσ - sinU1*sinσ*cosα1);
+      var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
+      var L = λ - (1-C) * f * sinα *
+	  (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
+      var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI; // normalise to -180...+180
+
+      var revAz = Math.atan2(sinα, -x);
+
+      return {lat: φ2.toDegrees(), 
+	      lng: λ2.toDegrees(),
+	      finalBearing: revAz.toDegrees() 
+      };
+    },
+    
+    /**
+    * Vincenty inverse calculation.
+    * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
+    *
+    * @private
+    * @param {LatLng} p1 - Latitude/longitude of start point.
+    * @param {LatLng} p2 - Latitude/longitude of destination point.
+    * @returns {Object} Object including distance, initialBearing, finalBearing.
+    * @throws {Error} If formula failed to converge.
+    */    
+    _vincenty_inverse: function (p1, p2) {
+      var φ1 = p1.lat.toRadians(), λ1 = p1.lng.toRadians();
+      var φ2 = p2.lat.toRadians(), λ2 = p2.lng.toRadians();
+
+      var a = this.datum.ellipsoid.a, b = this.datum.ellipsoid.b, f = this.datum.ellipsoid.f;
+
+      var L = λ2 - λ1;
+      var tanU1 = (1-f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1*tanU1)), sinU1 = tanU1 * cosU1;
+      var tanU2 = (1-f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2*tanU2)), sinU2 = tanU2 * cosU2;
+
+      var λ = L, λʹ, iterations = 0;
+      do {
+	  var sinλ = Math.sin(λ), cosλ = Math.cos(λ);
+	  var sinSqσ = (cosU2*sinλ) * (cosU2*sinλ) + (cosU1*sinU2-sinU1*cosU2*cosλ) * (cosU1*sinU2-sinU1*cosU2*cosλ);
+	  var sinσ = Math.sqrt(sinSqσ);
+	  if (sinσ==0) return 0;  // co-incident points
+	  var cosσ = sinU1*sinU2 + cosU1*cosU2*cosλ;
+	  var σ = Math.atan2(sinσ, cosσ);
+	  var sinα = cosU1 * cosU2 * sinλ / sinσ;
+	  var cosSqα = 1 - sinα*sinα;
+	  var cos2σM = cosσ - 2*sinU1*sinU2/cosSqα;
+	  if (isNaN(cos2σM)) cos2σM = 0;  // equatorial line: cosSqα=0 (§6)
+	  var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
+	  λʹ = λ;
+	  λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
+      } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<100);
+      if (iterations>=100) throw new Error('Formula failed to converge');
+
+      var uSq = cosSqα * (a*a - b*b) / (b*b);
+      var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
+      var B = uSq/1024 * (256+uSq*(-128+uSq*(74-47*uSq)));
+      var Δσ = B*sinσ*(cos2σM+B/4*(cosσ*(-1+2*cos2σM*cos2σM)-
+	  B/6*cos2σM*(-3+4*sinσ*sinσ)*(-3+4*cos2σM*cos2σM)));
+
+      var s = b*A*(σ-Δσ);
+
+      var fwdAz = Math.atan2(cosU2*sinλ,  cosU1*sinU2-sinU1*cosU2*cosλ);
+      var revAz = Math.atan2(cosU1*sinλ, -sinU1*cosU2+cosU1*sinU2*cosλ);
+
+      s = Number(s.toFixed(3)); // round to 1mm precision
+      return { distance: s, initialBearing: fwdAz.toDegrees(), finalBearing: revAz.toDegrees() };
+    },
+    
+
+    /**
+    * Returns the point of intersection of two paths defined by point and bearing.
+    *
+    * @param {LatLon} p1 - First point.
+    * @param {number} brng1 - Initial bearing from first point.
+    * @param {LatLon} p2 - Second point.
+    * @param {number} brng2 - Initial bearing from second point.
+    * @returns {LatLon} Destination point (null if no unique intersection defined).
+    *
+    * @example
+    * var p1 = LatLon(51.8853, 0.2545), brng1 = 108.55;
+    * var p2 = LatLon(49.0034, 2.5735), brng2 = 32.44;
+    * var pInt = LatLon.intersection(p1, brng1, p2, brng2); // pInt.toString(): 50.9078°N, 4.5084°E
+    */
+    _intersection : function(p1, brng1, p2, brng2) {
+    // see http://williams.best.vwh.net/avform.htm#Intersection
+
+      var φ1 = p1.lat.toRadians(), λ1 = p1.lng.toRadians();
+      var φ2 = p2.lat.toRadians(), λ2 = p2.lng.toRadians();
+      var θ13 = Number(brng1).toRadians(), θ23 = Number(brng2).toRadians();
+      var Δφ = φ2-φ1, Δλ = λ2-λ1;
+
+      var δ12 = 2*Math.asin( Math.sqrt( Math.sin(Δφ/2)*Math.sin(Δφ/2) +
+	  Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2) ) );
+      if (δ12 == 0) return null;
+
+      // initial/final bearings between points
+      var θ1 = Math.acos( ( Math.sin(φ2) - Math.sin(φ1)*Math.cos(δ12) ) /
+			  ( Math.sin(δ12)*Math.cos(φ1) ) );
+      if (isNaN(θ1)) θ1 = 0; // protect against rounding
+      var θ2 = Math.acos( ( Math.sin(φ1) - Math.sin(φ2)*Math.cos(δ12) ) /
+			  ( Math.sin(δ12)*Math.cos(φ2) ) );
+
+      if (Math.sin(λ2-λ1) > 0) {
+	  var θ12 = θ1;
+	  var θ21 = 2*Math.PI - θ2;
+      } else {
+	  var θ12 = 2*Math.PI - θ1;
+	  var θ21 = θ2;
+      }
+
+      var α1 = (θ13 - θ12 + Math.PI) % (2*Math.PI) - Math.PI; // angle 2-1-3
+      var α2 = (θ21 - θ23 + Math.PI) % (2*Math.PI) - Math.PI; // angle 1-2-3
+
+      if (Math.sin(α1)==0 && Math.sin(α2)==0) return null; // infinite intersections
+      if (Math.sin(α1)*Math.sin(α2) < 0) return null; // ambiguous intersection
+
+      //α1 = Math.abs(α1);
+      //α2 = Math.abs(α2);
+      // ... Ed Williams takes abs of α1/α2, but seems to break calculation?
+
+      var α3 = Math.acos( -Math.cos(α1)*Math.cos(α2) +
+			  Math.sin(α1)*Math.sin(α2)*Math.cos(δ12) );
+      var δ13 = Math.atan2( Math.sin(δ12)*Math.sin(α1)*Math.sin(α2),
+			    Math.cos(α2)+Math.cos(α1)*Math.cos(α3) )
+      var φ3 = Math.asin( Math.sin(φ1)*Math.cos(δ13) +
+			  Math.cos(φ1)*Math.sin(δ13)*Math.cos(θ13) );
+      var Δλ13 = Math.atan2( Math.sin(θ13)*Math.sin(δ13)*Math.cos(φ1),
+			    Math.cos(δ13)-Math.sin(φ1)*Math.sin(φ3) );
+      var λ3 = λ1 + Δλ13;
+      λ3 = (λ3+3*Math.PI) % (2*Math.PI) - Math.PI; // normalise to -180..+180º
+
+      return {lat: φ3.toDegrees(), 
+	      lng: λ3.toDegrees()
+      };
+    },    
+    
   /**
   * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
   * @param obj1
   * @param obj2
   * @returns obj3 a new object based on obj1 and obj2
   */
-  _merge_options: function(obj1,obj2){
+/*
+   Function: _merge_options
+
+   Merges two JavaScript objects 
+
+   Parameters:
+
+      obj1 - Object 1.
+      obj2 - Object 2.
+
+   Returns:
+
+      Merged Object.
+*/  
+    _merge_options: function(obj1,obj2){
       var obj3 = {};
       for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
       for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
       return obj3;
-  }
+    }
 });
 
 L.geodesic = function(latlngs, options) {

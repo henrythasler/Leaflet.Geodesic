@@ -27,30 +27,40 @@
 		var map = L.map('map').setView([51.505, -0.09], 2);
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
 			maxZoom: 18,
+			continuousWorld: false,
+			noWrap: true,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);		
-		
+
+		// test case with distance 54.972,271 m
+		var Flinders_Peak = new L.LatLng(-37.9510334166667, 144.424867888889); 
+		var Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778); 
+	
 		var berlin = new L.LatLng(52.5, 13.35); 
 		var losangeles = new L.LatLng(33.82, -118.38);
 		var santiago = new L.LatLng(-33.44, -70.71);
 		var tokio = new L.LatLng(35.47, 139.15);
 		var sydney = new L.LatLng(-33.91, 151.08);
 		var capetown = new L.LatLng(-33.94, 18.39);
+		var calgary = new L.LatLng(51.07, -114.35);
+		var hammerfest = new L.LatLng(70.70, 23.55);
+		var barrow = new L.LatLng(71.35, -156,83);
 
-		var p1 = [berlin, capetown];
-		var p2 = [capetown, losangeles];
-		var p3 = [losangeles, santiago];
-		var p4 = [santiago, sydney];
-		var p5 = [sydney, tokio];
-		var p6 = [tokio, berlin];
+		var test = [];
+//		test.push([Flinders_Peak, Buninyong])
 
-		var test = [p1, p2, p3, p4, p5, p6];
+//		test.push([berlin, losangeles])
+//		test.push([losangeles, capetown])
+//		test.push([capetown, santiago])
+		test.push([santiago, sydney, berlin])
+//		test.push([sydney, berlin])
+//		test.push([berlin, tokio])
+		test.push([barrow, tokio])
 
-		
-		var Geodesic = L.geodesic([[]], {
+		var Geodesic = L.geodesic([], {
 			weight:3, 
 			opacity:1
 		}).addTo(map);
