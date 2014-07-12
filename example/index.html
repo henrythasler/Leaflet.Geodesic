@@ -24,7 +24,7 @@
 	
 
 	<script>
-		var map = L.map('map').setView([51.505, -0.09], 3);
+		var map = L.map('map').setView([51.505, -0.09], 2);
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -33,7 +33,28 @@
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);		
 		
-		var Geodesic = L.geodesic("hello");
+		var berlin = new L.LatLng(52.5, 13.35); 
+		var losangeles = new L.LatLng(33.82, -118.38);
+		var santiago = new L.LatLng(-33.44, -70.71);
+		var tokio = new L.LatLng(35.47, 139.15);
+		var sydney = new L.LatLng(-33.91, 151.08);
+		var capetown = new L.LatLng(-33.94, 18.39);
+
+		var p1 = [berlin, capetown];
+		var p2 = [capetown, losangeles];
+		var p3 = [losangeles, santiago];
+		var p4 = [santiago, sydney];
+		var p5 = [sydney, tokio];
+		var p6 = [tokio, berlin];
+
+		var test = [p1, p2, p3, p4, p5, p6];
+
+		
+		var Geodesic = L.geodesic([[]], {
+			weight:3, 
+			opacity:1
+		}).addTo(map);
+		Geodesic.setLatLngs(test);
 	</script>
 	
  </body>
