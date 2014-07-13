@@ -12,7 +12,7 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
-	steps: 2
+	steps: 10
     },  
   
     initialize: function (latlngs, options) {
@@ -176,12 +176,13 @@ L.Geodesic = L.MultiPolyline.extend({
 
     /**
     * Returns the point of intersection of two paths defined by point and bearing.
+    * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
     *
     * @param {LatLon} p1 - First point.
     * @param {number} brng1 - Initial bearing from first point.
     * @param {LatLon} p2 - Second point.
     * @param {number} brng2 - Initial bearing from second point.
-    * @returns {LatLon} Destination point (null if no unique intersection defined).
+    * @returns {Object} containing lat/lng information of intersection.
     *
     * @example
     * var p1 = LatLon(51.8853, 0.2545), brng1 = 108.55;
