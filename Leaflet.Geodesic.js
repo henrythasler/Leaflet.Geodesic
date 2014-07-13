@@ -12,51 +12,52 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
-	steps: 50
+	steps: 2
     },  
   
     initialize: function (latlngs, options) {
       this.options = this._merge_options(this.options, options);
-      this._latlngs = latlngs;
       this.datum = {};
       this.datum.ellipsoid = { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 };
-      L.MultiPolyline.prototype.initialize.call(this, this._latlngs, this.options);    
+      L.MultiPolyline.prototype.initialize.call(this, latlngs, this.options);    
     },
   
     setLatLngs: function (latlngs) {
       this._latlngs = this._generate_Geodesic(latlngs);
       L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
-//      if(this._latlngs[0].length) {
-//	var res = this._vincenty_inverse(latlngs[0][0], latlngs[0][1]);
-//	L.MultiPolygon.prototype.setLatLngs.call(this, this._latlngs);
-  //    }
     },  
     
     
     _generate_Geodesic: function (latlngs) {
-      var _geo = [];
+      var _geo = [], _geocnt=0;
 //      _geo = latlngs;		// bypass
 
       for(poly=0; poly<latlngs.length;poly++) {
-	_geo[poly] = [];
+	_geo[_geocnt] = [];
 	for(points=0;points<(latlngs[poly].length-1);points++) {
 	  var inverse = this._vincenty_inverse(latlngs[poly][points], latlngs[poly][points+1]);
-	  for(s=0; s<=this.options.steps; s++) {
+	  console.log(inverse.distance);
+	  var prev = {lat:0, lng:0};//new L.LatLng(0, 0);
+	  for(s=0; s<=this.options.steps; ) {
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
-	    _geo[poly].push(new L.LatLng(direct.lat, direct.lng));
+	    var gp = new L.LatLng(direct.lat, direct.lng);
+	    if(Math.abs(gp.lng-prev.lng) > 180) {
+	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-179.9:179.9}, 0);
+	      _geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+	      _geocnt++;
+	      _geo[_geocnt] = [];
+	      prev = new L.LatLng(sec.lat, -sec.lng);
+	      _geo[_geocnt].push(prev);
+	    }
+	    else {
+	      _geo[_geocnt].push(gp);
+	      prev = gp;
+	      s++;
+	    }
 	  }
 	}
-//	  _geo.push(latlngs[poly]);
+	_geocnt++;
       }
-/*      
-      if(latlngs.length) {
-	  var inverse = this._vincenty_inverse(latlngs[0][0], latlngs[0][1]);
-	  for(x=0; x<=this.options.steps; x++) {
-	    var direct = this._vincenty_direct(latlngs[0][0], inverse.initialBearing, inverse.distance/this.options.steps*x);
-	    _geo[0].push(new L.LatLng(direct.lat, direct.lng));
-	  }
-	}
-*/	
       return _geo;
     },
     
@@ -151,7 +152,11 @@ L.Geodesic = L.MultiPolyline.extend({
 	  λʹ = λ;
 	  λ = L + (1-C) * f * sinα * (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
       } while (Math.abs(λ-λʹ) > 1e-12 && ++iterations<100);
-      if (iterations>=100) throw new Error('Formula failed to converge');
+      if (iterations>=100) {
+	console.log('Formula failed to converge. Altering target position.')
+	return this._vincenty_inverse(p1, {lat: p2.lat, lng:p2.lng-0.01})
+//	throw new Error('Formula failed to converge');
+      }
 
       var uSq = cosSqα * (a*a - b*b) / (b*b);
       var A = 1 + uSq/16384*(4096+uSq*(-768+uSq*(320-175*uSq)));
