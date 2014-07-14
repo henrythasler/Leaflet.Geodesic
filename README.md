@@ -19,5 +19,5 @@ See examples.
 
 License
 -------
-GPL V3. See licen
+GPL V3
 
