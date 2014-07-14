@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<title>Leaflet.Geodesic Example - by Henry Thasler</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<style type="text/css">
+		    body {
+			    padding: 0;
+			    margin: 0;
+		    }
+		    html, body, #map {
+			    height: 100%;
+		    }	
+	</style>	
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="../Leaflet.Geodesic.js"></script>
+ </head>
+ <body>
+	<div id="map"></div>
+	<script>
+		var map = L.map('map').setView([0,0], 2);
+		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+			maxZoom: 15,
+//			continuousWorld: true,
+			noWrap: true,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'examples.map-i86knfo3'
+		}).addTo(map);		
+
+		var berlin = new L.LatLng(52.51, 13.4); 
+		var losangeles = new L.LatLng(34.05, -118.24);
+		var santiago = new L.LatLng(-33.44, -70.71);
+		var tokio = new L.LatLng(35.69, 139.69);
+		var sydney = new L.LatLng(-33.91, 151.08);
+		var capetown = new L.LatLng(-33.91, 18.41);
+		var calgary = new L.LatLng(51.05, -114.08);
+		var hammerfest = new L.LatLng(70.67, 23.68);
+		var barrow = new L.LatLng(71.29, -156.76);
+		
+		var north_magnetic_pole = new L.LatLng(85.9, -147);
+		var south_magnetic_pole = new L.LatLng(-64.497, 137.684);
+		
+		var test = [];
+		test.push([losangeles, sydney, santiago, tokio, capetown, calgary, hammerfest, barrow]);
+
+		var Geodesic1 = L.geodesic(test, {
+			weight:3, 
+			opacity:1,
+			steps: 50
+		}).addTo(map);
+		
+		var Geodesic2 = L.geodesic([[berlin, south_magnetic_pole]], {
+			weight:7, 
+			opacity:0.3,
+			color: 'red',
+			steps: 20
+		}).addTo(map);
+		
+	</script>
+ </body>
+</html>

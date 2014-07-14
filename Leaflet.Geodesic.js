@@ -1,3 +1,22 @@
+// This file is part of Leaflet.Geodesic.
+// Copyright (C) 2014  Henry Thasler
+// based on code by Chris Veness Copyright (C) 2014 https://github.com/chrisveness/geodesy
+// 
+// Leaflet.Geodesic is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// Leaflet.Geodesic is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with Leaflet.Geodesic.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
 /** Extend Number object with method to convert numeric degrees to radians */
 if (typeof Number.prototype.toRadians == 'undefined') {
     Number.prototype.toRadians = function() { return this * Math.PI / 180; }
@@ -7,7 +26,6 @@ if (typeof Number.prototype.toRadians == 'undefined') {
 if (typeof Number.prototype.toDegrees == 'undefined') {
     Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
 }
-
 
 L.Geodesic = L.MultiPolyline.extend({
     options: {
@@ -25,8 +43,7 @@ L.Geodesic = L.MultiPolyline.extend({
     setLatLngs: function (latlngs) {
       this._latlngs = this._generate_Geodesic(latlngs);
       L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
-    },  
-    
+    },
     
     _generate_Geodesic: function (latlngs) {
       var _geo = [], _geocnt=0;
@@ -71,6 +88,7 @@ L.Geodesic = L.MultiPolyline.extend({
     * @param {number} distance - Distance along bearing in metres.
     * @returns (Object} Object including point (destination point), finalBearing.
     */
+    
     _vincenty_direct : function (p1, initialBearing, distance) {
       var φ1 = p1.lat.toRadians(), λ1 = p1.lng.toRadians();
       var α1 = initialBearing.toRadians();
@@ -248,20 +266,6 @@ L.Geodesic = L.MultiPolyline.extend({
   * @param obj2
   * @returns obj3 a new object based on obj1 and obj2
   */
-/*
-   Function: _merge_options
-
-   Merges two JavaScript objects 
-
-   Parameters:
-
-      obj1 - Object 1.
-      obj2 - Object 2.
-
-   Returns:
-
-      Merged Object.
-*/  
     _merge_options: function(obj1,obj2){
       var obj3 = {};
       for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }

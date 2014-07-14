@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<title>Leaflet.Geodesic Example - by Henry Thasler</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<style type="text/css">
+		    body {
+			    padding: 0;
+			    margin: 0;
+		    }
+		    html, body, #map {
+			    height: 100%;
+		    }	
+	</style>	
+
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="../Leaflet.Geodesic.js"></script>
+ </head>
+ <body>
+	<div id="map"></div>
+	<script>
+		var map = L.map('map').setView([51.505, -0.09], 2);
+		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+			maxZoom: 18,
+//			continuousWorld: true,
+			noWrap: true,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'examples.map-i86knfo3'
+		}).addTo(map);		
+
+		// test case with distance 54.972,271 m
+		var Flinders_Peak = new L.LatLng(-37.9510334166667, 144.424867888889); 
+		var Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778); 
+	
+		var berlin = new L.LatLng(52.5, 13.35); 
+		var losangeles = new L.LatLng(33.82, -118.38);
+		var santiago = new L.LatLng(-33.44, -70.71);
+		var tokio = new L.LatLng(35.47, 139.15);
+		var sydney = new L.LatLng(-33.91, 151.08);
+		var capetown = new L.LatLng(-33.94, 18.39);
+		var calgary = new L.LatLng(51.07, -114.35);
+		var hammerfest = new L.LatLng(70.70, 23.55);
+		var barrow = new L.LatLng(71.35, -156,83);
+		
+		var north_magnetic_pole = new L.LatLng(85.9, -147);
+		var south_magnetic_pole = new L.LatLng(-64.497, 137.684);
+		
+		var A = new L.LatLng(0, -90.0);
+		var B = new L.LatLng(0, 90.0);
+/*		
+		var C = new L.LatLng(51.8853, 0.2545);
+		var brng1 = 108.55;
+		var D = new L.LatLng(49.0034, 2.5735);
+		var brng2 = 32.44;
+*/
+/*
+		var C = new L.LatLng(-33.44, -70.71);
+		var brng1 = 270;
+		var D = new L.LatLng(-89, -180);
+		var brng2 = 0;
+*/		
+		
+		var test = [];
+//		test.push([Flinders_Peak, Buninyong])	// distance = 54 972.271 m
+
+//		test.push([berlin, losangeles, santiago, tokio, sydney, santiago, capetown, calgary, hammerfest, barrow])
+//		test.push([losangeles, capetown])
+//		test.push([capetown, santiago])
+//		test.push([sydney, santiago])
+//		test.push([sydney, berlin])
+//		test.push([santiago, tokio])
+//		test.push([sydney, barrow])
+		test.push([north_magnetic_pole, south_magnetic_pole])
+
+//		test.push([A, B])
+
+/*
+		// test case 1: regular wrapping east->west
+		test.push([sydney, santiago])
+		// test case 2: regular wrapping west->east
+		test.push([santiago, sydney])
+		
+		// test case 3: selecting the correct intersection line east->west
+		test.push([sydney, barrow])
+		// test case 4: selecting the correct intersection line west->east
+		test.push([barrow, sydney])
+		
+		// test case 4; opposite positions
+		test.push([A, B])
+*/
+
+//		var poly = new L.MultiPolyline(test).addTo(map);
+
+
+		var Geodesic = L.geodesic(test, {
+			weight:3, 
+			opacity:1,
+			steps: 40
+		}).addTo(map);
+		
+/*		
+		var C2 = Geodesic._vincenty_direct(C, brng1, 1000000);
+		var D2 = Geodesic._vincenty_direct(D, brng2, 1000000);
+		
+		var I = Geodesic._intersection(C, brng1, D, brng2);
+		var I2 = Geodesic._vincenty_direct(I, 0, 1);
+		
+		test.push([C, C2])
+		test.push([D, D2])
+		test.push([I, I2])
+*/
+
+//		Geodesic.setLatLngs(test);
+	</script>
+ </body>
+</html>
