@@ -6,5 +6,5 @@ Add-on to draw geodesic lines with leaflet
 
 Live-Demo
 ---------
-[Static Demo](http://www.thasler.org/Leaflet.Geodesic/examples/simple.html)
+[Static Demo](http://www.thasler.org/leaflet.geodesic/examples/simple.html)
 
