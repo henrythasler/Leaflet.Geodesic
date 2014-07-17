@@ -61,6 +61,15 @@
 			color: 'red',
 			steps: 20
 		}).addTo(map);
+
+		var Geodesic3 = L.geodesic([], {
+			weight:3, 
+			opacity:1,
+			color: 'green',
+			steps: 40
+		}).addTo(map);
+		
+		Geodesic3.createCircle(calgary, 2000000);	
 		
 	</script>
  </body>
