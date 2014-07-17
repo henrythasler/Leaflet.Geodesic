@@ -12,6 +12,7 @@ Live-Demo
 ---------
 - [Static Demo](http://www.thasler.org/leaflet.geodesic/example/simple.html)
 - [Interactive Demo](http://www.thasler.org/leaflet.geodesic/example/interactive.html)
+- [Great Circle Demo](http://www.thasler.org/leaflet.geodesic/example/circle.html)
 
 Usage
 -----
