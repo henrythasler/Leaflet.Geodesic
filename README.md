@@ -16,7 +16,12 @@ Live-Demo
 
 Usage
 -----
-Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline).
+Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
+
+Geodesic has the following additional options:
+* steps - defines how many intermediate points are generated along the path. More steps mean a smoother path.
+
+This code creates an empty Geodesic object:
 ```
 var Geodesic = L.geodesic([], {
 	weight: 7, 
@@ -26,9 +31,34 @@ var Geodesic = L.geodesic([], {
 }).addTo(map);
 ```
 
-Geodesic has the following additional options:
-* steps - defines how many intermediate points are generated along the path. More steps mean a smoother path.
+To actually draw a line, we need to create and set the coordinates of our geodesic line:
+```
+var berlin = new L.LatLng(52.5, 13.35); 
+var losangeles = new L.LatLng(33.82, -118.38);
 
+Geodesic.setLatLngs([[berlin, losangeles]]);
+```
+
+a geodesic line can have more than two positions:
+```
+var berlin = new L.LatLng(52.5, 13.35); 
+var losangeles = new L.LatLng(33.82, -118.38);
+var capetown = new L.LatLng(-33.91, 18.41);
+
+Geodesic.setLatLngs([[berlin, losangeles, capetown]]);
+```
+
+you can also draw independent lines within one geodesic object:
+```
+var berlin = new L.LatLng(52.5, 13.35); 
+var losangeles = new L.LatLng(33.82, -118.38);
+var capetown = new L.LatLng(-33.91, 18.41);
+var sydney = new L.LatLng(-33.91, 151.08);
+
+Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
+```
+
+Please refer to the provided examples for additional information on how to use geodesic lines.
 
 License
 -------
