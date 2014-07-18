@@ -19,7 +19,18 @@ Usage
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
 
 Geodesic has the following additional options:
-* steps - defines how many intermediate points are generated along the path. More steps mean a smoother path.
+
+option  | description
+-------------: | :-------------
+steps  | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+
+You need to add the plugin in your html file **after** the leaflet file
+
+```html
+<script src="leaflet.js"></script>
+<script src="Leaflet.Geodesic.js"></script>
+```
+
 
 This code creates an empty Geodesic object:
 ```JavaScript
