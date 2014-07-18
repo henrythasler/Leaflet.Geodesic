@@ -17,14 +17,14 @@ Live-Demo
 Usage
 -----
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline).
-'''
+```
 var Geodesic = L.geodesic([], {
 	weight: 7, 
 	opacity: 0.5,
 	color: 'blue',
 	steps: 50
 }).addTo(map);
-'''
+```
 
 Geodesic has the following additional options:
 * steps - defines how many intermediate points are generated along the path. More steps mean a smoother path.
