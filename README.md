@@ -16,18 +16,19 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
 
 ### Creation
-option  | description
--------------: | :-------------
-```L.geodesic( <LatLng[][]> latlngs, <Geodesic options> options? )```  | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+```JavaScript
+L.geodesic( <LatLng[][]> latlngs, <Geodesic options> options? )
+```
 
-
-
+### Options
 Geodesic has the following additional options:
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
 steps  | number | 10 | defines how many intermediate points are generated along the path. More steps mean a smoother path.
 
+
+### Tutorial
 You need to add the plugin in your html file **after** the leaflet file
 
 ```html
