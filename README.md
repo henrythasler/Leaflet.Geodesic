@@ -28,7 +28,7 @@ Option  | Type | Default | Description
 `steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path.
 `color`  | `String` | `blue` | Stroke color.
 
-All options of Leaflet's MultiPolyline can be used as well.
+All options of Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline) can be used as well.
 
 ### Tutorial
 You need to add the plugin in your html file **after** the leaflet file
