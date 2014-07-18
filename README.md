@@ -21,12 +21,14 @@ L.geodesic( <LatLng[][]> latlngs, <Geodesic options> options? )
 ```
 
 ### Options
-Geodesic has the following additional options:
+Geodesic has the following options:
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
-`steps`  | `Number` | `10` | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+`steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path.
+`color`  | `String` | `blue` | Stroke color.
 
+All options of Leaflet's MultiPolyline can be used as well.
 
 ### Tutorial
 You need to add the plugin in your html file **after** the leaflet file
