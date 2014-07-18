@@ -72,7 +72,7 @@
 		
 		Geodesic.update = function () {
 		  Geodesic.setLatLngs([[A.getLatLng(), B.getLatLng()]]);
-		  info.update(Geodesic._vincenty_inverse(A.getLatLng(), B.getLatLng()));
+		  info.update(Geodesic.getStats());
 		};
 		
 		Geodesic.update();

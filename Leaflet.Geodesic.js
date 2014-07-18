@@ -27,6 +27,8 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
     Number.prototype.toDegrees = function() { return this * 180 / Math.PI; }
 }
 
+var INTERSECT_LNG = 179.999;	// Lng used for intersection and wrap around on map edges 
+
 L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
@@ -43,6 +45,25 @@ L.Geodesic = L.MultiPolyline.extend({
     setLatLngs: function (latlngs) {
       this._latlngs = this._generate_Geodesic(latlngs);
       L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
+    },
+
+    /**
+    * Calculates some statistic values of current geodesic multipolyline
+    * @returns (Object} Object with several properties (e.g. overall distance)
+    */
+    getStats: function () {
+      var obj={	distance: 0,
+		points: 0,
+		polygons: this._latlngs.length
+	      };
+	    
+      for(poly=0; poly<this._latlngs.length;poly++) {
+	obj.points+=this._latlngs[poly].length;
+	for(points=0;points<(this._latlngs[poly].length-1);points++) {
+	  obj.distance += this._vincenty_inverse(this._latlngs[poly][points], this._latlngs[poly][points+1]).distance;
+	}
+      }
+      return obj;
     },
     
     /**
@@ -62,7 +83,7 @@ L.Geodesic = L.MultiPolyline.extend({
 
 	if(Math.abs(gp.lng-prev.lng) > 180) {
 	  var inverse = this._vincenty_inverse(prev, gp);
-	  var sec = this._intersection(prev, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-179.9:179.9}, 0);
+	  var sec = this._intersection(prev, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	  if(sec) {
 	    _geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
 	    _geocnt++;
@@ -108,7 +129,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
 	    var gp = new L.LatLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
-	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-179.9:179.9}, 0);
+	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
 		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
 		_geocnt++;
