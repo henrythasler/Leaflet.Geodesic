@@ -25,7 +25,7 @@ Geodesic has the following additional options:
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
-steps  | number | 10 | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+`steps`  | `Number` | `10` | defines how many intermediate points are generated along the path. More steps mean a smoother path.
 
 
 ### Tutorial
