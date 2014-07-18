@@ -22,7 +22,7 @@ Geodesic has the following additional options:
 * steps - defines how many intermediate points are generated along the path. More steps mean a smoother path.
 
 This code creates an empty Geodesic object:
-```
+```JavaScript
 var Geodesic = L.geodesic([], {
 	weight: 7, 
 	opacity: 0.5,
@@ -32,7 +32,7 @@ var Geodesic = L.geodesic([], {
 ```
 
 To actually draw a line, we need to create and set the coordinates of our geodesic line:
-```
+```JavaScript
 var berlin = new L.LatLng(52.5, 13.35); 
 var losangeles = new L.LatLng(33.82, -118.38);
 
@@ -40,7 +40,7 @@ Geodesic.setLatLngs([[berlin, losangeles]]);
 ```
 
 a geodesic line can have more than two positions:
-```
+```JavaScript
 var berlin = new L.LatLng(52.5, 13.35); 
 var losangeles = new L.LatLng(33.82, -118.38);
 var capetown = new L.LatLng(-33.91, 18.41);
@@ -49,7 +49,7 @@ Geodesic.setLatLngs([[berlin, losangeles, capetown]]);
 ```
 
 you can also draw independent lines within one geodesic object:
-```
+```JavaScript
 var berlin = new L.LatLng(52.5, 13.35); 
 var losangeles = new L.LatLng(33.82, -118.38);
 var capetown = new L.LatLng(-33.91, 18.41);
