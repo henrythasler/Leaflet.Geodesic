@@ -1,5 +1,4 @@
-Leaflet.Geodesic
-================
+# Leaflet.Geodesic
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
 
@@ -8,21 +7,26 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness that gives extremely precise results.
 
 
-Live-Demo
----------
+## Live-Demo
 - [Static Demo](http://www.thasler.org/leaflet.geodesic/example/simple.html)
 - [Interactive Demo](http://www.thasler.org/leaflet.geodesic/example/interactive.html)
 - [Great Circle Demo](http://www.thasler.org/leaflet.geodesic/example/circle.html)
 
-Usage
------
+## Usage
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
+
+### Creation
+option  | description
+-------------: | :-------------
+```L.geodesic( <LatLng[][]> latlngs, <Geodesic options> options? )```  | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+
+
 
 Geodesic has the following additional options:
 
-option  | description
--------------: | :-------------
-steps  | defines how many intermediate points are generated along the path. More steps mean a smoother path.
+Option  | Type | Default | Description
+-------------: | ------------- | ------------- | :-------------
+steps  | number | 10 | defines how many intermediate points are generated along the path. More steps mean a smoother path.
 
 You need to add the plugin in your html file **after** the leaflet file
 
@@ -71,7 +75,6 @@ Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
 
 Please refer to the provided examples for additional information on how to use geodesic lines.
 
-License
--------
+## License
 GPL V3
 
