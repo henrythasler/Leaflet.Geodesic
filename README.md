@@ -1,7 +1,7 @@
 Leaflet.Geodesic
 ================
 
-Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface.
+Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
 
 [<img src="http://www.thasler.org/leaflet.geodesic/example/interactive.png" alt="Leaflet.Draw Screenshot" />](http://www.thasler.org/leaflet.geodesic/example/interactive.html)
 
@@ -39,7 +39,7 @@ var losangeles = new L.LatLng(33.82, -118.38);
 Geodesic.setLatLngs([[berlin, losangeles]]);
 ```
 
-a geodesic line can have more than two positions:
+A geodesic line can have more than two Points:
 ```JavaScript
 var berlin = new L.LatLng(52.5, 13.35); 
 var losangeles = new L.LatLng(33.82, -118.38);
@@ -48,7 +48,7 @@ var capetown = new L.LatLng(-33.91, 18.41);
 Geodesic.setLatLngs([[berlin, losangeles, capetown]]);
 ```
 
-you can also draw independent lines within one geodesic object:
+You can also draw independent lines within one geodesic object:
 ```JavaScript
 var berlin = new L.LatLng(52.5, 13.35); 
 var losangeles = new L.LatLng(33.82, -118.38);
