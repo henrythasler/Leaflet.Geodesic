@@ -56,7 +56,7 @@ L.Geodesic = L.MultiPolyline.extend({
       var obj={	distance: 0,
 		points: 0,
 		polygons: this._latlngs.length
-	      };
+	      }, poly, points;
 	    
       for(poly=0; poly<this._latlngs.length;poly++) {
 	obj.points+=this._latlngs[poly].length;
@@ -75,6 +75,7 @@ L.Geodesic = L.MultiPolyline.extend({
     createCircle: function (center, radius) {
       var _geo = [], _geocnt=0;
       var prev = {lat:0, lng:0, brg:0};//new L.LatLng(0, 0);
+      var s;
       
       _geo[_geocnt] = [];
       for(s=0; s<=this.options.steps; ) {
@@ -115,7 +116,7 @@ L.Geodesic = L.MultiPolyline.extend({
     * @returns (Object} An array of arrays of geographical points.
     */
     _generate_Geodesic: function (latlngs) {
-      var _geo = [], _geocnt=0;
+      var _geo = [], _geocnt=0, s, poly, points;
 //      _geo = latlngs;		// bypass
 
       for(poly=0; poly<latlngs.length;poly++) {
@@ -163,7 +164,7 @@ L.Geodesic = L.MultiPolyline.extend({
     * @returns (Object} An array of arrays of geographical points.
     */
     _generate_GeodesicDashed: function (latlngs) {
-      var _geo = [], _geocnt=0;
+      var _geo = [], _geocnt=0, s, poly, points;
 //      _geo = latlngs;		// bypass
 
       for(poly=0; poly<latlngs.length;poly++) {
