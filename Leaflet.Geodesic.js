@@ -32,7 +32,8 @@ var INTERSECT_LNG = 179.999;	// Lng used for intersection and wrap around on map
 L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
-	steps: 10
+	steps: 10,
+	dash: 1
     },  
   
     initialize: function (latlngs, options) {
@@ -43,7 +44,7 @@ L.Geodesic = L.MultiPolyline.extend({
     },
   
     setLatLngs: function (latlngs) {
-      this._latlngs = this._generate_Geodesic(latlngs);
+      this._latlngs = (this.options.dash<1)?this._generate_GeodesicDashed(latlngs):this._generate_Geodesic(latlngs);
       L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
     },
 
@@ -79,8 +80,6 @@ L.Geodesic = L.MultiPolyline.extend({
       for(s=0; s<=this.options.steps; ) {
 	var direct = this._vincenty_direct(center, 360/this.options.steps*s, radius);
 	var gp = new L.LatLng(direct.lat, direct.lng);
-	
-
 	if(Math.abs(gp.lng-prev.lng) > 180) {
 	  var inverse = this._vincenty_inverse(prev, gp);
 	  var sec = this._intersection(prev, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
@@ -104,7 +103,6 @@ L.Geodesic = L.MultiPolyline.extend({
 	  prev = gp;
 	  s++;
 	}
-	
       }
 
       this._latlngs = _geo;
@@ -124,8 +122,9 @@ L.Geodesic = L.MultiPolyline.extend({
 	_geo[_geocnt] = [];
 	for(points=0;points<(latlngs[poly].length-1);points++) {
 	  var inverse = this._vincenty_inverse(latlngs[poly][points], latlngs[poly][points+1]);
-	  var prev = {lat:0, lng:0};//new L.LatLng(0, 0);
-	  for(s=0; s<=this.options.steps; ) {
+	  var prev = latlngs[poly][points];
+	  _geo[_geocnt].push(prev);
+	  for(s=1; s<=this.options.steps; ) {
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
 	    var gp = new L.LatLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
@@ -156,6 +155,57 @@ L.Geodesic = L.MultiPolyline.extend({
       }
       return _geo;
     },
+    
+    
+    /**
+    * Creates a dashed geodesic MultiPolyline from given coordinates - under work
+    * @param {Object} latlngs - One or more polylines as an array. See Leaflet doc about MultiPolyline 
+    * @returns (Object} An array of arrays of geographical points.
+    */
+    _generate_GeodesicDashed: function (latlngs) {
+      var _geo = [], _geocnt=0;
+//      _geo = latlngs;		// bypass
+
+      for(poly=0; poly<latlngs.length;poly++) {
+	_geo[_geocnt] = [];
+	for(points=0;points<(latlngs[poly].length-1);points++) {
+	  var inverse = this._vincenty_inverse(latlngs[poly][points], latlngs[poly][points+1]);
+	  var prev = latlngs[poly][points];
+	  _geo[_geocnt].push(prev);
+	  for(s=1; s<=this.options.steps; ) {
+	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s-inverse.distance/this.options.steps*(1-this.options.dash));
+	    var gp = new L.LatLng(direct.lat, direct.lng);
+	    if(Math.abs(gp.lng-prev.lng) > 180) {
+	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
+	      if(sec) {
+		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+		_geocnt++;
+		_geo[_geocnt] = [];
+		prev = new L.LatLng(sec.lat, -sec.lng);
+		_geo[_geocnt].push(prev);
+	      }
+	      else {
+		_geocnt++;
+		_geo[_geocnt] = [];
+		_geo[_geocnt].push(gp);
+		prev = gp;
+		s++;
+	      }
+	    }
+	    else {
+	      _geo[_geocnt].push(gp);
+	      _geocnt++;
+	      var direct2 = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
+	      _geo[_geocnt] = [];
+	      _geo[_geocnt].push(new L.LatLng(direct2.lat, direct2.lng));
+	      s++;
+	    }
+	  }
+	}
+	_geocnt++;
+      }
+      return _geo;
+    },    
     
     
     /**
