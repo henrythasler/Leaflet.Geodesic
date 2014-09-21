@@ -73,10 +73,11 @@
 		    return this._div;
 		};
 		
-		info.update = function (props) {
-		    this._div.innerHTML = '<h4>Radius</h4>' +  (props ? (props.distance>10000)?(props.distance/1000).toFixed(0)+' km':(props.distance).toFixed(0)+' m' : 'invalid');
-		    this._div.innerHTML += '</br></br><h4>Diameter</h4>' +  (props ? (2*props.distance>10000)?(2*props.distance/1000).toFixed(0)+' km':(2*props.distance).toFixed(0)+' m' : 'invalid');
-		    this._div.innerHTML += '</br></br><h4>Circumfence</h4>' +  (props ? (Math.PI*2*props.distance>10000)?(Math.PI*2*props.distance/1000).toFixed(0)+' km':(Math.PI*2*props.distance).toFixed(0)+' m' : 'invalid');
+		info.update = function () {
+		    var stats = Geodesic.getStats();
+		    this._div.innerHTML = '<h4>Radius</h4>' +  (stats.distance/2/Math.PI ? (stats.distance/2/Math.PI>10000)?(stats.distance/2/Math.PI/1000).toFixed(0)+' km':(stats.distance/2/Math.PI).toFixed(0)+' m' : 'invalid');
+		    this._div.innerHTML += '</br></br><h4>Diameter</h4>' +  (stats.distance/Math.PI ? (stats.distance/Math.PI>10000)?(stats.distance/Math.PI/1000).toFixed(0)+' km':(stats.distance/Math.PI).toFixed(0)+' m' : 'invalid');
+		    this._div.innerHTML += '</br></br><h4>Circumfence</h4>' +  (stats.distance ? (stats.distance>10000)?(stats.distance/1000).toFixed(0)+' km':(stats.distance).toFixed(0)+' m' : 'invalid');
 		};
 		info.addTo(map);		
 		
@@ -85,7 +86,7 @@
 		  Geodesic.createCircle(A.getLatLng(), target.distance);
 //  		  Circle.setLatLng(A.getLatLng());
 //  		  Circle.setRadius(target.distance);
-		  info.update(target);
+		  info.update();
 		};
 		
 		Geodesic.update();
