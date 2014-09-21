@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="../leaflet.css" />
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -28,7 +28,7 @@
 		    }
 	</style>	
 
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="../leaflet.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
@@ -41,7 +41,7 @@
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-			id: 'examples.map-i86knfo3'
+			id: 'examples.map-zr0njcqy'
 		}).addTo(map);		
 		
 		var berlin = new L.LatLng(52.5, 13.35); 
@@ -54,7 +54,7 @@
 			weight: 7, 
 			opacity: 0.5,
 			color: 'blue',
-			steps: 20
+			steps: 50
 		}).addTo(map);
 		
 		var info = L.control();
@@ -72,7 +72,7 @@
 		
 		Geodesic.update = function () {
 		  Geodesic.setLatLngs([[A.getLatLng(), B.getLatLng()]]);
-		  info.update(Geodesic.getStats());
+		  info.update(Geodesic._vincenty_inverse(A.getLatLng(), B.getLatLng()));
 		};
 		
 		Geodesic.update();

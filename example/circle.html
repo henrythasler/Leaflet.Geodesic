@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="../leaflet.css" />
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -28,7 +28,7 @@
 		    }
 	</style>	
 
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="../leaflet.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
@@ -41,7 +41,7 @@
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-			id: 'examples.map-i86knfo3'
+			id: 'examples.map-zr0njcqy'
 		}).addTo(map);		
 		
 		var berlin = new L.LatLng(52.5, 13.35); 
@@ -57,6 +57,13 @@
 			steps: 50
 		}).addTo(map);
 
+/*		
+		var Circle = L.circle(A.getLatLng(),10,{
+			weight: 2, 
+			opacity: 1,
+			color: 'green'
+		}).addTo(map);
+*/		
 		var info = L.control();
 		var diff = {lat:0, lng:0};
 
@@ -69,14 +76,15 @@
 		info.update = function (props) {
 		    this._div.innerHTML = '<h4>Radius</h4>' +  (props ? (props.distance>10000)?(props.distance/1000).toFixed(0)+' km':(props.distance).toFixed(0)+' m' : 'invalid');
 		    this._div.innerHTML += '</br></br><h4>Diameter</h4>' +  (props ? (2*props.distance>10000)?(2*props.distance/1000).toFixed(0)+' km':(2*props.distance).toFixed(0)+' m' : 'invalid');
-		    var stats = Geodesic.getStats();
-		    this._div.innerHTML += '</br></br><h4>Circumfence</h4>' +  (stats ? (stats.distance>10000)?(stats.distance/1000).toFixed(0)+' km':(stats.distance).toFixed(0)+' m' : 'invalid');
+		    this._div.innerHTML += '</br></br><h4>Circumfence</h4>' +  (props ? (Math.PI*2*props.distance>10000)?(Math.PI*2*props.distance/1000).toFixed(0)+' km':(Math.PI*2*props.distance).toFixed(0)+' m' : 'invalid');
 		};
 		info.addTo(map);		
 		
 		Geodesic.update = function () {
 		  var target = Geodesic._vincenty_inverse(A.getLatLng(), B.getLatLng());
 		  Geodesic.createCircle(A.getLatLng(), target.distance);
+//  		  Circle.setLatLng(A.getLatLng());
+//  		  Circle.setRadius(target.distance);
 		  info.update(target);
 		};
 		

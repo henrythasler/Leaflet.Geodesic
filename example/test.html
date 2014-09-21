@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<link rel="stylesheet" href="../leaflet.css" />
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -16,7 +16,7 @@
 		    }	
 	</style>	
 
-	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="../leaflet.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
@@ -30,7 +30,7 @@
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-			id: 'examples.map-i86knfo3'
+			id: 'examples.map-zr0njcqy'
 		}).addTo(map);		
 
 		// test case with distance 54.972,271 m
@@ -103,9 +103,6 @@
 			steps: 40
 		}).addTo(map);
 		
-		Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
-		Geodesic.setLatLngs([[berlin, losangeles, capetown]]);
-
 /*		
 		var C2 = Geodesic._vincenty_direct(C, brng1, 1000000);
 		var D2 = Geodesic._vincenty_direct(D, brng2, 1000000);
