@@ -2,9 +2,7 @@
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
 
-[<img src="https://www.thasler.com/leaflet.geodesic/example/interactive.png" alt="Leaflet.Draw Screenshot" />](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
-
-[/example/interactive.png](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
+[<img src="https://github.com/henrythasler/Leaflet.Geodesic/blob/master/example/interactive.png" alt="Leaflet.Geodesic Screenshot" />](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
 
 It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness that gives extremely precise results.
 
