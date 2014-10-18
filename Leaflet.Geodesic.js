@@ -33,7 +33,8 @@ L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
 	steps: 10,
-	dash: 1
+	dash: 1,
+        wrap: true
     },  
   
     initialize: function (latlngs, options) {
@@ -81,7 +82,7 @@ L.Geodesic = L.MultiPolyline.extend({
       for(s=0; s<=this.options.steps; ) {
 	var direct = this._vincenty_direct(center, 360/this.options.steps*s, radius);
 	var gp = new L.LatLng(direct.lat, direct.lng);
-	if(Math.abs(gp.lng-prev.lng) > 180) {
+	if( (Math.abs(gp.lng-prev.lng) > 180) && this.options.wrap) {
 	  var inverse = this._vincenty_inverse(prev, gp);
 	  var sec = this._intersection(prev, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	  if(sec) {
@@ -128,7 +129,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	  for(s=1; s<=this.options.steps; ) {
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
 	    var gp = new L.LatLng(direct.lat, direct.lng);
-	    if(Math.abs(gp.lng-prev.lng) > 180) {
+	    if( (Math.abs(gp.lng-prev.lng) > 180) && this.options.wrap) {
 	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
 		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
@@ -179,18 +180,18 @@ L.Geodesic = L.MultiPolyline.extend({
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
 	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
-		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
-		_geocnt++;
-		_geo[_geocnt] = [];
-		prev = new L.LatLng(sec.lat, -sec.lng);
-		_geo[_geocnt].push(prev);
+			_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+			_geocnt++;
+			_geo[_geocnt] = [];
+			prev = new L.LatLng(sec.lat, -sec.lng);
+			_geo[_geocnt].push(prev);
 	      }
 	      else {
-		_geocnt++;
-		_geo[_geocnt] = [];
-		_geo[_geocnt].push(gp);
-		prev = gp;
-		s++;
+			_geocnt++;
+			_geo[_geocnt] = [];
+			_geo[_geocnt].push(gp);
+			prev = gp;
+			s++;
 	      }
 	    }
 	    else {
