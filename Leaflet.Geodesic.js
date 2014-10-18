@@ -255,7 +255,8 @@ L.Geodesic = L.MultiPolyline.extend({
       var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
       var L = λ - (1-C) * f * sinα *
 	  (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-      var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI; // normalise to -180...+180
+//      var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI; // normalise to -180...+180
+      var λ2 = (λ1+L+1*Math.PI) - Math.PI; // special hack to allow geodesic lines on endless/wrapped maps
 
       var revAz = Math.atan2(sinα, -x);
 
