@@ -80,15 +80,15 @@ L.Geodesic = L.MultiPolyline.extend({
       _geo[_geocnt] = [];
       for(s=0; s<=this.options.steps; ) {
 	var direct = this._vincenty_direct(center, 360/this.options.steps*s, radius);
-	var gp = new L.LatLng(direct.lat, direct.lng);
+	var gp = L.latLng(direct.lat, direct.lng);
 	if(Math.abs(gp.lng-prev.lng) > 180) {
 	  var inverse = this._vincenty_inverse(prev, gp);
 	  var sec = this._intersection(prev, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	  if(sec) {
-	    _geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+	    _geo[_geocnt].push(L.latLng(sec.lat, sec.lng));
 	    _geocnt++;
 	    _geo[_geocnt] = [];
-	    prev = new L.LatLng(sec.lat, -sec.lng);
+	    prev = L.latLng(sec.lat, -sec.lng);
 	    _geo[_geocnt].push(prev);
 	  }
 	  else {
@@ -127,14 +127,14 @@ L.Geodesic = L.MultiPolyline.extend({
 	  _geo[_geocnt].push(prev);
 	  for(s=1; s<=this.options.steps; ) {
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
-	    var gp = new L.LatLng(direct.lat, direct.lng);
+	    var gp = L.latLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
 	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
-		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+		_geo[_geocnt].push(L.latLng(sec.lat, sec.lng));
 		_geocnt++;
 		_geo[_geocnt] = [];
-		prev = new L.LatLng(sec.lat, -sec.lng);
+		prev = L.latLng(sec.lat, -sec.lng);
 		_geo[_geocnt].push(prev);
 	      }
 	      else {
@@ -175,14 +175,14 @@ L.Geodesic = L.MultiPolyline.extend({
 	  _geo[_geocnt].push(prev);
 	  for(s=1; s<=this.options.steps; ) {
 	    var direct = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s-inverse.distance/this.options.steps*(1-this.options.dash));
-	    var gp = new L.LatLng(direct.lat, direct.lng);
+	    var gp = L.latLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
 	      var sec = this._intersection(latlngs[poly][points], inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
-		_geo[_geocnt].push(new L.LatLng(sec.lat, sec.lng));
+		_geo[_geocnt].push(L.latLng(sec.lat, sec.lng));
 		_geocnt++;
 		_geo[_geocnt] = [];
-		prev = new L.LatLng(sec.lat, -sec.lng);
+		prev = L.latLng(sec.lat, -sec.lng);
 		_geo[_geocnt].push(prev);
 	      }
 	      else {
@@ -198,7 +198,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	      _geocnt++;
 	      var direct2 = this._vincenty_direct(latlngs[poly][points], inverse.initialBearing, inverse.distance/this.options.steps*s);
 	      _geo[_geocnt] = [];
-	      _geo[_geocnt].push(new L.LatLng(direct2.lat, direct2.lng));
+	      _geo[_geocnt].push(L.latLng(direct2.lat, direct2.lng));
 	      s++;
 	    }
 	  }
