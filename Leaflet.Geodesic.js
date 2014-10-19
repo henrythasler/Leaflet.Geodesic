@@ -33,7 +33,8 @@ L.Geodesic = L.MultiPolyline.extend({
     options: {
 	color:'blue',
 	steps: 10,
-	dash: 1
+	dash: 1,
+        wrap: true
     },  
   
     initialize: function (latlngs, options) {
@@ -79,7 +80,7 @@ L.Geodesic = L.MultiPolyline.extend({
       
       _geo[_geocnt] = [];
       for(s=0; s<=this.options.steps; ) {
-	var direct = this._vincenty_direct(L.latLng(center), 360/this.options.steps*s, radius);
+	var direct = this._vincenty_direct(L.latLng(center), 360/this.options.steps*s, radius, true);
 	var gp = L.latLng(direct.lat, direct.lng);
 	if(Math.abs(gp.lng-prev.lng) > 180) {
 	  var inverse = this._vincenty_inverse(prev, gp);
@@ -126,7 +127,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	  var prev = L.latLng(latlngs[poly][points]);
 	  _geo[_geocnt].push(prev);
 	  for(s=1; s<=this.options.steps; ) {
-	    var direct = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s);
+	    var direct = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s, this.options.wrap);
 	    var gp = L.latLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
 	      var sec = this._intersection(L.latLng(latlngs[poly][points]), inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
@@ -174,7 +175,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	  var prev = L.latLng(latlngs[poly][points]);
 	  _geo[_geocnt].push(prev);
 	  for(s=1; s<=this.options.steps; ) {
-	    var direct = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s-inverse.distance/this.options.steps*(1-this.options.dash));
+	    var direct = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s-inverse.distance/this.options.steps*(1-this.options.dash), this.options.wrap);
 	    var gp = L.latLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
 	      var sec = this._intersection(L.latLng(latlngs[poly][points]), inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
@@ -196,7 +197,7 @@ L.Geodesic = L.MultiPolyline.extend({
 	    else {
 	      _geo[_geocnt].push(gp);
 	      _geocnt++;
-	      var direct2 = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s);
+	      var direct2 = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s, this.options.wrap);
 	      _geo[_geocnt] = [];
 	      _geo[_geocnt].push(L.latLng(direct2.lat, direct2.lng));
 	      s++;
@@ -219,7 +220,7 @@ L.Geodesic = L.MultiPolyline.extend({
     * @returns (Object} Object including point (destination point), finalBearing.
     */
     
-    _vincenty_direct : function (p1, initialBearing, distance) {
+    _vincenty_direct : function (p1, initialBearing, distance, wrap) {
       var φ1 = p1.lat.toRadians(), λ1 = p1.lng.toRadians();
       var α1 = initialBearing.toRadians();
       var s = distance;
@@ -254,7 +255,11 @@ L.Geodesic = L.MultiPolyline.extend({
       var C = f/16*cosSqα*(4+f*(4-3*cosSqα));
       var L = λ - (1-C) * f * sinα *
 	  (σ + C*sinσ*(cos2σM+C*cosσ*(-1+2*cos2σM*cos2σM)));
-      var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI; // normalise to -180...+180
+          
+      if(wrap)
+        var λ2 = (λ1+L+3*Math.PI)%(2*Math.PI) - Math.PI; // normalise to -180...+180
+      else
+        var λ2 = (λ1+L); // do not normalize
 
       var revAz = Math.atan2(sinα, -x);
 
