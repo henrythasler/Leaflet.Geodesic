@@ -37,7 +37,7 @@
 		var Flinders_Peak = new L.LatLng(-37.9510334166667, 144.424867888889); 
 		var Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778); 
 	
-		var berlin = new L.LatLng(52.5, 13.35); 
+		var berlin = [52.5, 13.35]; 
 		var losangeles = new L.LatLng(33.82, -118.38);
 		var santiago = new L.LatLng(-33.44, -70.71);
 		var tokio = new L.LatLng(35.47, 139.15);
@@ -47,8 +47,12 @@
 		var hammerfest = new L.LatLng(70.70, 23.55);
 		var barrow = new L.LatLng(71.35, -156,83);
 		
-		var north_magnetic_pole = new L.LatLng(85.9, -147);
-		var south_magnetic_pole = new L.LatLng(-64.497, 137.684);
+		var north_magnetic_pole = [85.9, -147];
+		var south_magnetic_pole = [-64.497, 137.684];
+
+                var north_pole = [90, 0];
+                var south_pole = [-90, 0];
+		
 		
 		var A = new L.LatLng(0, -90.0);
 		var B = new L.LatLng(0, 90.0);
@@ -74,7 +78,7 @@
 //		test.push([sydney, santiago])
 //		test.push([sydney, berlin])
 //		test.push([santiago, tokio])
-//		test.push([sydney, barrow])
+		test.push([sydney, barrow])
 		test.push([north_magnetic_pole, south_magnetic_pole])
 
 //		test.push([A, B])
@@ -102,7 +106,32 @@
 			opacity:1,
 			steps: 40
 		}).addTo(map);
+
+		var Geodesic2 = L.geodesic([[sydney, berlin]], {
+                        weight:3, 
+                        opacity:1,
+                        dash: 0.2,
+                        color: 'red',
+                        steps: 40
+                }).addTo(map);
 		
+                var Geodesic3 = L.geodesic([], {
+                        weight:1, 
+                        opacity:1,
+                        color: 'green',
+                        steps: 40
+                }).addTo(map);
+                Geodesic3.createCircle(calgary, 2000000);		
+
+                var Geodesic4 = L.geodesic([], {
+                        weight:4, 
+                        opacity:1,
+                        color: 'green',
+                        steps: 4
+                }).addTo(map);
+                Geodesic4.createCircle(capetown, 2000000);               
+                
+                
 /*		
 		var C2 = Geodesic._vincenty_direct(C, brng1, 1000000);
 		var D2 = Geodesic._vincenty_direct(D, brng2, 1000000);
