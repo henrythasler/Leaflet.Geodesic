@@ -49,10 +49,6 @@ L.Geodesic = L.MultiPolyline.extend({
       L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
     },
 
-    getLatLngs: function (latlngs) {
-      return L.MultiPolyline.prototype.getLatLngs.call(this);
-    },
-    
     /**
     * Calculates some statistic values of current geodesic multipolyline
     * @returns (Object} Object with several properties (e.g. overall distance)
