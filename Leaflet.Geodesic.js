@@ -79,8 +79,12 @@ L.Geodesic = L.MultiPolyline.extend({
       var s;
       
       _geo[_geocnt] = [];
-      for(s=0; s<=this.options.steps; ) {
-	var direct = this._vincenty_direct(L.latLng(center), 360/this.options.steps*s, radius, true);
+      
+      var direct = this._vincenty_direct(L.latLng(center), 0, radius, this.options.wrap);
+      prev = L.latLng(direct.lat, direct.lng);
+      _geo[_geocnt].push(prev);
+      for(s=1; s<=this.options.steps; ) {
+	direct = this._vincenty_direct(L.latLng(center), 360/this.options.steps*s, radius, this.options.wrap);
 	var gp = L.latLng(direct.lat, direct.lng);
 	if(Math.abs(gp.lng-prev.lng) > 180) {
 	  var inverse = this._vincenty_inverse(prev, gp);
