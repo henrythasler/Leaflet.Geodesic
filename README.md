@@ -10,6 +10,7 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 ## Live-Demo
 - [Static Demo](http://www.thasler.com/leaflet.geodesic/example/simple.html)
 - [Interactive Demo](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
+- [Interactive Demo (noWrap)](http://www.thasler.com/leaflet.geodesic/example/interactive-noWrap.html)
 - [Great Circle Demo](http://www.thasler.com/leaflet.geodesic/example/circle.html)
 
 ## Usage
@@ -27,6 +28,7 @@ Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
 `steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path.
 `color`  | `String` | `blue` | Stroke color.
+`wrap`  | `Boolean` | `true` | Wrap line at map border (date line). Set to 'false' if you want lines to cross the dateline (experimental, see noWrap-example on how to use)
 
 All options of Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline) can be used as well.
 
