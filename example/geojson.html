@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<title>Leaflet.Geodesic Example - by Henry Thasler</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="../leaflet.css" />
+	<style type="text/css">
+		    body {
+			    padding: 0;
+			    margin: 0;
+		    }
+		    html, body, #map {
+			    height: 100%;
+		    }	
+	</style>	
+
+	<script src="../leaflet.js"></script>
+	<script src="../Leaflet.Geodesic.js"></script>
+ </head>
+ <body>
+	<div id="map"></div>
+	<script>
+		var map = L.map('map').setView([0,0], 2);
+		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+			maxZoom: 15,
+//			continuousWorld: true,
+			noWrap: true,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'examples.map-zr0njcqy'
+		}).addTo(map);
+
+		var geojson = {
+			  "type": "FeatureCollection",
+			  "features": [
+			    {
+			      "type": "Feature",
+			      "properties": {
+				"geodesic": "true",
+				"geodesic_steps": 50,
+				"geodesic_wrap": "true"
+			      },
+			      "geometry": {
+				"type": "LineString",
+				"coordinates": [
+				  [
+				    -69.9609375,
+				    29.22889003019423
+				  ],
+				  [
+				    26.71875,
+				    65.6582745198266
+				  ],
+				  [
+				    99.49218749999999,
+				    -12.211180191503985
+				  ]
+				]
+			      }
+			    },
+			    {
+			      "type": "Feature",
+			      "properties": {},
+			      "geometry": {
+				"type": "LineString",
+				"coordinates": [
+				  [
+				    -73.828125,
+				    34.30714385628804
+				  ],
+				  [
+				    27.421875,
+				    68.9110048456202
+				  ],
+				  [
+				    105.1171875,
+				    -8.754794702435605
+				  ]
+				]
+			      }
+			    }
+			  ]
+			};
+
+		var layer_geojson = L.geoJson(geojson).addTo(map);
+		
+	</script>
+ </body>
+</html>
