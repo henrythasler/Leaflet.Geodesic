@@ -80,7 +80,7 @@ Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
 ```
 
 ### Create geodesic objects from geoJSON:
-
+contributed by [prodrigestivill](https://github.com/prodrigestivill)
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
