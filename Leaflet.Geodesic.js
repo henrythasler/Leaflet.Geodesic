@@ -416,3 +416,28 @@ L.Geodesic = L.MultiPolyline.extend({
 L.geodesic = function(latlngs, options) {
     return new L.Geodesic(latlngs, options);
 };
+
+// Hook into L.GeoJSON.geometryToLayer and add geodesic support
+(function (){
+    var orig_L_GeoJSON_geometryToLayer = L.GeoJSON.geometryToLayer;
+    L.GeoJSON.geometryToLayer = function (geojson, pointToLayer, coordsToLatLng, vectorOptions) {
+        if (geojson.properties && geojson.properties.geodesic){
+            var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
+                coords = geometry.coordinates, props = geojson.properties, latlngs;
+            coordsToLatLng = coordsToLatLng || this.coordsToLatLng;
+            if (props.geodesic_steps) vectorOptions = L.extend({steps: props.geodesic_steps}, vectorOptions);
+            if (props.geodesic_wrap) vectorOptions = L.extend({wrap: props.geodesic_wrap}, vectorOptions);
+            switch (geometry.type) {
+                case 'LineString':
+                    latlngs = this.coordsToLatLngs(coords, 0, coordsToLatLng);
+                    return new L.Geodesic([latlngs], vectorOptions);
+                case 'MultiLineString':
+                    latlngs = this.coordsToLatLngs(coords, 1, coordsToLatLng);
+                    return new L.Geodesic(latlngs, vectorOptions);
+                default:
+                    console.log('Not yet supported drawing GeoJSON ' + geometry.type + ' as a geodesic: Drawing as non-geodesic.')
+            }
+        }
+        return orig_L_GeoJSON_geometryToLayer.apply(this, arguments);
+    }
+})();
