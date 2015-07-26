@@ -79,7 +79,8 @@ var sydney = new L.LatLng(-33.91, 151.08);
 Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
 ```
 
-Create geodesic objects from geoJSON:
+### Create geodesic objects from geoJSON:
+
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
