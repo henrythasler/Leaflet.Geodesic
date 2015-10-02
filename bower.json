@@ -16,7 +16,7 @@
     "Henry Thasler"
   ],
   "main": [
-    "Leaflet.Geodesic.js",
+    "Leaflet.Geodesic.js"
   ],
   "license": "GPL3",
   "private": false
