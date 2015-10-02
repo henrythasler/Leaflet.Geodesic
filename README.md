@@ -10,7 +10,9 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 ## Live-Demo
 - [Static Demo](http://www.thasler.com/leaflet.geodesic/example/simple.html)
 - [Interactive Demo](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
+- [Interactive Demo (noWrap)](http://www.thasler.com/leaflet.geodesic/example/interactive-noWrap.html)
 - [Great Circle Demo](http://www.thasler.com/leaflet.geodesic/example/circle.html)
+- [geoJSON Demo (static)](http://www.thasler.com/leaflet.geodesic/example/geojson.html)
 
 ## Usage
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
@@ -27,6 +29,7 @@ Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
 `steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path.
 `color`  | `String` | `blue` | Stroke color.
+`wrap`  | `Boolean` | `true` | Wrap line at map border (date line). Set to 'false' if you want lines to cross the dateline (experimental, see noWrap-example on how to use)
 
 All options of Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline) can be used as well.
 
@@ -74,6 +77,41 @@ var capetown = new L.LatLng(-33.91, 18.41);
 var sydney = new L.LatLng(-33.91, 151.08);
 
 Geodesic.setLatLngs([[berlin, losangeles], [capetown, sydney]]);
+```
+
+### Create geodesic objects from geoJSON:
+contributed by [prodrigestivill](https://github.com/prodrigestivill).
+To control its behavior it has been added 3 properties per each GeoJSON features:
+
+Option  | Type | Default | Description
+-------------: | ------------- | ------------- | :-------------
+`geodesic`  | `boolean` | `false` | To specify which are geodesic lines or not (default is false). So if disabled will use the original code from Leaflet.
+`geodesic_steps`  | `number` | `10` | To specify the steps to use (same as steps option in the plugin).
+`geodesic_wrap`  | `boolean` | `true` | To specify the steps to use (same as wrap option in the plugin).
+```JavaScript
+var geojson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "geodesic": "true",
+        "geodesic_steps": 50,
+        "geodesic_wrap": "true"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-69.9609375, 29.22889003019423],
+          [26.71875, 65.6582745198266],
+          [99.49218749999999, -12.211180191503985]
+        ]
+      }
+    }
+  ]
+};
+
+var layer_geojson = L.geoJson(geojson).addTo(map);
 ```
 
 Please refer to the provided examples for additional information on how to use geodesic lines.

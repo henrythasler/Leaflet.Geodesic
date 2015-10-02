@@ -29,7 +29,7 @@ if (typeof Number.prototype.toDegrees == 'undefined') {
 
 var INTERSECT_LNG = 179.999;	// Lng used for intersection and wrap around on map edges 
 
-L.Geodesic = L.MultiPolyline.extend({
+L.Geodesic = L.Polyline.extend({
     options: {
 	color:'blue',
 	steps: 10,
@@ -41,16 +41,16 @@ L.Geodesic = L.MultiPolyline.extend({
       this.options = this._merge_options(this.options, options);
       this.datum = {};
       this.datum.ellipsoid = { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 };	 // WGS-84
-      L.MultiPolyline.prototype.initialize.call(this, latlngs, this.options);    
+      L.Polyline.prototype.initialize.call(this, latlngs, this.options);    
     },
   
     setLatLngs: function (latlngs) {
       this._latlngs = (this.options.dash<1)?this._generate_GeodesicDashed(latlngs):this._generate_Geodesic(latlngs);
-      L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
+      L.Polyline.prototype.setLatLngs.call(this, this._latlngs);
     },
 
     /**
-    * Calculates some statistic values of current geodesic multipolyline
+    * Calculates some statistic values of current geodesic polyline
     * @returns (Object} Object with several properties (e.g. overall distance)
     */
     getStats: function () {
@@ -112,12 +112,12 @@ L.Geodesic = L.MultiPolyline.extend({
       }
 
       this._latlngs = _geo;
-      L.MultiPolyline.prototype.setLatLngs.call(this, this._latlngs);
+      L.Polyline.prototype.setLatLngs.call(this, this._latlngs);
     },
     
     /**
-    * Creates a geodesic MultiPolyline from given coordinates
-    * @param {Object} latlngs - One or more polylines as an array. See Leaflet doc about MultiPolyline 
+    * Creates a geodesic Polyline from given coordinates
+    * @param {Object} latlngs - One or more polylines as an array. See Leaflet doc about Polyline 
     * @returns (Object} An array of arrays of geographical points.
     */
     _generate_Geodesic: function (latlngs) {
@@ -164,8 +164,8 @@ L.Geodesic = L.MultiPolyline.extend({
     
     
     /**
-    * Creates a dashed geodesic MultiPolyline from given coordinates - under work
-    * @param {Object} latlngs - One or more polylines as an array. See Leaflet doc about MultiPolyline 
+    * Creates a dashed geodesic Polyline from given coordinates - under work
+    * @param {Object} latlngs - One or more polylines as an array. See Leaflet doc about Polyline 
     * @returns (Object} An array of arrays of geographical points.
     */
     _generate_GeodesicDashed: function (latlngs) {
@@ -416,3 +416,28 @@ L.Geodesic = L.MultiPolyline.extend({
 L.geodesic = function(latlngs, options) {
     return new L.Geodesic(latlngs, options);
 };
+
+// Hook into L.GeoJSON.geometryToLayer and add geodesic support
+(function (){
+    var orig_L_GeoJSON_geometryToLayer = L.GeoJSON.geometryToLayer;
+    L.GeoJSON.geometryToLayer = function (geojson, pointToLayer, coordsToLatLng, vectorOptions) {
+        if (geojson.properties && geojson.properties.geodesic){
+            var geometry = geojson.type === 'Feature' ? geojson.geometry : geojson,
+                coords = geometry.coordinates, props = geojson.properties, latlngs;
+            coordsToLatLng = coordsToLatLng || this.coordsToLatLng;
+            if (props.geodesic_steps) vectorOptions = L.extend({steps: props.geodesic_steps}, vectorOptions);
+            if (props.geodesic_wrap) vectorOptions = L.extend({wrap: props.geodesic_wrap}, vectorOptions);
+            switch (geometry.type) {
+                case 'LineString':
+                    latlngs = this.coordsToLatLngs(coords, 0, coordsToLatLng);
+                    return new L.Geodesic([latlngs], vectorOptions);
+                case 'MultiLineString':
+                    latlngs = this.coordsToLatLngs(coords, 1, coordsToLatLng);
+                    return new L.Geodesic(latlngs, vectorOptions);
+                default:
+                    console.log('Not yet supported drawing GeoJSON ' + geometry.type + ' as a geodesic: Drawing as non-geodesic.')
+            }
+        }
+        return orig_L_GeoJSON_geometryToLayer.apply(this, arguments);
+    }
+})();
