@@ -1,5 +1,6 @@
 # Testing branch
-Leaflet 1.0 has introduced incompatible changes with Leaflet.Geodesic.
+Leaflet 1.0 has introduced [incompatible changes](https://github.com/Leaflet/Leaflet/blob/master/CHANGELOG.md) with Leaflet.Geodesic. Namely the MultiPolyline class has been removed. This means Leaflet.Geodesic has to be changed in some parts.
+
 This branch has been created to adapt Leaflet.Geodesic to Leaflet 1.0+.
 
 # Leaflet.Geodesic
