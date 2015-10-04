@@ -20,7 +20,7 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 - [geoJSON Demo (static)](http://www.thasler.com/leaflet.geodesic/example/geojson.html)
 
 ## Usage
-Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
+Leaflet.Geodesic can be used similar to Leaflet's [Polyline](http://leafletjs.com/reference.html#polyline). 
 
 ### Creation
 ```JavaScript
