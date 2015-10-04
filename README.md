@@ -116,6 +116,13 @@ var layer_geojson = L.geoJson(geojson).addTo(map);
 
 Please refer to the provided examples for additional information on how to use geodesic lines.
 
+## FAQ
+Q: How can I use a custom icon with leaflet?
+A: http://jsfiddle.net/h1r3yagb/
+
+Q: I want to draw only part (eg. halfway) of a geodesic line between two places? 
+A: http://jsfiddle.net/h1r3yagb/2
+
 ## License
 GPL V3
 
