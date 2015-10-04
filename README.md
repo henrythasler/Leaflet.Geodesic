@@ -1,3 +1,8 @@
+# Testing branch
+Leaflet 1.0 has introduced [incompatible changes](https://github.com/Leaflet/Leaflet/blob/master/CHANGELOG.md) with Leaflet.Geodesic. Namely the MultiPolyline class has been removed. This means Leaflet.Geodesic has to be changed in some parts.
+
+This branch has been created to adapt Leaflet.Geodesic to Leaflet 1.0+.
+
 # Leaflet.Geodesic
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
@@ -115,6 +120,13 @@ var layer_geojson = L.geoJson(geojson).addTo(map);
 ```
 
 Please refer to the provided examples for additional information on how to use geodesic lines.
+
+## FAQ
+#####Q: How can I use a custom icon with leaflet?
+A: http://jsfiddle.net/h1r3yagb/
+
+#####Q: I want to draw only part (eg. halfway) of a geodesic line between two places? 
+A: http://jsfiddle.net/h1r3yagb/2
 
 ## License
 GPL V3
