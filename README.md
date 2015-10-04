@@ -36,7 +36,7 @@ Option  | Type | Default | Description
 `color`  | `String` | `blue` | Stroke color.
 `wrap`  | `Boolean` | `true` | Wrap line at map border (date line). Set to 'false' if you want lines to cross the dateline (experimental, see noWrap-example on how to use)
 
-All options of Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline) can be used as well.
+All options of Leaflet's [Polyline](http://leafletjs.com/reference.html#polyline) can be used as well.
 
 ### Tutorial
 You need to add the plugin in your html file **after** the leaflet file
