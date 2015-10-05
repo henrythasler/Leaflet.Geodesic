@@ -18,7 +18,7 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 Leaflet.Geodesic can be used similar to Leaflet's [MultiPolyline](http://leafletjs.com/reference.html#multipolyline). 
 
 ### Important note for Leaflet v1.0.0+
-Please look at the branch Testing1.0 to use Leaflet.Geodesic with Leaflet v1.0.0+. The master branch can only be used with Leaflet before v1.0.0.
+Please look at the branch [Testing1.0](https://github.com/henrythasler/Leaflet.Geodesic/tree/testing1.0) to use Leaflet.Geodesic with Leaflet v1.0.0+. The master branch can only be used with Leaflet before v1.0.0.
 
 ### Creation
 ```JavaScript
