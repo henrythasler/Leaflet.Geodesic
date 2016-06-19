@@ -23,14 +23,12 @@
 	<div id="map"></div>
 	<script>
 		var map = L.map('map').setView([0,0], 2);
-		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+        L.tileLayer('https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
 			maxZoom: 15,
 //			continuousWorld: true,
 			noWrap: true,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-			id: 'examples.map-zr0njcqy'
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
 		}).addTo(map);		
 
 		var berlin = new L.LatLng(52.51, 13.4); 
