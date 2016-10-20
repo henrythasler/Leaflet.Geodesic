@@ -41,7 +41,8 @@ L.Geodesic = L.Polyline.extend({
       this.options = this._merge_options(this.options, options);
       this.datum = {};
       this.datum.ellipsoid = { a: 6378137,     b: 6356752.3142,   f: 1/298.257223563 };	 // WGS-84
-      L.Polyline.prototype.initialize.call(this, latlngs, this.options);    
+      this._latlngs = (this.options.dash<1)?this._generate_GeodesicDashed(latlngs):this._generate_Geodesic(latlngs);
+      L.Polyline.prototype.initialize.call(this, this._latlngs, this.options);    
     },
   
     setLatLngs: function (latlngs) {
