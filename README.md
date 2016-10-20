@@ -1,8 +1,3 @@
-# Testing branch
-Leaflet 1.0 has introduced [incompatible changes](https://github.com/Leaflet/Leaflet/blob/master/CHANGELOG.md) with Leaflet.Geodesic. Namely the MultiPolyline class has been removed. This means Leaflet.Geodesic has to be changed in some parts.
-
-This branch has been created to adapt Leaflet.Geodesic to Leaflet 1.0+.
-
 # Leaflet.Geodesic
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
