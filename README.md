@@ -1,6 +1,6 @@
 # Leaflet.Geodesic
 
-Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly.
+Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly. The master branch is compatible with Leaflet v1.0.0+. For older versions see below.
 
 [<img src="https://github.com/henrythasler/Leaflet.Geodesic/blob/master/example/interactive.png" alt="Leaflet.Geodesic Screenshot" />](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
 
@@ -17,8 +17,8 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 ## Usage
 Leaflet.Geodesic can be used similar to Leaflet's [Polyline](http://leafletjs.com/reference.html#polyline). 
 
-### Important note for Leaflet v1.0.0+
-Please look at the branch [Testing1.0](https://github.com/henrythasler/Leaflet.Geodesic/tree/testing1.0) to use Leaflet.Geodesic with Leaflet v1.0.0+. The master branch can only be used with Leaflet before v1.0.0.
+### Legacy Branch for Leaflet v0.7.7 and before
+Please look at the branch [legacy](https://github.com/henrythasler/Leaflet.Geodesic/tree/legacy) to use Leaflet.Geodesic with Leaflet v0.7.7 and before. The master branch can only be used with Leaflet v1.0.0+.
 
 ### Creation
 ```JavaScript
