@@ -122,20 +122,25 @@ L.Geodesic = L.Polyline.extend({
     * @returns (Object} An array of arrays of geographical points.
     */
     _generate_Geodesic: function (latlngs) {
-      var _geo = [], _geocnt=0, s, poly, points;
+      var _geo = [], _geocnt=0, s, poly, points, pointA, pointB;
 //      _geo = latlngs;		// bypass
 
       for(poly=0; poly<latlngs.length;poly++) {
 	_geo[_geocnt] = [];
 	for(points=0;points<(latlngs[poly].length-1);points++) {
-	  var inverse = this._vincenty_inverse(L.latLng(latlngs[poly][points]), L.latLng(latlngs[poly][points+1]));
-	  var prev = L.latLng(latlngs[poly][points]);
+	  pointA = L.latLng(latlngs[poly][points]);
+	  pointB = L.latLng(latlngs[poly][points + 1]);
+	  if (pointA.equals(pointB)) {
+	    continue;
+	  }
+	  var inverse = this._vincenty_inverse(pointA, pointB);
+	  var prev = pointA;
 	  _geo[_geocnt].push(prev);
 	  for(s=1; s<=this.options.steps; ) {
-	    var direct = this._vincenty_direct(L.latLng(latlngs[poly][points]), inverse.initialBearing, inverse.distance/this.options.steps*s, this.options.wrap);
+	    var direct = this._vincenty_direct(pointA, inverse.initialBearing, inverse.distance/this.options.steps*s, this.options.wrap);
 	    var gp = L.latLng(direct.lat, direct.lng);
 	    if(Math.abs(gp.lng-prev.lng) > 180) {
-	      var sec = this._intersection(L.latLng(latlngs[poly][points]), inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
+	      var sec = this._intersection(pointA, inverse.initialBearing, {lat: -89, lng:((gp.lng-prev.lng)>0)?-INTERSECT_LNG:INTERSECT_LNG}, 0);
 	      if(sec) {
 		_geo[_geocnt].push(L.latLng(sec.lat, sec.lng));
 		_geocnt++;
