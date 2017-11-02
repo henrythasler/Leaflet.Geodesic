@@ -20,7 +20,6 @@
 
 	<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet-src.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
-  <script src="geojsonExample.js"></script>
  </head>
  <body>
 	<div id="map"></div>
@@ -34,57 +33,60 @@
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
 		}).addTo(map);
 
-		var geojson = {
-			  "type": "FeatureCollection",
-			  "features": [
-			    {
-			      "type": "Feature",
-			      "properties": {
-				"geodesic": "true",
-				"geodesic_steps": 50,
-				"geodesic_wrap": "true"
-			      },
-			      "geometry": {
-				"type": "LineString",
-				"coordinates": [
-				  [
-				    -69.9609375,
-				    29.22889003019423
-				  ],
-				  [
-				    26.71875,
-				    65.6582745198266
-				  ],
-				  [
-				    99.49218749999999,
-				    -12.211180191503985
-				  ]
-				]
-			      }
-			    },
-			    {
-			      "type": "Feature",
-			      "properties": {},
-			      "geometry": {
-				"type": "LineString",
-				"coordinates": [
-				  [
-				    -73.828125,
-				    34.30714385628804
-				  ],
-				  [
-				    27.421875,
-				    68.9110048456202
-				  ],
-				  [
-				    105.1171875,
-				    -8.754794702435605
-				  ],
-				]
-			      }
-			    }
-			  ]
-			};
+    var geojsonExample = {
+      "type": "FeatureCollection",
+      "features": [{
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [-69.9609375,
+              29.22889003019423
+            ],
+            [
+              26.71875, -65.6582745198266
+            ],
+            [
+              99.49218749999999, -12.211180191503985
+            ]
+          ]
+        }
+      }, {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+          "type": "MultiLineString",
+          "coordinates": [
+            [
+              [-69.9609375,
+                29.22889003019423
+              ],
+              [
+                26.71875,
+                65.6582745198266
+              ],
+              [
+                99.49218749999999, -12.211180191503985
+              ]
+            ],
+            [
+              [-73.828125,
+                34.30714385628804
+              ],
+              [
+                27.421875,
+                68.9110048456202
+              ],
+              [
+                105.1171875, -8.754794702435605
+              ],
+            ]
+          ]
+        }
+      }]
+    }
+
 
 		var geodesicLayer = L.geodesic([], {
 			weight: 7,
