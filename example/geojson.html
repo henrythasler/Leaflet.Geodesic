@@ -5,7 +5,9 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+              integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+              crossorigin=""/>
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -13,11 +15,12 @@
 		    }
 		    html, body, #map {
 			    height: 100%;
-		    }	
-	</style>	
+		    }
+	</style>
 
-	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet-src.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
+  <script src="geojsonExample.js"></script>
  </head>
  <body>
 	<div id="map"></div>
@@ -76,16 +79,25 @@
 				  [
 				    105.1171875,
 				    -8.754794702435605
-				  ]
+				  ],
 				]
 			      }
 			    }
 			  ]
 			};
 
-		var layer_geojson = L.geoJson(geojson);
-		layer_geojson.addTo(map);
-		
+		var geodesicLayer = L.geodesic([], {
+			weight: 7,
+			opacity: 0.5,
+			color: 'fuchsia',
+			steps: 50
+		}).addTo(map);
+
+		geodesicLayer.geoJson(geojsonExample);
+
+		var normalLayer = L.geoJson(geojsonExample);
+		normalLayer.addTo(map);
+
 	</script>
  </body>
 </html>
