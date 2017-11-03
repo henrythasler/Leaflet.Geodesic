@@ -1,6 +1,6 @@
 # Leaflet.Geodesic
 
-Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly. The master branch is compatible with Leaflet v1.0.0+. For older versions see below.
+Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly. The master branch is compatible with Leaflet v1.0.2+.
 
 [<img src="example/interactive.png" alt="Leaflet.Geodesic Screenshot" />](http://www.thasler.com/leaflet.geodesic/example/interactive.html)
 
@@ -16,9 +16,6 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 
 ## Usage
 Leaflet.Geodesic can be used similar to Leaflet's [Polyline](http://leafletjs.com/reference.html#polyline).
-
-### Legacy Branch for Leaflet v0.7.7 and before
-Please look at the branch [legacy](https://github.com/henrythasler/Leaflet.Geodesic/tree/legacy) to use Leaflet.Geodesic with Leaflet v0.7.7 and before. The master and testing branches can only be used with Leaflet v1.0.0+.
 
 ### Creation
 ```JavaScript
@@ -91,23 +88,26 @@ L.Geodesic.createCircle(<LatLng> center, <Number> radius)
 Parameter | Type | Description
 -------------: | ------------- | :-------------
 `center`  | `L.LatLng` | geographic position/center of the circle
-`radius`  | `Number` | Radius of the circle in **meter**
+`radius`  | `Number` | Radius of the circle in **metres**
 
-#### Example:
+#### Example
 ``` JavaScript
 var Geodesic = L.geodesic([], {steps:40}).addTo(map);
 Geodesic.createCircle(new L.LatLng(61.07, -114.35), 1500000);
 ```
-[<img src="example/greatcircle.png" alt="Great Circle Screenshot" />]
+<img src="example/greatcircle.png" alt="Great Circle Screenshot" />
 
 see also: [Great Circle Demo](http://www.thasler.com/leaflet.geodesic/example/circle.html)
 
-### Create geodesic objects from geoJSON:
-Draw geodesic lines given in geoJson-format.
+### Create geodesic objects from GeoJSON
+Draw geodesic lines given in GeoJSON-format. `LineString`, `MultiLineString` and `Polygon` geometries are supported.
+
+* Refer to [GeoJSON-Specification (RFC7946)](https://tools.ietf.org/html/rfc7946) for details.
+* Draw your own GeoJSON-Objects at [geojson.io](http://geojson.io).
 
 Parameter | Type | Description
 -------------: | ------------- | :-------------
-`geojson`  | `Object` | GeoJSON-Object. see http://geojson.org/geojson-spec.html for details. Create your own at http://geojson.io
+`geojson`  | `Object` | GeoJSON-Object to draw as geodesic-lines.
 
 ```JavaScript
 var geojsonExample =
@@ -139,7 +139,7 @@ var geodesicLayer = L.geodesic([], {
 
 geodesicLayer.geoJson(geojsonExample)
 ```
-[<img src="example/geojson.png" alt="geoJSON Screenshot" />]
+<img src="example/geojson.png" alt="geoJSON Screenshot" />
 
 ## FAQ
 #### Q: How can I use a custom icon with leaflet?
@@ -147,6 +147,9 @@ see http://jsfiddle.net/h1r3yagb/
 
 #### Q: I want to draw only part (eg. halfway) of a geodesic line between two places?
 see http://jsfiddle.net/h1r3yagb/2
+
+## Legacy Branch for Leaflet v0.7.7 and before
+Please look at the branch [legacy](https://github.com/henrythasler/Leaflet.Geodesic/tree/legacy) to use Leaflet.Geodesic with Leaflet v0.7.7 and before. The master and testing branches can only be used with Leaflet v1.0.0+.
 
 ## License
 GPL V3
