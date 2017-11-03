@@ -25,80 +25,75 @@
 	<div id="map"></div>
 	<script>
 		var map = L.map('map').setView([0,0], 2);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 			maxZoom: 15,
-//			continuousWorld: true,
-			noWrap: true,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
+			attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
 		}).addTo(map);
 
-    var geojsonExample = {
+    var geojsonExample =
+    {
       "type": "FeatureCollection",
-      "features": [{
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "type": "LineString",
-          "coordinates": [
-            [-69.9609375,
-              29.22889003019423
-            ],
-            [
-              26.71875, -65.6582745198266
-            ],
-            [
-              99.49218749999999, -12.211180191503985
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [-40.07, -6.66],
+              [16.17, -69.16],
+              [46.75, -20.30]
             ]
-          ]
-        }
-      }, {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "type": "MultiLineString",
-          "coordinates": [
-            [
-              [-69.9609375,
-                29.22889003019423
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "MultiLineString",
+            "coordinates": [
+              [
+                [-62.57, 52.48],
+                [-20.74, 68.65]
               ],
               [
-                26.71875,
-                65.6582745198266
-              ],
-              [
-                99.49218749999999, -12.211180191503985
+                [9.14, 74.11],
+                [55.89, 63.86]
               ]
-            ],
-            [
-              [-73.828125,
-                34.30714385628804
-              ],
-              [
-                27.421875,
-                68.9110048456202
-              ],
-              [
-                105.1171875, -8.754794702435605
-              ],
             ]
-          ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [-195.82, -16.63],
+                [-97.73, -68.13],
+                [-60.82, -39.36],
+                [-153.28, 21.28],
+                [-195.82, -16.63]
+              ]
+            ]
+          }
         }
-      }]
+      ]
     }
-
 
 		var geodesicLayer = L.geodesic([], {
 			weight: 7,
 			opacity: 0.5,
-			color: 'fuchsia',
-			steps: 50
-		}).addTo(map);
+			color: '#ff33ee',
+			steps: 50,
+      wrap: false,
+		}).addTo(map)
 
-		geodesicLayer.geoJson(geojsonExample);
+		geodesicLayer.geoJson(geojsonExample)
 
-		var normalLayer = L.geoJson(geojsonExample);
-		normalLayer.addTo(map);
+		var normalLayer = L.geoJson(geojsonExample)
+		normalLayer.addTo(map)
 
 	</script>
  </body>

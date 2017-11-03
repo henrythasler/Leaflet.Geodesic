@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -13,25 +13,24 @@
 		    }
 		    html, body, #map {
 			    height: 100%;
-		    }	
-	</style>	
+		    }
+	</style>
 
-        <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
 	<div id="map"></div>
 	<script>
 		var map = L.map('map').setView([0,0], 2);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 			maxZoom: 15,
 //			continuousWorld: true,
 			noWrap: true,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
-		}).addTo(map);		
+			attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+		}).addTo(map);
 
-		var berlin = new L.LatLng(52.51, 13.4); 
+		var berlin = new L.LatLng(52.51, 13.4);
 		var losangeles = new L.LatLng(34.05, -118.24);
 		var santiago = new L.LatLng(-33.44, -70.71);
 		var tokio = new L.LatLng(35.69, 139.69);
@@ -40,35 +39,35 @@
 		var calgary = new L.LatLng(51.05, -114.08);
 		var hammerfest = new L.LatLng(70.67, 23.68);
 		var barrow = new L.LatLng(71.29, -156.76);
-		
+
 		var north_magnetic_pole = new L.LatLng(85.9, -147);
 		var south_magnetic_pole = new L.LatLng(-64.497, 137.684);
-		
+
 		var test = [];
 		test.push([losangeles, sydney, santiago, tokio, capetown, calgary, hammerfest, barrow]);
 
 		var Geodesic1 = L.geodesic(test, {
-			weight:3, 
+			weight:3,
 			opacity:1,
 			steps: 50
 		}).addTo(map);
-		
+
 		var Geodesic2 = L.geodesic([[berlin, south_magnetic_pole]], {
-			weight:7, 
+			weight:7,
 			opacity:0.3,
 			color: 'red',
 			steps: 20
 		}).addTo(map);
 
 		var Geodesic3 = L.geodesic([], {
-			weight:3, 
+			weight:3,
 			opacity:1,
 			color: 'green',
 			steps: 40
 		}).addTo(map);
-		
-		Geodesic3.createCircle(calgary, 2000000);	
-		
+
+		Geodesic3.createCircle(calgary, 2000000);
+
 	</script>
  </body>
 </html>

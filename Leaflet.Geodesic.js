@@ -1,3 +1,5 @@
+'use strict';
+
 // This file is part of Leaflet.Geodesic.
 // Copyright (C) 2017  Henry Thasler
 // based on code by Chris Veness Copyright (C) 2014 https://github.com/chrisveness/geodesy
@@ -15,24 +17,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Leaflet.Geodesic.  If not, see <http://www.gnu.org/licenses/>.
 
-'use strict'
 
 
 /** Extend Number object with method to convert numeric degrees to radians */
-if (typeof Number.prototype.toRadians == 'undefined') {
+if (typeof Number.prototype.toRadians === 'undefined') {
   Number.prototype.toRadians = function() {
     return this * Math.PI / 180
   }
 }
 
 /** Extend Number object with method to convert radians to numeric (signed) degrees */
-if (typeof Number.prototype.toDegrees == 'undefined') {
+if (typeof Number.prototype.toDegrees === 'undefined') {
   Number.prototype.toDegrees = function() {
-    return this * 180 / Math.PI;
+    return this * 180 / Math.PI
   }
 }
 
-var INTERSECT_LNG = 179.999; // Lng used for intersection and wrap around on map edges
+var INTERSECT_LNG = 179.999 // Lng used for intersection and wrap around on map edges
 
 L.Geodesic = L.Polyline.extend({
   options: {
@@ -46,10 +47,10 @@ L.Geodesic = L.Polyline.extend({
     this.options = this._merge_options(this.options, options);
     this.datum = {};
     this.datum.ellipsoid = {
-      a: 6378137,
-      b: 6356752.3142,
-      f: 1 / 298.257223563
-    }; // WGS-84
+        a: 6378137,
+        b: 6356752.3142,
+        f: 1 / 298.257223563
+      } // WGS-84
     this._latlngs = (this.options.dash < 1) ? this._generate_GeodesicDashed(
       latlngs) : this._generate_Geodesic(latlngs);
     L.Polyline.prototype.initialize.call(this, this._latlngs, this.options);
@@ -74,24 +75,26 @@ L.Geodesic = L.Polyline.extend({
       poly, points;
 
     for (poly = 0; poly < this._latlngs.length; poly++) {
-      obj.points += this._latlngs[poly].length;
+      obj.points += this._latlngs[poly].length
       for (points = 0; points < (this._latlngs[poly].length - 1); points++) {
         obj.distance += this._vincenty_inverse(this._latlngs[poly][points],
-          this._latlngs[poly][points + 1]).distance;
+          this._latlngs[poly][points + 1]).distance
       }
     }
-    return obj;
+    return obj
   },
 
 
   /**
    * Creates geodesic lines from geoJson. Replaces all current features of this instance.
-   * @param {Object} geojson - geosjon as object
+   * Supports LineString, MultiLineString and Polygon
+   * @param {Object} geojson - geosjon as object.
    */
-  geoJson: function(geojson, options) {
-    let latlngs = []
+  geoJson: function(geojson) {
 
-    var features = L.GeoJSON.asFeature(geojson).features
+    let features = L.GeoJSON.asFeature(geojson).features
+    this._latlngs = []
+
     for (let feature of features) {
       let geometry = feature.type === 'Feature' ? feature.geometry :
         feature,
@@ -100,14 +103,11 @@ L.Geodesic = L.Polyline.extend({
       //      console.log(coords)
       switch (geometry.type) {
         case 'LineString':
-          console.log('LineString')
-          console.log(coords)
           this._latlngs.push(this._generate_Geodesic([L.GeoJSON.coordsToLatLngs(
             coords, 0)]))
           break
         case 'MultiLineString':
-          console.log('MultiLineString')
-          console.log(coords)
+        case 'Polygon':
           this._latlngs.push(this._generate_Geodesic(L.GeoJSON.coordsToLatLngs(
             coords, 1)))
           break
@@ -116,64 +116,60 @@ L.Geodesic = L.Polyline.extend({
             ' as a geodesic. Skipping...')
       }
     }
-    console.log('Result:')
-    console.log(this._latlngs)
-      //this._latlngs = this._generate_Geodesic(latlngs)
-    L.Polyline.prototype.setLatLngs.call(this, this._latlngs);
+    L.Polyline.prototype.setLatLngs.call(this, this._latlngs)
   },
 
   /**
    * Creates a great circle. Replaces all current lines.
    * @param {Object} center - geographic position
-   * @param {number} radius - radius of the circle in meters
+   * @param {number} radius - radius of the circle in meter
    */
   createCircle: function(center, radius) {
-    var _geo = [],
-      _geocnt = 0;
-    var prev = {
+    let polylineIndex = 0
+    let prev = {
       lat: 0,
       lng: 0,
       brg: 0
-    }; //new L.LatLng(0, 0);
-    var s;
+    }
+    let step;
 
-    _geo[_geocnt] = [];
+    this._latlngs = []
+    this._latlngs[polylineIndex] = []
 
-    var direct = this._vincenty_direct(L.latLng(center), 0, radius, this.options
+    let direct = this._vincenty_direct(L.latLng(center), 0, radius, this.options
       .wrap);
     prev = L.latLng(direct.lat, direct.lng);
-    _geo[_geocnt].push(prev);
-    for (s = 1; s <= this.options.steps;) {
+    this._latlngs[polylineIndex].push(prev);
+    for (step = 1; step <= this.options.steps;) {
       direct = this._vincenty_direct(L.latLng(center), 360 / this.options
-        .steps * s, radius, this.options.wrap);
-      var gp = L.latLng(direct.lat, direct.lng);
+        .steps * step, radius, this.options.wrap);
+      let gp = L.latLng(direct.lat, direct.lng);
       if (Math.abs(gp.lng - prev.lng) > 180) {
-        var inverse = this._vincenty_inverse(prev, gp);
-        var sec = this._intersection(prev, inverse.initialBearing, {
+        let inverse = this._vincenty_inverse(prev, gp);
+        let sec = this._intersection(prev, inverse.initialBearing, {
           lat: -89,
           lng: ((gp.lng - prev.lng) > 0) ? -INTERSECT_LNG : INTERSECT_LNG
         }, 0);
         if (sec) {
-          _geo[_geocnt].push(L.latLng(sec.lat, sec.lng));
-          _geocnt++;
-          _geo[_geocnt] = [];
+          this._latlngs[polylineIndex].push(L.latLng(sec.lat, sec.lng));
+          polylineIndex++;
+          this._latlngs[polylineIndex] = [];
           prev = L.latLng(sec.lat, -sec.lng);
-          _geo[_geocnt].push(prev);
+          this._latlngs[polylineIndex].push(prev);
         } else {
-          _geocnt++;
-          _geo[_geocnt] = [];
-          _geo[_geocnt].push(gp);
+          polylineIndex++;
+          this._latlngs[polylineIndex] = [];
+          this._latlngs[polylineIndex].push(gp);
           prev = gp;
-          s++;
+          step++;
         }
       } else {
-        _geo[_geocnt].push(gp);
+        this._latlngs[polylineIndex].push(gp);
         prev = gp;
-        s++;
+        step++;
       }
     }
 
-    this._latlngs = _geo;
     L.Polyline.prototype.setLatLngs.call(this, this._latlngs);
   },
 
