@@ -15,6 +15,12 @@ It is based on [geodesy](https://github.com/chrisveness/geodesy) by Chris Veness
 - [geoJSON Demo (static)](http://www.thasler.com/leaflet.geodesic/example/geojson.html)
 
 ## Usage
+Add the source to your project/html-file after `leaflet.js`:
+```html
+<script src="leaflet.js"></script>
+<script src="Leaflet.Geodesic.js"></script>
+```
+
 Leaflet.Geodesic can be used similar to Leaflet's [Polyline](http://leafletjs.com/reference.html#polyline).
 
 ### Creation
@@ -27,7 +33,7 @@ Geodesic has the following options:
 
 Option  | Type | Default | Description
 -------------: | ------------- | ------------- | :-------------
-`steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path.
+`steps`  | `Number` | `10` | Defines how many intermediate points are generated along the path. More steps mean a smoother path but more resources.
 `color`  | `String` | `blue` | Stroke color.
 `dash`  | `Number` | `1` | Use a number between 0..1 to create a dashed line. The given number represents the percentage of the actual dash between each intermediate point (`0.5` means the line is drawn half the length) defined by `steps`. See example below.
 `wrap`  | `Boolean` | `true` | Wrap line at map border (date line). Set to 'false' if you want lines to cross the dateline (experimental, see noWrap-example on how to use)

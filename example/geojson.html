@@ -89,11 +89,35 @@
 			steps: 50,
       wrap: false,
 		}).addTo(map)
-
 		geodesicLayer.geoJson(geojsonExample)
 
 		var normalLayer = L.geoJson(geojsonExample)
 		normalLayer.addTo(map)
+
+
+    var geojsonExample2 =
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-93.16, 71.85],
+          [-43.24, 22.26]
+        ]
+      }
+    }
+    var geodesicLayer2 = L.geodesic([], {
+    	weight: 7,
+    	opacity: 0.5,
+    	color: '#ff33ee',
+    	steps: 50,
+    	wrap: false,
+    }).addTo(map)
+    geodesicLayer2.geoJson(geojsonExample2)
+
+    var normalLayer2 = L.geoJson(geojsonExample2)
+    normalLayer2.addTo(map)
 
 	</script>
  </body>
