@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -13,7 +13,7 @@
 		    }
 		    html, body, #map {
 			    height: 100%;
-		    }	
+		    }
 		    .info {
 			padding: 6px 8px;
 			font: 14px/16px Arial, Helvetica, sans-serif;
@@ -26,56 +26,55 @@
 			padding-right: 5px;
 			margin: 0 0 5px;
 		    }
-	</style>	
+	</style>
 
-        <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
 	<div id="map"></div>
 	<script>
 		var map = L.map('map').setView([0, -180], 3);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 			maxZoom: 15,
 			noWrap: false,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
-		}).addTo(map);		
-		
-		var Chubu_Airport = new L.LatLng(34.858333, 136.805278-360.); 
+			attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+		}).addTo(map);
+
+		var Chubu_Airport = new L.LatLng(34.858333, 136.805278-360.);
 		var Kalaeloa_Airport = new L.LatLng(21.307222, -158.070278);
 
 		var A = L.marker(Chubu_Airport, {draggable: true}).addTo(map);
 		var B = L.marker(Kalaeloa_Airport, {draggable: true}).addTo(map).bindPopup("Drag me.").openPopup();
-		
+
 		var Geodesic = L.geodesic([[A.getLatLng(), B.getLatLng()]], {
-			weight: 7, 
+			weight: 7,
 			opacity: 0.5,
 			color: 'blue',
 			steps: 50,
 			wrap: false
 		}).addTo(map);
-		
+
 		var info = L.control();
 
 		info.onAdd = function (map) {
-		    this._div = L.DomUtil.create('div', 'info'); 
+		    this._div = L.DomUtil.create('div', 'info');
 		    this.update();
 		    return this._div;
 		};
-		
+
 		info.update = function (props) {
 		    this._div.innerHTML = '<h4>Distance</h4>' +  (props ? (props.distance>10000)?(props.distance/1000).toFixed(0)+' km':(props.distance).toFixed(0)+' m' : 'invalid');
 		};
-		info.addTo(map);		
-		
+		info.addTo(map);
+
 		Geodesic.update = function () {
 		  Geodesic.setLatLngs([[A.getLatLng(), B.getLatLng()]]);
 		  info.update(Geodesic._vincenty_inverse(A.getLatLng(), B.getLatLng()));
 		};
-		
+
 		Geodesic.update();
-		
+
 		A.on('drag', Geodesic.update);
 		B.on('drag', Geodesic.update);
 	</script>

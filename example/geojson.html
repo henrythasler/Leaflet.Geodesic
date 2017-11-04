@@ -5,7 +5,9 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+              integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+              crossorigin=""/>
 	<style type="text/css">
 		    body {
 			    padding: 0;
@@ -13,79 +15,110 @@
 		    }
 		    html, body, #map {
 			    height: 100%;
-		    }	
-	</style>	
+		    }
+	</style>
 
-	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet-src.js"></script>
 	<script src="../Leaflet.Geodesic.js"></script>
  </head>
  <body>
 	<div id="map"></div>
 	<script>
 		var map = L.map('map').setView([0,0], 2);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 			maxZoom: 15,
-//			continuousWorld: true,
-			noWrap: true,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, '
+			attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
 		}).addTo(map);
 
-		var geojson = {
-			  "type": "FeatureCollection",
-			  "features": [
-			    {
-			      "type": "Feature",
-			      "properties": {
-				"geodesic": "true",
-				"geodesic_steps": 50,
-				"geodesic_wrap": "true"
-			      },
-			      "geometry": {
-				"type": "LineString",
-				"coordinates": [
-				  [
-				    -69.9609375,
-				    29.22889003019423
-				  ],
-				  [
-				    26.71875,
-				    65.6582745198266
-				  ],
-				  [
-				    99.49218749999999,
-				    -12.211180191503985
-				  ]
-				]
-			      }
-			    },
-			    {
-			      "type": "Feature",
-			      "properties": {},
-			      "geometry": {
-				"type": "LineString",
-				"coordinates": [
-				  [
-				    -73.828125,
-				    34.30714385628804
-				  ],
-				  [
-				    27.421875,
-				    68.9110048456202
-				  ],
-				  [
-				    105.1171875,
-				    -8.754794702435605
-				  ]
-				]
-			      }
-			    }
-			  ]
-			};
+    var geojsonExample =
+    {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [-40.07, -6.66],
+              [16.17, -69.16],
+              [46.75, -20.30]
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "MultiLineString",
+            "coordinates": [
+              [
+                [-62.57, 52.48],
+                [-20.74, 68.65]
+              ],
+              [
+                [9.14, 74.11],
+                [55.89, 63.86]
+              ]
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [-195.82, -16.63],
+                [-97.73, -68.13],
+                [-60.82, -39.36],
+                [-153.28, 21.28],
+                [-195.82, -16.63]
+              ]
+            ]
+          }
+        }
+      ]
+    }
 
-		var layer_geojson = L.geoJson(geojson);
-		layer_geojson.addTo(map);
-		
+		var geodesicLayer = L.geodesic([], {
+			weight: 7,
+			opacity: 0.5,
+			color: '#ff33ee',
+			steps: 50,
+      wrap: false,
+		}).addTo(map)
+		geodesicLayer.geoJson(geojsonExample)
+
+		var normalLayer = L.geoJson(geojsonExample)
+		normalLayer.addTo(map)
+
+
+    var geojsonExample2 =
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-93.16, 71.85],
+          [-43.24, 22.26]
+        ]
+      }
+    }
+    var geodesicLayer2 = L.geodesic([], {
+    	weight: 7,
+    	opacity: 0.5,
+    	color: '#ff33ee',
+    	steps: 50,
+    	wrap: false,
+    }).addTo(map)
+    geodesicLayer2.geoJson(geojsonExample2)
+
+    var normalLayer2 = L.geoJson(geojsonExample2)
+    normalLayer2.addTo(map)
+
 	</script>
  </body>
 </html>
