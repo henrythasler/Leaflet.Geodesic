@@ -92,15 +92,16 @@ L.Geodesic = L.Polyline.extend({
    */
   geoJson: function(geojson) {
 
-    let features = L.GeoJSON.asFeature(geojson).features
+    let normalized = L.GeoJSON.asFeature(geojson)
+    let features = normalized.type === "FeatureCollection" ? normalized.features : [
+      normalized
+    ]
     this._latlngs = []
-
     for (let feature of features) {
       let geometry = feature.type === "Feature" ? feature.geometry :
         feature,
         coords = geometry.coordinates
 
-      //      console.log(coords)
       switch (geometry.type) {
         case "LineString":
           this._latlngs.push(this._generate_Geodesic([L.GeoJSON.coordsToLatLngs(
@@ -111,9 +112,13 @@ L.Geodesic = L.Polyline.extend({
           this._latlngs.push(this._generate_Geodesic(L.GeoJSON.coordsToLatLngs(
             coords, 1)))
           break
+        case "Point":
+        case "MultiPoint":
+          console.log("Dude, points can't be drawn as geodesic lines...")
+          break
         default:
-          console.log("Not yet supported drawing GeoJSON " + geometry.type +
-            " as a geodesic. Skipping...")
+          console.log("Drawing " + geometry.type +
+            " as a geodesic is not supported. Skipping...")
       }
     }
     L.Polyline.prototype.setLatLngs.call(this, this._latlngs)
