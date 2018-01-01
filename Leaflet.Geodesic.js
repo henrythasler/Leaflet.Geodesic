@@ -67,7 +67,7 @@ L.Geodesic = L.Polyline.extend({
    * @returns (Object} Object with several properties (e.g. overall distance)
    */
   getStats: function() {
-    let obj = {
+    var obj = {
         distance: 0,
         points: 0,
         polygons: this._latlngs.length
@@ -91,13 +91,14 @@ L.Geodesic = L.Polyline.extend({
    */
   geoJson: function(geojson) {
 
-    let normalized = L.GeoJSON.asFeature(geojson);
-    let features = normalized.type === "FeatureCollection" ? normalized.features : [
+    var normalized = L.GeoJSON.asFeature(geojson);
+    var features = normalized.type === "FeatureCollection" ? normalized.features : [
       normalized
     ];
     this._latlngs = [];
-    for (let feature of features) {
-      let geometry = feature.type === "Feature" ? feature.geometry :
+
+    features.forEach(function (feature) {
+      var geometry = feature.type === "Feature" ? feature.geometry :
         feature,
         coords = geometry.coordinates;
 
@@ -119,7 +120,7 @@ L.Geodesic = L.Polyline.extend({
           console.log("Drawing " + geometry.type +
             " as a geodesic is not supported. Skipping...");
       }
-    }
+    });
     L.Polyline.prototype.setLatLngs.call(this, this._latlngs);
   },
 
@@ -129,28 +130,28 @@ L.Geodesic = L.Polyline.extend({
    * @param {number} radius - radius of the circle in metres
    */
   createCircle: function(center, radius) {
-    let polylineIndex = 0;
-    let prev = {
+    var polylineIndex = 0;
+    var prev = {
       lat: 0,
       lng: 0,
       brg: 0
     };
-    let step;
+    var step;
 
     this._latlngs = [];
     this._latlngs[polylineIndex] = [];
 
-    let direct = this._vincenty_direct(L.latLng(center), 0, radius, this.options
+    var direct = this._vincenty_direct(L.latLng(center), 0, radius, this.options
       .wrap);
     prev = L.latLng(direct.lat, direct.lng);
     this._latlngs[polylineIndex].push(prev);
     for (step = 1; step <= this.options.steps;) {
       direct = this._vincenty_direct(L.latLng(center), 360 / this.options
         .steps * step, radius, this.options.wrap);
-      let gp = L.latLng(direct.lat, direct.lng);
+      var gp = L.latLng(direct.lat, direct.lng);
       if (Math.abs(gp.lng - prev.lng) > 180) {
-        let inverse = this._vincenty_inverse(prev, gp);
-        let sec = this._intersection(prev, inverse.initialBearing, {
+        var inverse = this._vincenty_inverse(prev, gp);
+        var sec = this._intersection(prev, inverse.initialBearing, {
           lat: -89,
           lng: ((gp.lng - prev.lng) > 0) ? -INTERSECT_LNG : INTERSECT_LNG
         }, 0);
@@ -183,7 +184,7 @@ L.Geodesic = L.Polyline.extend({
    * @returns (Object} An array of arrays of geographical points.
    */
   _generate_Geodesic: function(latlngs) {
-    let _geo = [],
+    var _geo = [],
       _geocnt = 0,
       s, poly, points, pointA, pointB;
 
@@ -195,16 +196,16 @@ L.Geodesic = L.Polyline.extend({
         if (pointA.equals(pointB)) {
           continue;
         }
-        let inverse = this._vincenty_inverse(pointA, pointB);
-        let prev = pointA;
+        var inverse = this._vincenty_inverse(pointA, pointB);
+        var prev = pointA;
         _geo[_geocnt].push(prev);
         for (s = 1; s <= this.options.steps;) {
-          let direct = this._vincenty_direct(pointA, inverse.initialBearing,
+          var direct = this._vincenty_direct(pointA, inverse.initialBearing,
             inverse.distance / this.options.steps * s, this.options.wrap
           );
-          let gp = L.latLng(direct.lat, direct.lng);
+          var gp = L.latLng(direct.lat, direct.lng);
           if (Math.abs(gp.lng - prev.lng) > 180) {
-            let sec = this._intersection(pointA, inverse.initialBearing, {
+            var sec = this._intersection(pointA, inverse.initialBearing, {
               lat: -89,
               lng: ((gp.lng - prev.lng) > 0) ? -INTERSECT_LNG : INTERSECT_LNG
             }, 0);
@@ -240,7 +241,7 @@ L.Geodesic = L.Polyline.extend({
    * @returns (Object} An array of arrays of geographical points.
    */
   _generate_GeodesicDashed: function(latlngs) {
-    let _geo = [],
+    var _geo = [],
       _geocnt = 0,
       s, poly, points;
       //      _geo = latlngs;    // bypass
@@ -248,20 +249,20 @@ L.Geodesic = L.Polyline.extend({
     for (poly = 0; poly < latlngs.length; poly++) {
       _geo[_geocnt] = [];
       for (points = 0; points < (latlngs[poly].length - 1); points++) {
-        let inverse = this._vincenty_inverse(L.latLng(latlngs[poly][
+        var inverse = this._vincenty_inverse(L.latLng(latlngs[poly][
           points
         ]), L.latLng(latlngs[poly][points + 1]));
-        let prev = L.latLng(latlngs[poly][points]);
+        var prev = L.latLng(latlngs[poly][points]);
         _geo[_geocnt].push(prev);
         for (s = 1; s <= this.options.steps;) {
-          let direct = this._vincenty_direct(L.latLng(latlngs[poly][
+          var direct = this._vincenty_direct(L.latLng(latlngs[poly][
               points
             ]), inverse.initialBearing, inverse.distance / this.options
             .steps * s - inverse.distance / this.options.steps * (1 -
               this.options.dash), this.options.wrap);
-          let gp = L.latLng(direct.lat, direct.lng);
+          var gp = L.latLng(direct.lat, direct.lng);
           if (Math.abs(gp.lng - prev.lng) > 180) {
-            let sec = this._intersection(L.latLng(latlngs[poly][points]),
+            var sec = this._intersection(L.latLng(latlngs[poly][points]),
               inverse.initialBearing, {
                 lat: -89,
                 lng: ((gp.lng - prev.lng) > 0) ? -INTERSECT_LNG : INTERSECT_LNG
@@ -282,7 +283,7 @@ L.Geodesic = L.Polyline.extend({
           } else {
             _geo[_geocnt].push(gp);
             _geocnt++;
-            let direct2 = this._vincenty_direct(L.latLng(latlngs[poly][
+            var direct2 = this._vincenty_direct(L.latLng(latlngs[poly][
                 points
               ]), inverse.initialBearing, inverse.distance / this.options
               .steps * s, this.options.wrap);
@@ -536,11 +537,11 @@ L.Geodesic = L.Polyline.extend({
    * @returns obj3 a new object based on obj1 and obj2
    */
   _merge_options: function(obj1, obj2) {
-    let obj3 = {};
-    for (let attrname in obj1) {
+    var obj3 = {};
+    for (var attrname in obj1) {
       obj3[attrname] = obj1[attrname];
     }
-    for (let attrname in obj2) {
+    for (var attrname in obj2) {
       obj3[attrname] = obj2[attrname];
     }
     return obj3;

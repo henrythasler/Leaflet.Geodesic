@@ -1,4 +1,6 @@
-# Leaflet.Geodesic
+# Leaflet.Geodesic - ES5-compatible Version
+
+:bangbang: This is the ES5-compatible version of Leaflet.Geodesic incuding a minified version. If you don't know what ES5 is or why this branch even exists, please switch to the master branch. :bangbang:
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and great circles. A geodesic line is the shortest path between two given positions on the earth surface. Wrapping at lng=180° is handled correctly. The master branch is compatible with Leaflet v1.0.2+.
 
