@@ -152,7 +152,7 @@ geodesicLayer.geoJson(geojsonExample)
 see http://jsfiddle.net/h1r3yagb/
 
 #### Q: I want to draw only part (eg. halfway) of a geodesic line between two places?
-see http://jsfiddle.net/h1r3yagb/2
+see http://jsfiddle.net/h1r3yagb/20/
 
 ## Branches
 
