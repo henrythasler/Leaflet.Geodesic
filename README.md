@@ -154,7 +154,13 @@ see http://jsfiddle.net/h1r3yagb/
 #### Q: I want to draw only part (eg. halfway) of a geodesic line between two places?
 see http://jsfiddle.net/h1r3yagb/2
 
-## Legacy Branch for Leaflet v0.7.7 and before
+## Branches
+
+### ES5 branch
+See https://github.com/henrythasler/Leaflet.Geodesic/issues/31
+Also includes a minified version
+
+### Legacy Branch for Leaflet v0.7.7 and before
 Please look at the branch [legacy](https://github.com/henrythasler/Leaflet.Geodesic/tree/legacy) to use Leaflet.Geodesic with Leaflet v0.7.7 and before. The master and testing branches can only be used with Leaflet v1.0.0+.
 
 ## License
