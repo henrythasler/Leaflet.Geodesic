@@ -182,24 +182,21 @@ L.Geodesic = L.Polyline.extend({
    * @returns (Object} An array of arrays of geographical points.
    */
   _generate_Geodesic: function(latlngs) {
-    let _geo = [],
-      _geocnt = 0,
-      s, poly, points, pointA, pointB;
+    let _geo = [], _geocnt = 0;
 
-    for (poly = 0; poly < latlngs.length; poly++) {
+    for (let poly = 0; poly < latlngs.length; poly++) {
       _geo[_geocnt] = [];
-      let prev = null;
-      for (points = 0; points < (latlngs[poly].length - 1); points++) {
+      let prev = L.latLng(latlngs[poly][0]);
+      for (let points = 0; points < (latlngs[poly].length - 1); points++) {
         // use prev, so that wrapping behaves correctly
-        pointA = prev || L.latLng(latlngs[poly][points]);
-        pointB = L.latLng(latlngs[poly][points + 1]);
+        let pointA = prev;
+        let pointB = L.latLng(latlngs[poly][points + 1]);
         if (pointA.equals(pointB)) {
           continue;
         }
         let inverse = this._vincenty_inverse(pointA, pointB);
-        prev = pointA;
         _geo[_geocnt].push(prev);
-        for (s = 1; s <= this.options.steps;) {
+        for (let s = 1; s <= this.options.steps;) {
           let distance = inverse.distance / this.options.steps;
           // dashed lines don't go the full distance between the points
           let dist_mult = s - 1 + this.options.dash;
