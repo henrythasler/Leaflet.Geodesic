@@ -241,7 +241,6 @@ L.Geodesic = L.Polyline.extend({
       }
       _geocnt++;
     }
-    console.log("done");
     return _geo;
   },
 
