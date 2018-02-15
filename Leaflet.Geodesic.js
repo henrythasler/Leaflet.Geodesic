@@ -184,34 +184,28 @@ L.Geodesic = L.Polyline.extend({
   _generate_Geodesic: function(latlngs) {
     let _geo = [],
       _geocnt = 0,
-      continuous_offset = 0,
       s, poly, points, pointA, pointB;
 
     for (poly = 0; poly < latlngs.length; poly++) {
       _geo[_geocnt] = [];
+      let prev = null;
       for (points = 0; points < (latlngs[poly].length - 1); points++) {
-        // continuous_offset keeps track of points beyond +/-180, so we can safely wrap
-        pointA = L.latLng(latlngs[poly][points]).wrap();
-        pointB = L.latLng(latlngs[poly][points + 1]).wrap();
+        // use prev, so that wrapping behaves correctly
+        pointA = prev || L.latLng(latlngs[poly][points]);
+        pointB = L.latLng(latlngs[poly][points + 1]);
         if (pointA.equals(pointB)) {
           continue;
         }
-        if (continuous_offset){
-          pointA.lng += continuous_offset;
-          pointB.lng += continuous_offset;
-        }
         let inverse = this._vincenty_inverse(pointA, pointB);
-        let prev = pointA;
-        let first_lng = prev.lng;
+        prev = pointA;
         _geo[_geocnt].push(prev);
         for (s = 1; s <= this.options.steps;) {
           let distance = inverse.distance / this.options.steps;
           // dashed lines don't go the full distance between the points
-		  let dist_mult = s - 1 + this.options.dash;
+          let dist_mult = s - 1 + this.options.dash;
           let direct = this._vincenty_direct(pointA, inverse.initialBearing, distance*dist_mult, this.options.wrap);
           let gp = L.latLng(direct.lat, direct.lng);
           if (Math.abs(gp.lng - prev.lng) > 180) {
-			  console.log("180");
             let sec = this._intersection(pointA, inverse.initialBearing, {
               lat: -89,
               lng: ((gp.lng - prev.lng) > 0) ? -INTERSECT_LNG : INTERSECT_LNG
@@ -233,29 +227,21 @@ L.Geodesic = L.Polyline.extend({
             _geo[_geocnt].push(gp);
             // Dashed lines start a new line
             if (this.options.dash < 1){
-				_geocnt++;
-				// go full distance this time, to get starting point for next line
-				let direct_full = this._vincenty_direct(pointA, inverse.initialBearing, distance*s, this.options.wrap);
-				_geo[_geocnt] = [];
-				prev = L.latLng(direct_full.lat, direct_full.lng);
-				_geo[_geocnt].push(prev);
-			}
+                _geocnt++;
+                // go full distance this time, to get starting point for next line
+                let direct_full = this._vincenty_direct(pointA, inverse.initialBearing, distance*s, this.options.wrap);
+                _geo[_geocnt] = [];
+                prev = L.latLng(direct_full.lat, direct_full.lng);
+                _geo[_geocnt].push(prev);
+            }
             else prev = gp;
             s++;
           }
         }
-        // If geodesic line crosses the -180/180 boundary, increment continuous_offset
-        if (!this.options.wrap){
-		  let last_lng = prev.lng;
-          // check the multiple of 360 that thie first/last lie in
-          let mult_first = Math.floor((first_lng+180)/360);
-          let mult_last = Math.floor((last_lng+180)/360);
-          // if they are different, we crossed a boundary; add offset +/-360
-          continuous_offset += 360*(mult_last-mult_first);
-        }
       }
       _geocnt++;
     }
+    console.log("done");
     return _geo;
   },
 
