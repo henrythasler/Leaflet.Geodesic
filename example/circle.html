@@ -50,6 +50,7 @@
 		var Geodesic = L.geodesic([], {
 			weight: 7,
 			opacity: 0.5,
+			fill: true,
 			color: '#ff33ee',
 			steps: 50
 		}).addTo(map);
@@ -90,9 +91,12 @@
 
 		A.on('dragstart', function() {
 		  diff = {lat: A.getLatLng().lat - B.getLatLng().lat, lng: A.getLatLng().lng - B.getLatLng().lng};	// remember difference between A and B
+		  console.log("dragstart:"+diff.lat+"/"+diff.lng)
 		});
 		A.on('drag', function() {
-		  B.setLatLng({lat: A.getLatLng().lat-diff.lat, lng: A.getLatLng().lng-diff.lng});	// move B parallel to A
+		  B.setLatLng({
+            lat: Math.max(-90, Math.min(90, A.getLatLng().lat-diff.lat)), 
+            lng: A.getLatLng().lng-diff.lng});	// move B parallel to A
 		  Geodesic.update();
 		});
 		B.on('drag', Geodesic.update);

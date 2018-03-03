@@ -154,6 +154,15 @@ see http://jsfiddle.net/h1r3yagb/
 #### Q: I want to draw only part (eg. halfway) of a geodesic line between two places?
 see http://jsfiddle.net/h1r3yagb/20/
 
+#### Q: How can I draw *filled* great circles?
+in options set: `fill: true`. See also Leaflet's [Path API reference](http://leafletjs.com/reference-1.3.0.html#path)
+```JavaScript
+var Geodesic3 = L.geodesic([], {
+	weight:3, opacity:1, fill: true,
+	color: 'green',	steps: 40}).addTo(map);
+Geodesic3.createCircle(calgary, 2000000);
+```
+
 ## Branches
 
 ### ES5 branch
