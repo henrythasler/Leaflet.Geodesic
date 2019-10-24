@@ -1,11 +1,11 @@
 {
-  "name": "Leaflet.Geodesic",
-  "version": "1.1.0",
+  "name": "leaflet.geodesic",
+  "version": "2.0.0",
   "description": "Add-on to draw geodesic lines with leaflet",
-  "main": "Leaflet.Geodesic.js",
+  "main": "dist/Leaflet.Geodesic.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/henrythasler/Leaflet.Geodesic"
+    "url": "git+https://github.com/henrythasler/Leaflet.Geodesic.git"
   },
   "keywords": [
     "leaflet",
@@ -17,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/henrythasler/Leaflet.Geodesic/issues"
   },
-  "homepage": "https://github.com/henrythasler/Leaflet.Geodesic#readme"
+  "homepage": "https://github.com/henrythasler/Leaflet.Geodesic#readme",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/leaflet": "^1.5.5",
+    "@types/node": "^12.11.5"
+  },
+  "scripts": {
+    "test": "jest --coverage"
+  }
 }
