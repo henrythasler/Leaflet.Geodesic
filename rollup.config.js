@@ -13,8 +13,8 @@ const bundle = (format, filename, options = {}) => ({
   output: {
     file: filename,
     format: format,
-    name: 'Leaflet.Geodesic',
-    sourcemap: true,
+    name: 'leaflet.geodesic',
+    sourcemap: false,
     globals: {
       leaflet: 'L',
     },

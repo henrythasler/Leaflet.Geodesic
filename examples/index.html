@@ -46,6 +46,8 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
+    <script src="leaflet.geodesic.umd.js"></script>
+
 </head>
 
 <body>
@@ -56,17 +58,18 @@
 
         var map = L.map('map').setView([50, -40], 3);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-			maxZoom: 15,
-			noWrap: true,
-			attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
-		}).addTo(map);
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
 
-		var berlin = new L.LatLng(52.5, 13.35);
-		var losangeles = new L.LatLng(33.82, -118.38);
+        var berlin = new L.LatLng(52.5, 13.35);
+        var losangeles = new L.LatLng(33.82, -118.38);
 
-		var A = L.marker(losangeles, {draggable: true}).addTo(map);
-		var B = L.marker(berlin, {draggable: true}).addTo(map).bindPopup("Drag me.").openPopup();
+        var A = L.marker(losangeles, { draggable: true }).addTo(map);
+        var B = L.marker(berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
 
+        var Geodesic = L.geodesic({ }).addTo(map);
 
     </script>
 </body>
