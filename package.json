@@ -2,7 +2,9 @@
   "name": "leaflet.geodesic",
   "version": "2.0.0",
   "description": "Add-on to draw geodesic lines with leaflet",
-  "main": "dist/Leaflet.Geodesic.js",
+  "main": "dist/leaflet.geodesic.js",
+  "module": "dist/leaflet.geodesic.esm.js",
+  "browser": "dist/leaflet.geodesic.umd.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/henrythasler/Leaflet.Geodesic.git"
@@ -21,12 +23,32 @@
   "directories": {
     "example": "examples"
   },
+  "peerDependencies": {
+    "leaflet": "^1.5.1"
+  },
   "dependencies": {},
   "devDependencies": {
     "@types/leaflet": "^1.5.5",
-    "@types/node": "^12.11.5"
+    "@types/node": "^12.11.5",
+    "leaflet": "^1.5.1",
+    "autoprefixer": "^9.7.0",
+    "browserify": "^16.5.0",
+    "gulp": "^4.0.0",
+    "gulp-typescript": "^5.0.1",
+    "postcss-assets": "^5.0.0",
+    "rollup": "^1.25.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-typescript2": "^0.24.3",
+    "rollup-plugin-visualizer": "^2.6.0",
+    "tsify": "^4.0.1",
+    "typescript": "^3.6.4",
+    "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "build": "find dist -type f -not -name '*.html'-delete && rollup -c"
   }
 }
