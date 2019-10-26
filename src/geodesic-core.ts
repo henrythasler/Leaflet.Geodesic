@@ -44,14 +44,15 @@ export class GeodesicCore {
      * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
      * source: https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js
      *
-     * @param start starting point and initial bearing (in degrees)
-     * @param distance distance from starting point to calculate along given bearing in metres.
+     * @param start starting point 
+     * @param bearing initial bearing (in degrees)
+     * @param distance distance from starting point to calculate along given bearing in meters.
      * @return Final point (destination point) and bearing (in degrees)
      */
-    direct(start: WGS84Vector, distance: number): WGS84Vector {
+    direct(start: L.LatLngLiteral, bearing: number, distance: number): WGS84Vector {
         const φ1 = this.toRadians(start.lat)
         const λ1 = this.toRadians(start.lng);
-        const α1 = this.toRadians(start.bearing);
+        const α1 = this.toRadians(bearing);
         const s = distance;
 
         const { a, b, f } = this.ellipsoid;
@@ -94,7 +95,7 @@ export class GeodesicCore {
         return {
             lat: this.toDegrees(φ2),
             lng: this.toDegrees(λ2),
-            bearing: this.wrap360(α2)
+            bearing: this.wrap360(this.toDegrees(α2))
         }
     }
 }

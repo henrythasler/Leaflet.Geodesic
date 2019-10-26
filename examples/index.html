@@ -69,7 +69,12 @@
         var A = L.marker(losangeles, { draggable: true }).addTo(map);
         var B = L.marker(berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
 
-        var Geodesic = L.geodesic({ }).addTo(map);
+        const geodesic = L.geodesic([[berlin, losangeles]], {
+            weight: 7,
+            opacity: 0.5,
+            color: 'red',
+            steps: 50
+        }).addTo(map);
 
     </script>
 </body>

@@ -51,6 +51,6 @@
   },
   "scripts": {
     "test": "jest --coverage",
-    "build": "find dist -type f -not -name '*.html' -delete && rollup -c"
+    "build": "rm -f dist/* && rollup -c && cp dist/leaflet.geodesic.umd.js examples/"
   }
 }

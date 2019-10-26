@@ -34,6 +34,8 @@ const bundle = (format, filename, options = {}) => ({
     ...(options.minimize ? [terser()] : []),
     ...(options.stats ? [visualizer({
       filename: filename + '.stats.html',
+      template: "treemap"
+
     })] : []),
   ],
 });
