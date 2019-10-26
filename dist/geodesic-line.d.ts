@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { GeodesicOptions } from "./geodesic-algorithms";
+import { GeodesicOptions } from "./geodesic-core";
 export declare class GeodesicLine extends L.Layer {
     readonly polyline: L.Polyline;
     readonly options: GeodesicOptions;

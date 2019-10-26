@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { GeodesicOptions } from "./geodesic-algorithms"
+import { GeodesicOptions } from "./geodesic-core"
 
 export class GreatCircleClass extends L.Layer {
     readonly polygon: L.Polygon;

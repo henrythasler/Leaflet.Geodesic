@@ -28,9 +28,14 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/chai": "^4.2.0",
+    "@types/jest": "^24.0.17",
     "@types/leaflet": "^1.5.5",
     "@types/node": "^12.11.5",
     "autoprefixer": "^9.7.0",
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.7",
+    "jest": "^24.9.0",
     "leaflet": "^1.5.1",
     "postcss-assets": "^5.0.0",
     "rollup": "^1.25.2",
@@ -40,6 +45,8 @@
     "rollup-plugin-terser": "^5.1.2",
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-visualizer": "^2.6.0",
+    "ts-jest": "^24.1.0",
+    "typedoc": "^0.15.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
