@@ -50,7 +50,7 @@
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage --",
     "build": "rm -f dist/* && rollup -c && cp dist/leaflet.geodesic.umd.js examples/"
   }
 }
