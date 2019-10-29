@@ -1,5 +1,7 @@
 import L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
+import { GeodesicGeometry } from "./geodesic-geom";
+import { latlngExpressiontoLiteral } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
     readonly polyline: L.Polyline;
@@ -8,6 +10,7 @@ export class GeodesicLine extends L.Layer {
     constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
+        const geom = new GeodesicGeometry();
         this.polyline = L.polyline(latlngs, this.options);
     }
 
