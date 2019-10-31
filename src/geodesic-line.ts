@@ -1,17 +1,17 @@
 import L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry } from "./geodesic-geom";
-import { latlngExpressiontoLiteral } from "../src/types-helper";
+import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
     readonly polyline: L.Polyline;
     readonly options: GeodesicOptions = {};
+    private geom = new GeodesicGeometry();
 
     constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
-        const geom = new GeodesicGeometry();
-        this.polyline = L.polyline(latlngs, this.options);
+        this.polyline = L.polyline(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)), this.options);
     }
 
     onAdd(map: L.Map): this {
@@ -25,12 +25,7 @@ export class GeodesicLine extends L.Layer {
     }
 
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.polyline.setLatLngs(latlngs);
+        this.polyline.setLatLngs(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)));
         return this;
-    }
-
-    asPolyline(): L.LatLngExpression[] {
-        console.log("[ Geodesic ]: asPolyline()");
-        return [[0, 0] as L.LatLngExpression];
     }
 }

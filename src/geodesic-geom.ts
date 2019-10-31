@@ -18,7 +18,7 @@ export class GeodesicGeometry {
     }
 
     line(start: L.LatLngLiteral, dest: L.LatLngLiteral): L.LatLngLiteral[] {
-        return this.recursiveMidpoint(start, dest, 2);
+        return this.recursiveMidpoint(start, dest, 3);
     }
 
     multilinestring(latlngs: L.LatLngLiteral[][]): L.LatLngLiteral[][] {

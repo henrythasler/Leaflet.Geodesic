@@ -293,7 +293,7 @@ var GeodesicGeometry = /** @class */ (function () {
         return geom;
     };
     GeodesicGeometry.prototype.line = function (start, dest) {
-        return this.recursiveMidpoint(start, dest, 2);
+        return this.recursiveMidpoint(start, dest, 3);
     };
     GeodesicGeometry.prototype.multilinestring = function (latlngs) {
         var _this = this;
@@ -313,14 +313,89 @@ var GeodesicGeometry = /** @class */ (function () {
     return GeodesicGeometry;
 }());
 
+function instanceOfLatLngLiteral(object) {
+    return ((typeof object === "object")
+        && (typeof object !== null)
+        && ('lat' in object)
+        && ('lng' in object)
+        && (typeof object.lat === "number")
+        && (typeof object.lng === "number"));
+}
+function instanceOfLatLngTuple(object) {
+    return ((object instanceof Array)
+        && (typeof object[0] === "number")
+        && (typeof object[1] === "number"));
+}
+function instanceOfLatLngExpression(object) {
+    if (object instanceof L.LatLng) {
+        return true;
+    }
+    else if (instanceOfLatLngTuple(object)) {
+        return true;
+    }
+    else if (instanceOfLatLngLiteral(object)) {
+        return true;
+    }
+    else
+        return false;
+}
+function latlngExpressiontoLiteral(input) {
+    if (input instanceof L.LatLng) {
+        return { lat: input.lat, lng: input.lng };
+    }
+    else if (instanceOfLatLngTuple(input)) {
+        return { lat: input[0], lng: input[1] };
+    }
+    else if (instanceOfLatLngLiteral(input)) {
+        return input;
+    }
+    else
+        throw new Error("L.LatLngExpression expected. Unknown object found.");
+}
+function latlngExpressionArraytoLiteralArray(input) {
+    var literal = [];
+    var _loop_1 = function (group) {
+        // it's a 1D-Array L.LatLngExpression[]
+        if (instanceOfLatLngExpression(group)) {
+            var sub_1 = [];
+            input.forEach(function (point) {
+                sub_1.push(latlngExpressiontoLiteral(point));
+            });
+            literal.push(sub_1);
+            return "break";
+        }
+        // it's a 2D-Array L.LatLngExpression[][]
+        else if (group instanceof Array) {
+            if (instanceOfLatLngExpression(group[0])) {
+                var sub_2 = [];
+                group.forEach(function (point) {
+                    sub_2.push(latlngExpressiontoLiteral(point));
+                });
+                literal.push(sub_2);
+            }
+            else
+                throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+        }
+        else
+            throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+    };
+    for (var _i = 0, input_1 = input; _i < input_1.length; _i++) {
+        var group = input_1[_i];
+        var state_1 = _loop_1(group);
+        if (state_1 === "break")
+            break;
+    }
+    return literal;
+}
+
 var GeodesicLine = /** @class */ (function (_super) {
     __extends(GeodesicLine, _super);
     function GeodesicLine(latlngs, options) {
         var _this = _super.call(this) || this;
         _this.options = {};
+        _this.geom = new GeodesicGeometry();
         _this.options = __assign(__assign({}, _this.options), options);
-        var geom = new GeodesicGeometry();
-        _this.polyline = L.polyline(latlngs, _this.options);
+        _this.polyline = L.polyline(_this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)), _this.options);
         return _this;
     }
     GeodesicLine.prototype.onAdd = function (map) {
@@ -332,12 +407,8 @@ var GeodesicLine = /** @class */ (function (_super) {
         return this;
     };
     GeodesicLine.prototype.setLatLngs = function (latlngs) {
-        this.polyline.setLatLngs(latlngs);
+        this.polyline.setLatLngs(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)));
         return this;
-    };
-    GeodesicLine.prototype.asPolyline = function () {
-        console.log("[ Geodesic ]: asPolyline()");
-        return [[0, 0]];
     };
     return GeodesicLine;
 }(L.Layer));
