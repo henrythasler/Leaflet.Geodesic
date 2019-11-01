@@ -7,5 +7,7 @@ export declare class GeodesicLine extends L.Layer {
     constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions);
     onAdd(map: L.Map): this;
     onRemove(): this;
+    update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void;
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this;
+    getLatLngs(): L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
 }

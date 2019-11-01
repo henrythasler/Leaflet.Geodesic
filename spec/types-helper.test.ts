@@ -6,17 +6,17 @@ import { latlngExpressiontoLiteral, instanceOfLatLngExpression, latlngExpression
 import { expect } from "chai";
 
 import "jest";
-import { LatLng, Point } from "leaflet";
+import L from "leaflet";
 
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
 const eps = 0.000001;
 
 describe("instanceOf-Functions", function () {
     it("instanceOfLatLngExpression", function () {
-        expect(instanceOfLatLngExpression(new LatLng(Berlin.lat, Berlin.lng))).to.be.true;
+        expect(instanceOfLatLngExpression(new L.LatLng(Berlin.lat, Berlin.lng))).to.be.true;
         expect(instanceOfLatLngExpression(Berlin)).to.be.true;
         expect(instanceOfLatLngExpression([Berlin.lat, Berlin.lng])).to.be.true;
-        expect(instanceOfLatLngExpression(new Point(Berlin.lat, Berlin.lng))).to.be.false;
+        expect(instanceOfLatLngExpression(new L.Point(Berlin.lat, Berlin.lng))).to.be.false;
         expect(instanceOfLatLngExpression({ some: "object", num: 33 })).to.be.false;
         // expect(instanceOfLatLngExpression([{some:"object", num: 33}])).to.be.true;
     });
@@ -25,7 +25,7 @@ describe("instanceOf-Functions", function () {
 
 describe("latlngExpressiontoLiteral", function () {
     it("LatLng-Class", function () {
-        const point: L.LatLngLiteral = latlngExpressiontoLiteral(new LatLng(Berlin.lat, Berlin.lng));
+        const point: L.LatLngLiteral = latlngExpressiontoLiteral(new L.LatLng(Berlin.lat, Berlin.lng));
         expect(point).to.be.an("object");
         expect(point).to.include.all.keys("lat", "lng");
         expect(point.lat).to.be.closeTo(Berlin.lat, eps);
@@ -78,13 +78,13 @@ describe("latlngExpressionArraytoLiteralArray", function () {
 
     it("1D-Array - 1 Point - LatLng-Class", function () {
         const n = 1, m = 1;
-        const literal = latlngExpressionArraytoLiteralArray([new LatLng(Berlin.lat, Berlin.lng)]);
+        const literal = latlngExpressionArraytoLiteralArray([new L.LatLng(Berlin.lat, Berlin.lng)]);
         checkLiteral(literal, n, m, Berlin)
     });
 
     it("1D-Array - Multipoint - LatLng-Class", function () {
         const n = 1, m = 5;
-        const literal = latlngExpressionArraytoLiteralArray((new Array(m) as L.LatLngExpression[]).fill(new LatLng(Berlin.lat, Berlin.lng)));
+        const literal = latlngExpressionArraytoLiteralArray((new Array(m) as L.LatLngExpression[]).fill(new L.LatLng(Berlin.lat, Berlin.lng)));
         checkLiteral(literal, n, m, Berlin)
     });
 
@@ -115,7 +115,7 @@ describe("latlngExpressionArraytoLiteralArray", function () {
 
     it("2D-Array - LatLng-Class", function () {
         const n = 2, m = 2;
-        const input = new Array(n).fill((new Array(m) as L.LatLngExpression[]).fill(new LatLng(Berlin.lat, Berlin.lng)));
+        const input = new Array(n).fill((new Array(m) as L.LatLngExpression[]).fill(new L.LatLng(Berlin.lat, Berlin.lng)));
         const literal = latlngExpressionArraytoLiteralArray(input);
         checkLiteral(literal, n, m, Berlin);
     });

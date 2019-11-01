@@ -46,7 +46,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="leaflet.geodesic.umd.js"></script>
+    <script src="leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
@@ -56,10 +56,10 @@
 
     <script type="text/javascript">
 
-        var map = L.map('map').setView([50, -40], 3);
+        var map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
-            noWrap: true,
+            noWrap: false,
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 

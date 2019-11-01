@@ -11,7 +11,7 @@ export class GeodesicLine extends L.Layer {
     constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
-        this.polyline = L.polyline(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)), this.options);
+        this.polyline = L.polyline(this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs)), this.options);
     }
 
     onAdd(map: L.Map): this {
@@ -24,8 +24,18 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
+    update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+        let geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+        this.polyline.setLatLngs(this.geom.splitMultiLineString(geodesic));
+    }
+
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.polyline.setLatLngs(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)));
+        this.update(latlngs);
         return this;
     }
+
+    getLatLngs(): L.LatLng[] | L.LatLng[][] | L.LatLng[][][] {
+        return this.polyline.getLatLngs();
+    }
+
 }

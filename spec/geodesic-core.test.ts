@@ -124,7 +124,8 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
 
     it("Reduced iterations to throw maxIterations-error", function () {
         try {
-            const dest = geodesic.direct(Berlin, 90, 16000000, 10);
+            geodesic.direct(Berlin, 90, 16000000, 3);
+            expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
             expect(e.message).to.have.match(/Vincenty formula failed to converge/);
@@ -177,12 +178,23 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     it("no convergence", function () {
         try {
             // reduced maxIterations
-            const res = geodesic.inverse({ lat: 0, lng: 0 }, { lat: 0, lng: 179.5 }, 50);
+            geodesic.inverse({ lat: 0, lng: 0 }, { lat: 0, lng: 179.5 }, 50);
+            expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
             expect(e.message).to.have.match(/Vincenty formula failed to converge/);
         }
     });
+
+    it("λ > π", function () {
+        try {
+            geodesic.inverse({ lat: -84, lng: -172 }, { lat: -70, lng: 190 });
+            expect.fail();
+        } catch (e) {
+            expect(e).to.be.an("Error");
+            expect(e.message).to.have.match(/λ > π/);
+        }
+    });    
 });
 
 describe("Intersection - regular test cases", function () {

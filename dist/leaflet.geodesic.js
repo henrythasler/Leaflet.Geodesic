@@ -83,6 +83,15 @@ var GeodesicCore = /** @class */ (function () {
         return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
     };
     /**
+     * @param degrees arbitrary value
+     * @return degrees between -180..+180
+     */
+    GeodesicCore.prototype.wrap180 = function (degrees) {
+        if (-180 <= degrees && degrees < 180)
+            return degrees;
+        return (((degrees + 180) % 360 + 360) % 360) - 180;
+    };
+    /**
      * Vincenty direct calculation.
      * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
      * source: https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js
@@ -123,7 +132,7 @@ var GeodesicCore = /** @class */ (function () {
             σ = s / (b * A) + Δσ;
         } while (Math.abs(σ - σʹ) > ε && ++iterations < maxInterations);
         if (iterations >= maxInterations)
-            throw new EvalError("Vincenty formula failed to converge after " + maxInterations + " iterations"); // not possible?
+            throw new EvalError("Vincenty formula failed to converge after " + maxInterations + " iterations (start=" + start.lat + "/" + start.lng + "; bearing=" + bearing + "; distance=" + distance + ")"); // not possible?
         var x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
         var φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
         var λ = Math.atan2(sinσ * sinα1, cosU1 * cosσ - sinU1 * sinσ * cosα1);
@@ -131,7 +140,6 @@ var GeodesicCore = /** @class */ (function () {
         var L = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
         var λ2 = λ1 + L;
         var α2 = Math.atan2(sinα, -x);
-        // console.log(`iterations: ${iterations}`)
         return {
             lat: this.toDegrees(φ2),
             lng: this.wrap360(this.toDegrees(λ2)),
@@ -270,8 +278,8 @@ var GeodesicCore = /** @class */ (function () {
         var φm = Math.atan2(C.z, Math.sqrt(C.x * C.x + C.y * C.y));
         var λm = λ1 + Math.atan2(C.y, C.x);
         return {
-            lat: this.toDegrees(φm),
-            lng: this.toDegrees(λm)
+            lat: this.wrap180(this.toDegrees(φm)),
+            lng: this.wrap180(this.toDegrees(λm))
         };
     };
     return GeodesicCore;
@@ -293,22 +301,74 @@ var GeodesicGeometry = /** @class */ (function () {
         return geom;
     };
     GeodesicGeometry.prototype.line = function (start, dest) {
-        return this.recursiveMidpoint(start, dest, 3);
+        return this.recursiveMidpoint(start, dest, 4);
     };
-    GeodesicGeometry.prototype.multilinestring = function (latlngs) {
+    GeodesicGeometry.prototype.multiLineString = function (latlngs) {
         var _this = this;
-        var geodesic = [];
+        var multiLineString = [];
         latlngs.forEach(function (linestring) {
             var segment = [];
             for (var j = 1; j < linestring.length; j++) {
                 segment.splice.apply(segment, __spreadArrays([segment.length - 1, 1], _this.line(linestring[j - 1], linestring[j])));
             }
-            geodesic.push(segment);
+            multiLineString.push(segment);
         });
-        return geodesic;
+        return multiLineString;
     };
-    GeodesicGeometry.prototype.linestring = function (latlngs) {
-        return this.multilinestring([latlngs])[0];
+    GeodesicGeometry.prototype.lineString = function (latlngs) {
+        return this.multiLineString([latlngs])[0];
+    };
+    GeodesicGeometry.prototype.splitLine = function (start, dest) {
+        var dateLineWest = {
+            point: { lat: 89, lng: -180 },
+            bearing: 180
+        };
+        var dateLineEast = {
+            point: { lat: 89, lng: 180 },
+            bearing: 180
+        };
+        var line = this.geodesic.inverse(start, dest);
+        var intersection;
+        // depending on initial direction, we check for crossing the dateline in western or eastern direction
+        if (line.initialBearing > 180) {
+            intersection = this.geodesic.intersection(start, line.initialBearing, dateLineWest.point, dateLineWest.bearing);
+        }
+        else {
+            intersection = this.geodesic.intersection(start, line.initialBearing, dateLineEast.point, dateLineEast.bearing);
+        }
+        if (intersection) {
+            var intersectionDistance = this.geodesic.inverse(start, intersection);
+            if (intersectionDistance.distance < line.distance) {
+                if (intersection.lng < -179.9999) {
+                    return [[start, intersection], [{ lat: intersection.lat, lng: intersection.lng + 360 }, dest]];
+                }
+                else if (intersection.lng > 179.9999) {
+                    return [[start, intersection], [{ lat: intersection.lat, lng: intersection.lng - 360 }, dest]];
+                }
+                return [[start, intersection], [intersection, dest]];
+            }
+        }
+        return [[start, dest]];
+    };
+    GeodesicGeometry.prototype.splitMultiLineString = function (multilinestring) {
+        var _this = this;
+        var result = [];
+        multilinestring.forEach(function (linestring) {
+            var segment = [linestring[0]];
+            for (var j = 1; j < linestring.length; j++) {
+                var split = _this.splitLine(linestring[j - 1], linestring[j]);
+                if (split.length === 1) {
+                    segment.push(linestring[j]);
+                }
+                else {
+                    segment.push(split[0][1]);
+                    result.push(segment);
+                    segment = split[1];
+                }
+            }
+            result.push(segment);
+        });
+        return result;
     };
     return GeodesicGeometry;
 }());
@@ -395,7 +455,7 @@ var GeodesicLine = /** @class */ (function (_super) {
         _this.options = {};
         _this.geom = new GeodesicGeometry();
         _this.options = __assign(__assign({}, _this.options), options);
-        _this.polyline = L.polyline(_this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)), _this.options);
+        _this.polyline = L.polyline(_this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs)), _this.options);
         return _this;
     }
     GeodesicLine.prototype.onAdd = function (map) {
@@ -406,9 +466,18 @@ var GeodesicLine = /** @class */ (function (_super) {
         this.polyline.remove();
         return this;
     };
+    GeodesicLine.prototype.update = function (latlngs) {
+        // this.polyline.setLatLngs(this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs)));
+        var geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+        this.polyline.setLatLngs(this.geom.splitMultiLineString(geodesic));
+        // this.polyline.setLatLngs(this.geom.splitLine(latlngs[0] as any, latlngs[1] as any));
+    };
     GeodesicLine.prototype.setLatLngs = function (latlngs) {
-        this.polyline.setLatLngs(this.geom.multilinestring(latlngExpressionArraytoLiteralArray(latlngs)));
+        this.update(latlngs);
         return this;
+    };
+    GeodesicLine.prototype.getLatLngs = function () {
+        return this.polyline.getLatLngs();
     };
     return GeodesicLine;
 }(L.Layer));

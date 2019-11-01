@@ -28,6 +28,11 @@ export declare class GeodesicCore {
      */
     wrap360(degrees: number): number;
     /**
+     * @param degrees arbitrary value
+     * @return degrees between -180..+180
+     */
+    wrap180(degrees: number): number;
+    /**
      * Vincenty direct calculation.
      * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
      * source: https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js

@@ -50,6 +50,15 @@ export class GeodesicCore {
     }
 
     /**
+     * @param degrees arbitrary value
+     * @return degrees between -180..+180
+     */
+    wrap180(degrees: number) {
+        if (-180 <= degrees && degrees < 180) return degrees;
+        return (((degrees+180) % 360 + 360) % 360) - 180;
+    }
+
+    /**
      * Vincenty direct calculation.
      * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
      * source: https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js
@@ -93,7 +102,7 @@ export class GeodesicCore {
             σʹ = σ;
             σ = s / (b * A) + Δσ;
         } while (Math.abs(σ - σʹ) > ε && ++iterations < maxInterations);
-        if (iterations >= maxInterations) throw new EvalError(`Vincenty formula failed to converge after ${maxInterations} iterations`); // not possible?
+        if (iterations >= maxInterations) throw new EvalError(`Vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; bearing=${bearing}; distance=${distance})`); // not possible?
 
         const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
         const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
@@ -103,7 +112,6 @@ export class GeodesicCore {
         const λ2 = λ1 + L;
 
         const α2 = Math.atan2(sinα, -x);
-        // console.log(`iterations: ${iterations}`)
         return {
             lat: this.toDegrees(φ2),
             lng: this.wrap360(this.toDegrees(λ2)),
@@ -181,7 +189,7 @@ export class GeodesicCore {
             distance: s,
             initialBearing: Math.abs(s) < ε ? NaN : this.wrap360(this.toDegrees(α1)),
             finalBearing: Math.abs(s) < ε ? NaN : this.wrap360(this.toDegrees(α2))
-        };
+        } as GeoDistance;
     }
 
     /**
@@ -262,8 +270,8 @@ export class GeodesicCore {
         const λm = λ1 + Math.atan2(C.y, C.x);
 
         return {
-            lat: this.toDegrees(φm),
-            lng: this.toDegrees(λm)
+            lat: this.wrap180(this.toDegrees(φm)),
+            lng: this.wrap180(this.toDegrees(λm))
         } as L.LatLngLiteral;
     }
 }
