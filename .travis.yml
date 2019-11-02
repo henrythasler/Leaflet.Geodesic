@@ -12,4 +12,5 @@ deploy:
   on:
     tags: true  
   provider: npm
-  email: "npm@thasler.com"
+  email: '$NPM_EMAIL'
+  api_key: '$NPM_TOKEN'

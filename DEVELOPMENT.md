@@ -29,6 +29,7 @@ sudo npm install -g np npm
 ## Tooling
 
 - [How to publish packages to npm](https://zellwk.com/blog/publish-to-npm/)
+- [Deploying our Library to NPM](https://hungryturtlecode.com/projects/parallax-deploy-npm/)
 
 ## UI, Graphics
 
