@@ -1,3 +1,13 @@
+
+# local installations
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
+sudo npm install -g np npm
+
+```
+
+
 # References
 
 ## Typescript 
@@ -13,3 +23,11 @@
 ## Leaflet 
 
 - [leaflet-lasso](https://github.com/zakjan/leaflet-lasso) (on how to create a leaflet plug-in with typescript)
+
+## Tooling
+
+- [How to publish packages to npm](https://zellwk.com/blog/publish-to-npm/)
+
+## UI, Graphics
+
+- [Full Emoji List](http://www.unicode.org/emoji/charts/full-emoji-list.html)

@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 10
+
+addons:
+  sonarcloud:
+    organization: "henrythasler"
+script:
+  - npm run test && sonar-scanner
+
+deploy:
+  on:
+    tags: true  
+  provider: npm
+  email: "npm@thasler.com"
