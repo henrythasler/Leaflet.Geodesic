@@ -11,8 +11,14 @@ export class GeodesicLine extends L.Layer {
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
-        this.polyline = L.polyline([], this.options);
-        if(latlngs) this.update(latlngs);
+        
+        if(latlngs) {
+            this.polyline = new L.Polyline(this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs)), this.options);
+        }
+        else {
+            this.polyline = new L.Polyline([], this.options);
+        }
+        // this.update(latlngs);
     }
 
     onAdd(map: L.Map): this {
