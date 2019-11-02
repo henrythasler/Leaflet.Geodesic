@@ -1,6 +1,6 @@
 {
   "name": "leaflet.geodesic",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Add-on to draw geodesic lines with leaflet",
   "main": "dist/leaflet.geodesic.js",
   "module": "dist/leaflet.geodesic.esm.js",
@@ -56,7 +56,7 @@
     "build": "rm -f dist/* && rollup -c && npm run sha512 && cp dist/leaflet.geodesic.umd.min.js docs/"
   },
   "np": {
-		"publish": false,
-		"releaseDraft": false
-	}
+    "publish": false,
+    "releaseDraft": false
+  }
 }
