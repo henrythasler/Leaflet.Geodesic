@@ -57,7 +57,7 @@ export function latlngExpressionArraytoLiteralArray(input: L.LatLngExpression[] 
         else if (group instanceof Array) {
             if (instanceOfLatLngExpression(group[0])) {
                 let sub: L.LatLngLiteral[] = [];
-                (group as L.LatLngExpression[]).forEach((point) => {
+                group.forEach((point) => {
                     sub.push(latlngExpressiontoLiteral(point));
                 });
                 literal.push(sub);
@@ -65,6 +65,6 @@ export function latlngExpressionArraytoLiteralArray(input: L.LatLngExpression[] 
             else throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
         }
         else throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
-    };
+    }
     return literal;
 }

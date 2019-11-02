@@ -1,5 +1,8 @@
+# Developer Information
 
-# local installations
+These are my notes on how to develop this plug-in.
+
+## local installations
 
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
@@ -7,8 +10,7 @@ sudo npm install -g np npm
 
 ```
 
-
-# References
+## References
 
 ## Typescript 
 
@@ -31,3 +33,4 @@ sudo npm install -g np npm
 ## UI, Graphics
 
 - [Full Emoji List](http://www.unicode.org/emoji/charts/full-emoji-list.html)
+- [Shields IO](https://shields.io)

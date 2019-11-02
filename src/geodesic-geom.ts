@@ -1,4 +1,4 @@
-import L, { geodesic } from "leaflet";
+import L from "leaflet";
 import { GeodesicCore, GeoDistance } from "./geodesic-core"
 
 export class GeodesicGeometry {
@@ -70,7 +70,7 @@ export class GeodesicGeometry {
                 return [[start, intersection], [intersection, dest]];
             }
         }
-        return [[start, dest]]
+        return [[start, dest]];
     }
 
     splitMultiLineString(multilinestring: L.LatLngLiteral[][]): L.LatLngLiteral[][] {

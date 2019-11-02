@@ -108,8 +108,8 @@ export class GeodesicCore {
         const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
         const λ = Math.atan2(sinσ * sinα1, cosU1 * cosσ - sinU1 * sinσ * cosα1);
         const C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
-        const L = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
-        const λ2 = λ1 + L;
+        const dL = λ - (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
+        const λ2 = λ1 + dL;
 
         const α2 = Math.atan2(sinα, -x);
         return {
@@ -138,13 +138,13 @@ export class GeodesicCore {
         // allow alternative ellipsoid to be specified
         const { a, b, f } = this.ellipsoid;
 
-        const L = λ2 - λ1; // L = difference in longitude, U = reduced latitude, defined by tan U = (1-f)·tanφ.
+        const dL = λ2 - λ1; // L = difference in longitude, U = reduced latitude, defined by tan U = (1-f)·tanφ.
         const tanU1 = (1 - f) * Math.tan(φ1), cosU1 = 1 / Math.sqrt((1 + tanU1 * tanU1)), sinU1 = tanU1 * cosU1;
         const tanU2 = (1 - f) * Math.tan(φ2), cosU2 = 1 / Math.sqrt((1 + tanU2 * tanU2)), sinU2 = tanU2 * cosU2;
 
-        const antipodal = Math.abs(L) > π / 2 || Math.abs(φ2 - φ1) > π / 2;
+        const antipodal = Math.abs(dL) > π / 2 || Math.abs(φ2 - φ1) > π / 2;
 
-        let λ = L, sinλ = null, cosλ = null; // λ = difference in longitude on an auxiliary sphere
+        let λ = dL, sinλ = null, cosλ = null; // λ = difference in longitude on an auxiliary sphere
         let σ = antipodal ? π : 0, sinσ = 0, cosσ = antipodal ? -1 : 1, sinSqσ = null; // σ = angular distance P₁ P₂ on the sphere
         let cos2σₘ = 1;                      // σₘ = angular distance on the sphere from the equator to the midpoint of the line
         let sinα = null, cosSqα = 1;         // α = azimuth of the geodesic at the equator
@@ -164,7 +164,7 @@ export class GeodesicCore {
             cos2σₘ = (cosSqα != 0) ? (cosσ - 2 * sinU1 * sinU2 / cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
             C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
             λʹ = λ;
-            λ = L + (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
+            λ = dL + (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
             const iterationCheck = antipodal ? Math.abs(λ) - π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
