@@ -178,12 +178,21 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     it("no convergence", function () {
         try {
             // reduced maxIterations
-            geodesic.inverse({ lat: 0, lng: 0 }, { lat: 0, lng: 179.5 }, 50);
+            geodesic.inverse({ lat: 0, lng: 0 }, { lat: 0, lng: 179.5 }, 50, false);
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
             expect(e.message).to.have.match(/vincenty formula failed to converge/);
         }
+    });
+
+    it("mitigate convergence Error", function () {
+        let res = geodesic.inverse({ lat: 0, lng: 0 }, { lat: 0, lng: 179.5 });
+        expect(res).to.be.an("object");
+        expect(res).to.include.all.keys("distance", "initialBearing", "finalBearing");
+        expect(res.distance).to.be.closeTo(19969603.453263, eps);
+        expect(res.initialBearing).to.be.closeTo(90, eps);   // the formula has special handling for antipodals (going only north/south)
+        expect(res.finalBearing).to.be.closeTo(90, eps);
     });
 
     it("λ > π", function () {
@@ -194,7 +203,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
             expect(e).to.be.an("Error");
             expect(e.message).to.have.match(/λ > π/);
         }
-    });    
+    });
 });
 
 describe("Intersection - regular test cases", function () {
@@ -269,7 +278,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             { lat: 2, lng: 1 }, 0,
             { lat: 1, lng: 0 }, 90);
         expect(res).to.be.null;
-    });       
+    });
 });
 
 

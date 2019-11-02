@@ -128,7 +128,7 @@ export class GeodesicCore {
      * @param dest Latitude/longitude of destination point.
      * @return Object including distance, initialBearing, finalBearing.
      */
-    inverse(start: L.LatLngLiteral, dest: L.LatLngLiteral, maxInterations: number = 1000): GeoDistance {
+    inverse(start: L.LatLngLiteral, dest: L.LatLngLiteral, maxInterations: number = 100, mitigateConvergenceError: boolean = true): GeoDistance {
         const p1 = start, p2 = dest;
         const φ1 = this.toRadians(p1.lat), λ1 = this.toRadians(p1.lng);
         const φ2 = this.toRadians(p2.lat), λ2 = this.toRadians(p2.lng);
@@ -168,8 +168,15 @@ export class GeodesicCore {
             const iterationCheck = antipodal ? Math.abs(λ) - π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
-        if (iterations >= maxInterations) throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
-
+        if (iterations >= maxInterations) {
+            if(mitigateConvergenceError) {
+                return this.inverse(start, {lat: dest.lat, lng: dest.lng - 0.01}, maxInterations, mitigateConvergenceError);
+            }
+            else {
+                throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
+            }
+            
+        }
         const uSq = cosSqα * (a * a - b * b) / (b * b);
         const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
         const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));

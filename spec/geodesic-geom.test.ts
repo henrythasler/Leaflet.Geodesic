@@ -225,6 +225,23 @@ describe("splitMultiLineString function", function () {
         });
     });
 
+    it("Berlin -> Los Angeles (higher resolution, no split)", function () {
+        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(Berlin, {lat: 32.54681317351517, lng: -118.82812500000001}, 2)];
+        const split = geom.splitMultiLineString(geodesic);
+        expect(split).to.be.an("array");
+        expect(split).to.be.length(1);
+        split.forEach((line, k) => {
+            expect(line).to.be.length(geodesic[0].length);
+            line.forEach((point, l) => {
+                expect(point).to.be.an("object");
+                expect(point).to.include.all.keys("lat", "lng");
+                expect(point.lat).to.be.closeTo(geodesic[k][l].lat, eps);
+                expect(point.lng).to.be.closeTo(geodesic[k][l].lng, eps);
+            });
+        });
+    });
+
+
     it("Seattle -> Tokyo", function () {
         const fixture: L.LatLngLiteral[][] = [
             [
