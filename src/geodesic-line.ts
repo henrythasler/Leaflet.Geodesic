@@ -8,10 +8,11 @@ export class GeodesicLine extends L.Layer {
     readonly options: GeodesicOptions = {};
     private geom = new GeodesicGeometry();
 
-    constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
+    constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
-        this.polyline = L.polyline(this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs)), this.options);
+        this.polyline = L.polyline([], this.options);
+        if(latlngs) this.update(latlngs);
     }
 
     onAdd(map: L.Map): this {

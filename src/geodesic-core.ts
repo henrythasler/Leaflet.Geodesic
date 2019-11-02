@@ -102,7 +102,7 @@ export class GeodesicCore {
             σʹ = σ;
             σ = s / (b * A) + Δσ;
         } while (Math.abs(σ - σʹ) > ε && ++iterations < maxInterations);
-        if (iterations >= maxInterations) throw new EvalError(`Vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; bearing=${bearing}; distance=${distance})`); // not possible?
+        if (iterations >= maxInterations) throw new EvalError(`Direct vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; bearing=${bearing}; distance=${distance})`); // not possible?
 
         const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
         const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
@@ -168,7 +168,7 @@ export class GeodesicCore {
             const iterationCheck = antipodal ? Math.abs(λ) - π : Math.abs(λ);
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
-        if (iterations >= maxInterations) throw new EvalError(`Vincenty formula failed to converge after ${maxInterations} iterations`);
+        if (iterations >= maxInterations) throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
 
         const uSq = cosSqα * (a * a - b * b) / (b * b);
         const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
@@ -244,8 +244,8 @@ export class GeodesicCore {
         const λ3 = λ1 + Δλ13;
 
         return {
-            lat: this.toDegrees(φ3),
-            lng: this.toDegrees(λ3)
+            lat: this.wrap180(this.toDegrees(φ3)),
+            lng: this.wrap180(this.toDegrees(λ3))
         } as L.LatLngLiteral;
     }
 

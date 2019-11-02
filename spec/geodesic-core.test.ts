@@ -128,7 +128,7 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/Vincenty formula failed to converge/);
+            expect(e.message).to.have.match(/vincenty formula failed to converge/);
         }
     });
 });
@@ -182,7 +182,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/Vincenty formula failed to converge/);
+            expect(e.message).to.have.match(/vincenty formula failed to converge/);
         }
     });
 

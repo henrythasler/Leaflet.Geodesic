@@ -1,33 +1,13 @@
 import L from "leaflet";
+import { GeodesicLine } from "./geodesic-line"
 import { GeodesicOptions } from "./geodesic-core"
 
-export class GreatCircleClass extends L.Layer {
-    readonly polygon: L.Polygon;
-    readonly options: GeodesicOptions = {};
+export class GreatCircleClass extends GeodesicLine {
 
-    constructor(latlngs: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
-        super();
-        this.options = { ...this.options, ...options };
-        this.polygon = L.polygon(latlngs, this.options);
+    constructor(latlngs?: L.LatLngExpression[], options?: GeodesicOptions) {
+        super(latlngs, options);
     }
 
-    onAdd(map: L.Map): this {
-        this.polygon.addTo(map);
-        return this;
-    }
-
-    onRemove(): this {
-        this.polygon.remove();
-        return this;
-    }
-
-    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.polygon.setLatLngs(latlngs);
-        return this;
-    }
-
-    asPolyline(): L.LatLngExpression[] {
-        console.log("[ Geodesic ]: asPolyline()");
-        return [[0, 0] as L.LatLngExpression];
-    }
+    update(latlngs: L.LatLngExpression[]): void {
+    }    
 }
