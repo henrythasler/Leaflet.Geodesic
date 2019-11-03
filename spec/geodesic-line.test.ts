@@ -8,8 +8,6 @@ import { expect } from "chai";
 
 import "jest";
 
-const eps = 0.000001;
-
 describe("Main functionality", function () {
     it("Create class w/o any parameters", function () {
         const line = new GeodesicLine();

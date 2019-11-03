@@ -69,22 +69,27 @@
         var A = L.marker(losangeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
         var B = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
+        // const Berlin = new L.LatLng(52.5, 13.35);
+        // const LosAngeles = new L.LatLng(33.82, -118.38);
+        // const geodesic2 = new L.Geodesic().addTo(map);
+        // geodesic2.setLatLngs([Berlin, LosAngeles])
+
         const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
             weight: 7,
             opacity: 0.5,
             color: 'red',
-            steps: 50
+            steps: 50,
         }).addTo(map);
 
-		A.on('drag', (e) => {
+        A.on('drag', (e) => {
             // console.log(`A=${e.latlng}`);
-            A.setTooltipContent(`${Math.round(100*e.latlng.lat)/100} ${Math.round(100*e.latlng.lng)/100}`);
+            A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
             // console.log(geodesic.getLatLngs());
         });
-		B.on('drag', (e) => {
+        B.on('drag', (e) => {
             // console.log(`B=${e.latlng}`);
-            B.setTooltipContent(`${Math.round(100*e.latlng.lat)/100} ${Math.round(100*e.latlng.lng)/100}`);
+            B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
             // console.log(geodesic.getLatLngs());
         });

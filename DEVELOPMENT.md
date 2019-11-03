@@ -16,6 +16,7 @@ sudo npm install -g np npm
 
 - ['this' in TypeScript](https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript)
 - [Building and publishing a module with TypeScript and Rollup.js](https://hackernoon.com/building-and-publishing-a-module-with-typescript-and-rollup-js-faa778c85396)
+- [Debugging with TypeScript, Jest, ts-jest and Visual Studio Code](https://medium.com/@mtiller/debugging-with-typescript-jest-ts-jest-and-visual-studio-code-ef9ca8644132)
 
 ## Geoscience
 
@@ -30,6 +31,7 @@ sudo npm install -g np npm
 
 - [How to publish packages to npm](https://zellwk.com/blog/publish-to-npm/)
 - [Deploying our Library to NPM](https://hungryturtlecode.com/projects/parallax-deploy-npm/)
+- [np](https://github.com/sindresorhus/np)
 
 ## UI, Graphics
 
