@@ -47,6 +47,13 @@ export class GeodesicGeometry {
             point: { lat: 89, lng: 180 } as L.LatLngLiteral,
             bearing: 180
         };
+
+        // we need a significant difference between the points and the dateline. So we clamp for +-179.9 for now...
+        start.lng = Math.max(-179.9, start.lng);
+        start.lng = Math.min(179.9, start.lng);
+        dest.lng = Math.max(-179.9, dest.lng);
+        dest.lng = Math.min(179.9, dest.lng);
+
         let line: GeoDistance = this.geodesic.inverse(start, dest);
         let intersection: L.LatLngLiteral | null;
 

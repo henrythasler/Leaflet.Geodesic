@@ -251,8 +251,8 @@ export class GeodesicCore {
         const λ3 = λ1 + Δλ13;
 
         return {
-            lat: this.wrap180(this.toDegrees(φ3)),
-            lng: this.wrap180(this.toDegrees(λ3))
+            lat: this.toDegrees(φ3),
+            lng: this.toDegrees(λ3)
         } as L.LatLngLiteral;
     }
 

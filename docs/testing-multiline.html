@@ -46,7 +46,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="https://unpkg.com/leaflet.geodesic@2.0.1/dist/leaflet.geodesic.umd.min.js"></script>
+    <script src="leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
@@ -56,32 +56,59 @@
 
     <script type="text/javascript">
 
-        var map = L.map('map').setView([0, 0], 2);
+        const map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
-            noWrap: false,
+            noWrap: true,
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
-        var berlin = new L.LatLng(52.5, 13.35);
-        var losangeles = new L.LatLng(33.82, -118.38);
+        const multiline = [
+            [   // 1st line
+                new L.LatLng(52.5, 13.35), //Berlin
+                new L.LatLng(71.39, -156.48), // Point Barrow
+                new L.LatLng(33.82, -118.38), // Los Angeles
+            ],
+            [   // 2nd line
+                new L.LatLng(-33.44, -70.71), // Santiago
+                new L.LatLng(35.47, 139.15), // Tokyo
+                new L.LatLng(-33.94, 18.39), // Capetown
+                new L.LatLng(-33.91, 151.08), // Sydney
+            ]
+        ];
 
-        var A = L.marker(losangeles, { draggable: true }).addTo(map);
-        var B = L.marker(berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
-
-        const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
+        const geodesic = L.geodesic(multiline, {
             weight: 7,
             opacity: 0.5,
             color: 'red',
             steps: 50
         }).addTo(map);
 
-		A.on('drag', (e) => {
-            geodesic.setLatLngs([e.latlng, B.getLatLng()])
-        });
-		B.on('drag', (e) => {
-            geodesic.setLatLngs([A.getLatLng(), e.latlng])
-        });
+        var markers = [];
+
+        function updateGeodesic() {
+            let currentMultiline = [];
+            for (let subMarker of markers) {
+                let currentLine = [];
+                for (let point of subMarker) {
+                    currentLine.push(point.getLatLng());
+                }
+                currentMultiline.push(currentLine);
+            }
+            geodesic.setLatLngs(currentMultiline);
+        }
+
+        for (let line of multiline) {
+            var subMarker = [];
+            for (let place of line) {
+                var marker = L.marker(place, { draggable: true }).addTo(map);
+                marker.on('drag', (e) => {
+                    updateGeodesic();
+                });
+                subMarker.push(marker);
+            }
+            markers.push(subMarker);
+        }
 
     </script>
 </body>
