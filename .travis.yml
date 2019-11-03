@@ -13,6 +13,7 @@ after_success:
   - coveralls < coverage/lcov.info
 
 deploy:
+  skip_cleanup: true
   on:
     tags: true  
   provider: npm
