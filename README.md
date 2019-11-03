@@ -14,11 +14,11 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 
 ## Add the plugin to your project
 
-Add the script to your html-file after you have [included leaflet.js](https://leafletjs.com/examples/quick-start/).
+Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have [included leaflet.js](https://leafletjs.com/examples/quick-start/).
 
 ```html
 <!-- Make sure you put this AFTER leaflet.js -->
-<script src="https://unpkg.com/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
 ```
 
 Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic) and [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic).
@@ -35,7 +35,7 @@ const geodesicLine = new L.Geodesic().addTo(map);   // creates a blank geodesic-
 const greatCircle = new L.GreatCircle().addTo(map);   // creates a blank great-circle-object and adds it to the map
 ```
 
-> Make sure you add the geodesic-object to the map. It won't display otherwise.
+Make sure you add the geodesic-object to the map. It won't display otherwise.
 
 Each constructor is defined as:
 ```JavaScript
