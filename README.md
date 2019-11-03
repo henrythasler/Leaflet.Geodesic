@@ -21,7 +21,7 @@ Leaflet.Geodesic is available via CDN. Add the following snippet to your html-fi
 <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
 ```
 
-Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic) and [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic).
+Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic/) and [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic).
 
 ## Basic usage
 
@@ -33,6 +33,13 @@ The Objects can be created as follows:
 ```JavaScript
 const geodesicLine = new L.Geodesic().addTo(map);   // creates a blank geodesic-line-object and adds it to the map
 const greatCircle = new L.GreatCircle().addTo(map);   // creates a blank great-circle-object and adds it to the map
+```
+
+Alternative method:
+
+```JavaScript
+const geodesicLine = L.geodesic().addTo(map);   // lower-case
+const greatCircle = L.greatCircle().addTo(map);   // lower-case
 ```
 
 Make sure you add the geodesic-object to the map. It won't display otherwise.

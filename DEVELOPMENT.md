@@ -21,7 +21,7 @@ sudo npm install -g np npm
 ## Geoscience
 
 - [Calculate distance, bearing and more between Latitude/Longitude points](https://www.movable-type.co.uk/scripts/latlong.html)
-- [Geodetic Calculations - Vincenty's Formulae, Inverse Method](http://www.ga.gov.au/geodesy/datums/vincenty_inverse.jsp)
+- [Geodetic Calculations - Vincenty's Formulae, Inverse Method](https://www.ga.gov.au/geodesy/datums/vincenty_inverse.jsp)
 
 ## Leaflet 
 
@@ -35,5 +35,5 @@ sudo npm install -g np npm
 
 ## UI, Graphics
 
-- [Full Emoji List](http://www.unicode.org/emoji/charts/full-emoji-list.html)
+- [Full Emoji List](https://www.unicode.org/emoji/charts/full-emoji-list.html)
 - [Shields IO](https://shields.io)

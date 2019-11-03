@@ -73,6 +73,13 @@
         // const LosAngeles = new L.LatLng(33.82, -118.38);
         // const geodesic2 = new L.Geodesic().addTo(map);
         // geodesic2.setLatLngs([Berlin, LosAngeles])
+        const places = [
+    new L.LatLng(52.5, 13.35), // Berlin
+    new L.LatLng(33.82, -118.38), // Los Angeles
+    new L.LatLng(-33.44, -70.71), // Santiago
+    new L.LatLng(-33.94, 18.39), // Capetown
+];
+const geodesic2 = new L.Geodesic(places,{fill: true}).addTo(map);
 
         const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
             weight: 7,
