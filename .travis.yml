@@ -7,15 +7,13 @@ addons:
     organization: "henrythasler"
     
 script:
-  # - npm run test && sonar-scanner 
-  - npm run build
+  - npm run test && sonar-scanner 
   
 after_success:  
-  - ls -la
-  # - coveralls < coverage/lcov.info
+  - coveralls < coverage/lcov.info
 
-# before_deploy:
-  # - npm run build
+before_deploy:
+  - npm run build
 
 deploy:
   skip_cleanup: true
