@@ -1,6 +1,6 @@
 {
   "name": "leaflet.geodesic",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Add-on to draw geodesic lines with leaflet",
   "main": "dist/leaflet.geodesic.js",
   "module": "dist/leaflet.geodesic.esm.js",
