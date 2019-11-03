@@ -12,6 +12,9 @@ script:
 after_success:  
   - coveralls < coverage/lcov.info
 
+before_deploy:
+  - npm run build
+
 deploy:
   skip_cleanup: true
   on:

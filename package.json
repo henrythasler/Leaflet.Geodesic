@@ -5,6 +5,9 @@
   "main": "dist/leaflet.geodesic.js",
   "module": "dist/leaflet.geodesic.esm.js",
   "browser": "dist/leaflet.geodesic.umd.min.js",
+  "files": [
+    "dist"
+  ], 
   "repository": {
     "type": "git",
     "url": "git+https://github.com/henrythasler/Leaflet.Geodesic.git"
