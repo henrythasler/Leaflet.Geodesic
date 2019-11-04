@@ -56,17 +56,10 @@
 
     <script type="text/javascript">
 
-        var map = L.map('map', {
-            maxBounds: [
-                [-90, -180],
-                [90, 180]
-            ],
-            center: [51.505, -0.09],
-            zoom: 2
-        });
+        var map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
-            noWrap: true,
+            noWrap: false,
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
@@ -80,7 +73,8 @@
             weight: 7,
             opacity: 0.5,
             color: 'red',
-            steps: 5,
+            steps: 2,
+            split:false
         }).addTo(map);
 
         A.on('drag', (e) => {

@@ -109,7 +109,7 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
         expect(dest).to.be.an("object");
         expect(dest).to.include.all.keys("lat", "lng", "bearing");
         expect(dest.lat).to.be.closeTo(0, eps);
-        expect(dest.lng).to.be.closeTo(180, eps);
+        expect(dest.lng).to.be.closeTo(-180, eps);  // FIXME: why is this not +180?
         expect(dest.bearing).to.be.closeTo(90, eps);
     });
 

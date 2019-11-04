@@ -61,8 +61,8 @@
                 [-90, -180],
                 [90, 180]
             ],
-            center: [51.505, -0.09],
-            zoom: 2
+            center: [50, -40],
+            zoom: 3
         });
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
@@ -71,29 +71,36 @@
         }).addTo(map);
 
         var berlin = new L.LatLng(52.5, 13.35);
-        var losangeles = new L.LatLng(33.82, -118.38);
+        var paris = new L.LatLng(48, 2);
 
-        var A = L.marker(losangeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        var B = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
+        var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
-        const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
+        const greatcircle = new L.GreatCircle(A.getLatLng(), {
             weight: 7,
             opacity: 0.5,
             color: 'red',
-            steps: 5,
+            steps: 24,
         }).addTo(map);
 
+
+        var diff = {lat:0, lng:0};
+        A.on('dragstart', function () {
+            diff = { lat: A.getLatLng().lat - B.getLatLng().lat, lng: A.getLatLng().lng - B.getLatLng().lng };	// remember difference between A and B
+        });
+
         A.on('drag', (e) => {
-            // console.log(`A=${e.latlng}`);
             A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            geodesic.setLatLngs([e.latlng, B.getLatLng()])
-            // console.log(geodesic.getLatLngs());
+            B.setLatLng({
+                lat: Math.max(-90, Math.min(90, A.getLatLng().lat - diff.lat)),
+                lng: A.getLatLng().lng - diff.lng
+            });	// move B parallel to A            
+            greatcircle.setLatLng(e.latlng);
+            greatcircle.setRadius(greatcircle.distanceTo(B.getLatLng()));
         });
         B.on('drag', (e) => {
-            // console.log(`B=${e.latlng}`);
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            geodesic.setLatLngs([A.getLatLng(), e.latlng])
-            // console.log(geodesic.getLatLngs());
+            greatcircle.setRadius(greatcircle.distanceTo(e.latlng));
         });
 
     </script>

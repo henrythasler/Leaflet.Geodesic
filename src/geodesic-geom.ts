@@ -1,12 +1,20 @@
 import L from "leaflet";
-import { GeodesicCore, GeoDistance } from "./geodesic-core"
+import { GeodesicCore, GeoDistance, GeodesicOptions, WGS84Vector } from "./geodesic-core"
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
+    readonly options: GeodesicOptions = {split: true, steps: 3};
+
+    constructor(options?: GeodesicOptions) {
+        this.options = { ...this.options, ...options };
+    }
 
     recursiveMidpoint(start: L.LatLngLiteral, dest: L.LatLngLiteral, iterations: number): L.LatLngLiteral[] {
         let geom: L.LatLngLiteral[] = [start, dest];
-        const midpoint = this.geodesic.midpoint(start, dest)
+        let midpoint = this.geodesic.midpoint(start, dest)
+        if(this.options.split) {
+            midpoint.lng = this.geodesic.wrap180(midpoint.lng);
+        }
 
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
@@ -18,7 +26,17 @@ export class GeodesicGeometry {
     }
 
     line(start: L.LatLngLiteral, dest: L.LatLngLiteral): L.LatLngLiteral[] {
-        return this.recursiveMidpoint(start, dest, 4);
+        return this.recursiveMidpoint(start, dest, Math.min(8, (this.options.steps === undefined)?3:this.options.steps));
+    }
+
+    circle(center: L.LatLngLiteral, radius: number): L.LatLngLiteral[] {
+        const steps = (this.options.steps === undefined)?24:this.options.steps;
+        let points: L.LatLngLiteral[] = [];
+        for(let i=0; i<steps;i++) {
+            let point: WGS84Vector = this.geodesic.direct(center, 360/steps*i, radius);
+            points.push({lat: point.lat, lng: point.lng} as L.LatLngLiteral);
+        }
+        return points;
     }
 
     multiLineString(latlngs: L.LatLngLiteral[][]): L.LatLngLiteral[][] {
@@ -39,16 +57,16 @@ export class GeodesicGeometry {
     }
 
     splitLine(start: L.LatLngLiteral, dest: L.LatLngLiteral): L.LatLngLiteral[][] {
-        const dateLineWest = {
+        const antimeridianWest = {
             point: { lat: 89, lng: -180 } as L.LatLngLiteral,
             bearing: 180
         };
-        const dateLineEast = {
+        const antimeridianEast = {
             point: { lat: 89, lng: 180 } as L.LatLngLiteral,
             bearing: 180
         };
 
-        // we need a significant difference between the points and the dateline. So we clamp for +-179.9 for now...
+        // we need a significant difference between the points and the antimeridian. So we clamp for +-179.9 for now...
         start.lng = Math.max(-179.9, start.lng);
         start.lng = Math.min(179.9, start.lng);
         dest.lng = Math.max(-179.9, dest.lng);
@@ -57,12 +75,12 @@ export class GeodesicGeometry {
         let line: GeoDistance = this.geodesic.inverse(start, dest);
         let intersection: L.LatLngLiteral | null;
 
-        // depending on initial direction, we check for crossing the dateline in western or eastern direction
+        // depending on initial direction, we check for crossing the antimeridian in western or eastern direction
         if (line.initialBearing > 180) {
-            intersection = this.geodesic.intersection(start, line.initialBearing, dateLineWest.point, dateLineWest.bearing);
+            intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianWest.point, antimeridianWest.bearing);
         }
         else {
-            intersection = this.geodesic.intersection(start, line.initialBearing, dateLineEast.point, dateLineEast.bearing);
+            intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianEast.point, antimeridianEast.bearing);
         }
 
         if (intersection) {
@@ -98,5 +116,9 @@ export class GeodesicGeometry {
             result.push(segment);
         });
         return result;
+    }
+
+    distance(start: L.LatLngLiteral, dest: L.LatLngLiteral):number {
+        return this.geodesic.inverse(start, dest).distance;
     }
 }
