@@ -15,3 +15,7 @@ use-site-title: true
 ## Interactive Multi-Linestring
 
 [![multiline-interactive](img/multiline-interactive.png)](multiline-interactive.html)
+
+## Interactive Circle
+
+[![circle-interactive](img/circle-interactive.png)](circle-interactive.html)
