@@ -4,8 +4,8 @@ import { GeodesicGeometry } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
-    readonly polyline: L.Polyline;
-    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
+    polyline: L.Polyline;
+    options: GeodesicOptions = { wrap: true, steps: 3 };
     private geom: GeodesicGeometry;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
@@ -39,7 +39,7 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
-    update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+    private update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
         const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
         if (this.options.wrap) {
             const split = this.geom.splitMultiLineString(geodesic);

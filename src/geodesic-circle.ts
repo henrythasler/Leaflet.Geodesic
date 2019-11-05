@@ -1,11 +1,11 @@
 import L from "leaflet";
 import { GeodesicGeometry } from "./geodesic-geom"
 import { GeodesicOptions } from "./geodesic-core"
-import { latlngExpressiontoLiteral } from "../src/types-helper";
+import { latlngExpressiontoLiteral } from "./types-helper";
 
-export class GreatCircleClass extends L.Layer {
+export class GeodesicCircleClass extends L.Layer {
     polyline: L.Polyline;
-    options: GeodesicOptions = {wrap: true, steps: 24, noClip: true};
+    options: GeodesicOptions = {wrap: true, steps: 24, fill: true, noClip: true};
     private geom: GeodesicGeometry;
     center: L.LatLngLiteral = {lat: 0, lng: 0};
     radius: number = 0;
@@ -21,7 +21,8 @@ export class GreatCircleClass extends L.Layer {
         if (center ) {
             this.center = latlngExpressiontoLiteral(center);
             let latlngs = this.geom.circle(this.center, this.radius);
-            this.polyline = new L.Polyline([latlngs], this.options);
+            // const split = this.geom.splitCircle(latlngs);
+            this.polyline = new L.Polyline(latlngs, this.options);
         }
         else {
             this.polyline = new L.Polyline([], this.options);
@@ -40,7 +41,8 @@ export class GreatCircleClass extends L.Layer {
 
     private update():void {
         const latlngs = this.geom.circle(this.center, this.radius);
-        this.polyline.setLatLngs([latlngs]);
+        // const split = this.geom.splitCircle(latlngs);
+        this.polyline.setLatLngs(latlngs);
     }
 
     distanceTo(latlng: L.LatLngExpression): number {

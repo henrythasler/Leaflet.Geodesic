@@ -3,7 +3,7 @@
  */
 import L from "leaflet";
 import { GeodesicOptions } from "../src/geodesic-core"
-import { GreatCircleClass } from "../src/great-circle";
+import { GeodesicCircleClass } from "../src/geodesic-circle";
 import { expect } from "chai";
 
 import "jest";
@@ -15,7 +15,7 @@ const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.9264955277
 const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
 const Beijing: L.LatLngLiteral = { lat: 39.92, lng: 116.39 };
 
-const defaultOptions:GeodesicOptions = { wrap: true, steps: 24, noClip: true };
+const defaultOptions:GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
 
 const eps = 0.000001;
 
@@ -32,30 +32,30 @@ describe("Main functionality", function () {
     });
 
     it("Create class w/o any parameters", function () {
-        const circle = new GreatCircleClass();
+        const circle = new GeodesicCircleClass();
         expect(circle.options).to.be.deep.equal(defaultOptions);
         expect(circle.polyline).to.be.an("object");
     });
 
-    it("Create class with legacy parameters", function () {
-        const circle = new GreatCircleClass(Beijing, {wrap: true});
-        expect(circle.options).to.be.deep.equal(defaultOptions);
+    it("Create class with parameters", function () {
+        const circle = new GeodesicCircleClass(Beijing, {steps: 48});
+        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{steps: 48} });
         expect(circle.polyline).to.be.an("object");
     });
 
     it("Add empty circle to map", async function () {
-        const circle = new GreatCircleClass().addTo(map);
+        const circle = new GeodesicCircleClass().addTo(map);
         expect(circle.options).to.be.deep.equal(defaultOptions);
         expect(circle.polyline).to.be.an("object");
 
         expect(map.hasLayer(circle)).to.be.true;
         map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GreatCircleClass);
+            expect(layer).to.be.instanceOf(GeodesicCircleClass);
         });
     });
 
     it("update center", async function () {
-        const circle = new GreatCircleClass(Seattle).addTo(map);
+        const circle = new GeodesicCircleClass(Seattle).addTo(map);
         circle.setLatLng(Beijing);
         expect(circle.options).to.be.deep.equal(defaultOptions);
         expect(circle.polyline).to.be.an("object");
@@ -65,12 +65,12 @@ describe("Main functionality", function () {
 
         expect(map.hasLayer(circle)).to.be.true;
         map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GreatCircleClass);
+            expect(layer).to.be.instanceOf(GeodesicCircleClass);
         });
     });
 
     it("update radius", async function () {
-        const circle = new GreatCircleClass(Seattle, { radius: radius }).addTo(map);
+        const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
         expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{radius: radius} });
         expect(circle.polyline).to.be.an("object");
         expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
@@ -80,12 +80,12 @@ describe("Main functionality", function () {
 
         expect(map.hasLayer(circle)).to.be.true;
         map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GreatCircleClass);
+            expect(layer).to.be.instanceOf(GeodesicCircleClass);
         });
     });
 
     it("distance function (wrapper for vincenty inverse)", function () {
-        const circle = new GreatCircleClass(FlindersPeak);
+        const circle = new GeodesicCircleClass(FlindersPeak);
         const res = circle.distanceTo(Buninyong);
         expect(res).to.be.a("number");
         expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits

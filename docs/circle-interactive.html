@@ -46,7 +46,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="leaflet.geodesic.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
@@ -61,8 +61,8 @@
                 [-90, -180],
                 [90, 180]
             ],
-            center: [0, 0],
-            zoom: 2
+            center: [50, 0],
+            zoom: 4
         });
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
@@ -73,29 +73,17 @@
         var berlin = new L.LatLng(52.5, 13.35);
         var paris = new L.LatLng(48, 2);
 
-        // var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        // var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
-
-        var A = L.marker([0, -170], { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
         var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
-        const greatcircle = new L.GeodesicCircle(A.getLatLng(), {
+        const geodesiccircle = new L.GeodesicCircle(A.getLatLng(), {
             weight: 7,
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 80,
-            radius: 3000*1000
+            steps: 80
         }).addTo(map);
-
-        const greatcircle2 = new L.GeodesicCircle({ lat: 47.56, lng: -122.33 }, {
-            weight: 6,
-            // opacity: 0.5,
-            // color: 'red',
-            radius: 3000*1000,
-            // steps: 48,
-        }).addTo(map);        
-
+        geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
 
         var diff = {lat:0, lng:0};
         A.on('dragstart', function () {
@@ -108,12 +96,12 @@
                 lat: Math.max(-90, Math.min(90, A.getLatLng().lat - diff.lat)),
                 lng: A.getLatLng().lng - diff.lng
             });	// move B parallel to A            
-            greatcircle.setLatLng(e.latlng);
-            greatcircle.setRadius(greatcircle.distanceTo(B.getLatLng()));
+            geodesiccircle.setLatLng(e.latlng);
+            geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            greatcircle.setRadius(greatcircle.distanceTo(e.latlng));
+            geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
         });
 
     </script>
