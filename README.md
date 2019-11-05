@@ -25,8 +25,8 @@ Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geod
 
 ## Basic usage
 
-- `L.Geodesic` calculates the geodesic lines between all points of a given line- or multiline-string. 
-- `L.GeodesicCircle` calculates a circle with a specific radius around a given point.
+- `L.Geodesic` draws geodesic lines between all points of a given line- or multiline-string. 
+- `L.GeodesicCircle` draws a circle with a specific radius around a given point.
 
 The Objects can be created as follows:
 
