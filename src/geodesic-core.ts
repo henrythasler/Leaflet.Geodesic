@@ -1,8 +1,9 @@
 import L from "leaflet";
 
 export interface GeodesicOptions extends L.PolylineOptions {
-    wrap?: true,
-    steps?: 10
+    wrap?: boolean,
+    steps?: number,
+    radius?: number
 }
 
 export interface WGS84Vector extends L.LatLngLiteral {
@@ -20,7 +21,7 @@ export class GeodesicCore {
     // /** used as maximal deviation for all iterative calculation. Smaller value increases computational effort */
     // protected ε = 1e-12;
 
-    readonly options: GeodesicOptions = {};
+    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     readonly ellipsoid = {
         a: 6378137,
         b: 6356752.3142,
@@ -55,7 +56,7 @@ export class GeodesicCore {
      */
     wrap180(degrees: number) {
         if (-180 <= degrees && degrees < 180) return degrees;
-        return (((degrees+180) % 360 + 360) % 360) - 180;
+        return (((degrees + 180) % 360 + 360) % 360) - 180;
     }
 
     /**
@@ -114,7 +115,7 @@ export class GeodesicCore {
         const α2 = Math.atan2(sinα, -x);
         return {
             lat: this.toDegrees(φ2),
-            lng: this.wrap360(this.toDegrees(λ2)),
+            lng: this.toDegrees(λ2),
             bearing: this.wrap360(this.toDegrees(α2))
         }
     }
@@ -169,13 +170,13 @@ export class GeodesicCore {
             if (iterationCheck > π) throw new EvalError('λ > π');
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
         if (iterations >= maxInterations) {
-            if(mitigateConvergenceError) {
-                return this.inverse(start, {lat: dest.lat, lng: dest.lng - 0.01}, maxInterations, mitigateConvergenceError);
+            if (mitigateConvergenceError) {
+                return this.inverse(start, { lat: dest.lat, lng: dest.lng - 0.01 }, maxInterations, mitigateConvergenceError);
             }
             else {
                 throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
             }
-            
+
         }
         const uSq = cosSqα * (a * a - b * b) / (b * b);
         const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
@@ -277,8 +278,8 @@ export class GeodesicCore {
         const λm = λ1 + Math.atan2(C.y, C.x);
 
         return {
-            lat: this.wrap180(this.toDegrees(φm)),
-            lng: this.wrap180(this.toDegrees(λm))
+            lat: this.toDegrees(φm),
+            lng: this.toDegrees(λm)
         } as L.LatLngLiteral;
     }
 }

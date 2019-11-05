@@ -12,15 +12,15 @@ import "jest";
 describe("Object creation", function () {
     it("Classes", function () {
         const geodesic:L.Geodesic = new L.Geodesic();
-        const greatcircle:L.GreatCircle = new L.GreatCircle();
+        const circle:L.GeodesicCircle = new L.GeodesicCircle();
         expect(geodesic).to.be.instanceOf(L.Geodesic);
-        expect(greatcircle).to.be.instanceOf(L.GreatCircle);
+        expect(circle).to.be.instanceOf(L.GeodesicCircle);
     });
 
     it("Functions", function () {
         const geodesic:L.Geodesic = L.geodesic();
-        const greatcircle:L.GreatCircle = L.greatcircle();
+        const circle:L.GeodesicCircle = L.geodesiccircle();
         expect(geodesic).to.be.instanceOf(L.Geodesic);
-        expect(greatcircle).to.be.instanceOf(L.GreatCircle);
+        expect(circle).to.be.instanceOf(L.GeodesicCircle);
     });    
 });

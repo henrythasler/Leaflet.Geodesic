@@ -4,23 +4,29 @@ import { GeodesicGeometry } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
-    readonly polyline: L.Polyline;
-    readonly options: GeodesicOptions = {};
-    private geom = new GeodesicGeometry();
+    polyline: L.Polyline;
+    options: GeodesicOptions = { wrap: true, steps: 3 };
+    private geom: GeodesicGeometry;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
-        
-        if(latlngs) {
-            let geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
-            let split = this.geom.splitMultiLineString(geodesic);
-            this.polyline = new L.Polyline(split, this.options);
+
+        this.geom = new GeodesicGeometry(this.options);
+
+        if (latlngs) {
+            const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+            if (this.options.wrap) {
+                const split = this.geom.splitMultiLineString(geodesic);
+                this.polyline = new L.Polyline(split, this.options);
+            }
+            else {
+                this.polyline = new L.Polyline(geodesic, this.options);
+            }
         }
         else {
             this.polyline = new L.Polyline([], this.options);
         }
-        // this.update(latlngs);
     }
 
     onAdd(map: L.Map): this {
@@ -33,12 +39,15 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
-    update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
-        let geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
-        let split = this.geom.splitMultiLineString(geodesic);
-        this.polyline.setLatLngs(split);
-
-        // this.polyline.setLatLngs(geodesic);
+    private update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+        const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+        if (this.options.wrap) {
+            const split = this.geom.splitMultiLineString(geodesic);
+            this.polyline.setLatLngs(split);
+        }
+        else {
+            this.polyline.setLatLngs(geodesic);
+        }
     }
 
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {

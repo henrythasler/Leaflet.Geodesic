@@ -1,22 +1,22 @@
 import L from "leaflet";
 import { GeodesicLine } from './geodesic-line';
-import { GreatCircleClass } from './great-circle';
+import { GeodesicCircleClass } from './geodesic-circle';
 
 declare module "leaflet" {
         type Geodesic = GeodesicLine;
         let Geodesic: typeof GeodesicLine;
         let geodesic: (...args: ConstructorParameters<typeof GeodesicLine>) => GeodesicLine;
 
-        type GreatCircle = GreatCircleClass;
-        let GreatCircle: typeof GreatCircleClass;
-        let greatcircle: (...args: ConstructorParameters<typeof GreatCircleClass>) => GreatCircleClass;
+        type GeodesicCircle = GeodesicCircleClass;
+        let GeodesicCircle: typeof GeodesicCircleClass;
+        let geodesiccircle: (...args: ConstructorParameters<typeof GeodesicCircleClass>) => GeodesicCircleClass;
 }
 
 L.Geodesic = GeodesicLine;
 L.geodesic = (...args: ConstructorParameters<typeof GeodesicLine>) => new GeodesicLine(...args);
 
-L.GreatCircle = GreatCircleClass;
-L.greatcircle = (...args: ConstructorParameters<typeof GreatCircleClass>) => new GreatCircleClass(...args);
+L.GeodesicCircle = GeodesicCircleClass;
+L.geodesiccircle = (...args: ConstructorParameters<typeof GeodesicCircleClass>) => new GeodesicCircleClass(...args);
 
 export * from './geodesic-line';
-export * from './great-circle';
+export * from './geodesic-circle';
