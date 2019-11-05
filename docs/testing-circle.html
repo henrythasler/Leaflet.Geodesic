@@ -73,11 +73,11 @@
         var berlin = new L.LatLng(52.5, 13.35);
         var paris = new L.LatLng(48, 2);
 
-        // var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        // var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
-
-        var A = L.marker([0, -170], { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
         var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
+
+        // var A = L.marker([0, -170], { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        // var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
         const greatcircle = new L.GeodesicCircle(A.getLatLng(), {
             weight: 7,
@@ -88,13 +88,13 @@
             radius: 3000*1000
         }).addTo(map);
 
-        const greatcircle2 = new L.GeodesicCircle({ lat: 47.56, lng: -122.33 }, {
-            weight: 6,
-            // opacity: 0.5,
-            // color: 'red',
-            radius: 3000*1000,
-            // steps: 48,
-        }).addTo(map);        
+        // const greatcircle2 = new L.GeodesicCircle({ lat: 47.56, lng: -122.33 }, {
+        //     weight: 6,
+        //     // opacity: 0.5,
+        //     // color: 'red',
+        //     radius: 3000*1000,
+        //     // steps: 48,
+        // }).addTo(map);        
 
 
         var diff = {lat:0, lng:0};
