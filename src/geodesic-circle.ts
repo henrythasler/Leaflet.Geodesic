@@ -21,7 +21,6 @@ export class GeodesicCircleClass extends L.Layer {
         if (center ) {
             this.center = latlngExpressiontoLiteral(center);
             let latlngs = this.geom.circle(this.center, this.radius);
-            // const split = this.geom.splitCircle(latlngs);
             this.polyline = new L.Polyline(latlngs, this.options);
         }
         else {
@@ -41,7 +40,6 @@ export class GeodesicCircleClass extends L.Layer {
 
     private update():void {
         const latlngs = this.geom.circle(this.center, this.radius);
-        // const split = this.geom.splitCircle(latlngs);
         this.polyline.setLatLngs(latlngs);
     }
 

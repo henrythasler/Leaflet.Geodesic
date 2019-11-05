@@ -7,7 +7,7 @@ declare module "leaflet" {
         let Geodesic: typeof GeodesicLine;
         let geodesic: (...args: ConstructorParameters<typeof GeodesicLine>) => GeodesicLine;
 
-        type GreatCircle = GeodesicCircleClass;
+        type GeodesicCircle = GeodesicCircleClass;
         let GeodesicCircle: typeof GeodesicCircleClass;
         let geodesiccircle: (...args: ConstructorParameters<typeof GeodesicCircleClass>) => GeodesicCircleClass;
 }
