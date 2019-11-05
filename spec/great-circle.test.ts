@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import L from "leaflet";
+import { GeodesicOptions } from "../src/geodesic-core"
 import { GreatCircleClass } from "../src/great-circle";
 import { expect } from "chai";
 
@@ -13,6 +14,8 @@ const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.9264955277
 
 const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
 const Beijing: L.LatLngLiteral = { lat: 39.92, lng: 116.39 };
+
+const defaultOptions:GeodesicOptions = { wrap: true, steps: 24, noClip: true };
 
 const eps = 0.000001;
 
@@ -30,14 +33,20 @@ describe("Main functionality", function () {
 
     it("Create class w/o any parameters", function () {
         const circle = new GreatCircleClass();
-        expect(circle.options).to.be.deep.equal({ split: true, steps: 3 });
-        expect(circle.polygon).to.be.an("object");
+        expect(circle.options).to.be.deep.equal(defaultOptions);
+        expect(circle.polyline).to.be.an("object");
+    });
+
+    it("Create class with legacy parameters", function () {
+        const circle = new GreatCircleClass(Beijing, {wrap: true});
+        expect(circle.options).to.be.deep.equal(defaultOptions);
+        expect(circle.polyline).to.be.an("object");
     });
 
     it("Add empty circle to map", async function () {
         const circle = new GreatCircleClass().addTo(map);
-        expect(circle.options).to.be.deep.equal({ split: true, steps: 3 });
-        expect(circle.polygon).to.be.an("object");
+        expect(circle.options).to.be.deep.equal(defaultOptions);
+        expect(circle.polyline).to.be.an("object");
 
         expect(map.hasLayer(circle)).to.be.true;
         map.eachLayer(function (layer) {
@@ -48,8 +57,8 @@ describe("Main functionality", function () {
     it("update center", async function () {
         const circle = new GreatCircleClass(Seattle).addTo(map);
         circle.setLatLng(Beijing);
-        expect(circle.options).to.be.deep.equal({ split: true, steps: 3});
-        expect(circle.polygon).to.be.an("object");
+        expect(circle.options).to.be.deep.equal(defaultOptions);
+        expect(circle.polyline).to.be.an("object");
         expect(circle.center.lat).to.be.closeTo(Beijing.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Beijing.lng, eps);
         expect(circle.radius).to.be.closeTo(radius, eps);
@@ -62,8 +71,8 @@ describe("Main functionality", function () {
 
     it("update radius", async function () {
         const circle = new GreatCircleClass(Seattle, { radius: radius }).addTo(map);
-        expect(circle.options).to.be.deep.equal({ split: true, steps: 3, radius: radius });
-        expect(circle.polygon).to.be.an("object");
+        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{radius: radius} });
+        expect(circle.polyline).to.be.an("object");
         expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
         circle.setRadius(2 * radius);

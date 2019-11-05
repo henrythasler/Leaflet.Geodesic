@@ -5,24 +5,18 @@ import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
     readonly polyline: L.Polyline;
-    readonly options: GeodesicOptions = { split: true, steps: 3 };
+    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     private geom: GeodesicGeometry;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
         this.options = { ...this.options, ...options };
 
-        // allow "wrap" for compatibility-reasons with the (old) javascript-implementation. Is mapped to "split".
-        if ("wrap" in this.options) {
-            this.options.split = this.options.wrap;
-            delete this.options.wrap;
-        }
-
         this.geom = new GeodesicGeometry(this.options);
 
         if (latlngs) {
             const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
-            if (this.options.split) {
+            if (this.options.wrap) {
                 const split = this.geom.splitMultiLineString(geodesic);
                 this.polyline = new L.Polyline(split, this.options);
             }
@@ -47,7 +41,7 @@ export class GeodesicLine extends L.Layer {
 
     update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
         const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
-        if (this.options.split) {
+        if (this.options.wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
             this.polyline.setLatLngs(split);
         }

@@ -3,7 +3,7 @@ import { GeodesicCore, GeoDistance, GeodesicOptions, WGS84Vector } from "./geode
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
-    readonly options: GeodesicOptions = {split: true, steps: 3};
+    readonly options: GeodesicOptions = {wrap: true, steps: 3};
 
     constructor(options?: GeodesicOptions) {
         this.options = { ...this.options, ...options };
@@ -12,7 +12,7 @@ export class GeodesicGeometry {
     recursiveMidpoint(start: L.LatLngLiteral, dest: L.LatLngLiteral, iterations: number): L.LatLngLiteral[] {
         let geom: L.LatLngLiteral[] = [start, dest];
         let midpoint = this.geodesic.midpoint(start, dest)
-        if(this.options.split) {
+        if(this.options.wrap) {
             midpoint.lng = this.geodesic.wrap180(midpoint.lng);
         }
 
@@ -32,7 +32,7 @@ export class GeodesicGeometry {
     circle(center: L.LatLngLiteral, radius: number): L.LatLngLiteral[] {
         const steps = (this.options.steps === undefined)?24:this.options.steps;
         let points: L.LatLngLiteral[] = [];
-        for(let i=0; i<steps;i++) {
+        for(let i=0; i<steps+1;i++) {
             let point: WGS84Vector = this.geodesic.direct(center, 360/steps*i, radius);
             points.push({lat: point.lat, lng: point.lng} as L.LatLngLiteral);
         }
@@ -117,6 +117,30 @@ export class GeodesicGeometry {
         });
         return result;
     }
+
+    splitCircle(latlngs: L.LatLngLiteral[]): L.LatLngLiteral[][] {
+
+        // let segment: L.LatLngLiteral[] = [];
+        // for (let j = 1; j < latlngs.length; j++) {
+        //     segment.splice(segment.length - 1, 1, ...this.line(linestring[j - 1], linestring[j]));
+        // }
+
+
+        let needsSplitting = false;
+        for(let point of latlngs) {
+            if((point.lng < -180) || (point.lng > 180)) {
+                needsSplitting = true;
+                break;
+            }
+        }
+
+        if(needsSplitting) {
+            return [latlngs];
+        }
+        else {
+            return [latlngs];
+        }
+    }    
 
     distance(start: L.LatLngLiteral, dest: L.LatLngLiteral):number {
         return this.geodesic.inverse(start, dest).distance;

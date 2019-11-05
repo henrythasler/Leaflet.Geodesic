@@ -4,21 +4,15 @@ import { GeodesicOptions } from "./geodesic-core"
 import { latlngExpressiontoLiteral } from "../src/types-helper";
 
 export class GreatCircleClass extends L.Layer {
-    polygon: L.Polygon;
-    options: GeodesicOptions = { split: true, steps: 3 };
+    polyline: L.Polyline;
+    options: GeodesicOptions = {wrap: true, steps: 24, noClip: true};
     private geom: GeodesicGeometry;
     center: L.LatLngLiteral = {lat: 0, lng: 0};
     radius: number = 0;
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
         super();
-        this.options = { ...this.options, ...options };
-
-        // allow "wrap" for compatibility-reasons with the (old) javascript-implementation. Is mapped to "split".
-        if ("wrap" in this.options) {
-            this.options.split = this.options.wrap;
-            delete this.options.wrap;
-        }
+        this.options = { ...this.options, ...options};  // noClip prevents broken fills
 
         this.geom = new GeodesicGeometry(this.options);
 
@@ -27,26 +21,26 @@ export class GreatCircleClass extends L.Layer {
         if (center ) {
             this.center = latlngExpressiontoLiteral(center);
             let latlngs = this.geom.circle(this.center, this.radius);
-            this.polygon = new L.Polygon(latlngs, this.options);
+            this.polyline = new L.Polyline([latlngs], this.options);
         }
         else {
-            this.polygon = new L.Polygon([], this.options);
+            this.polyline = new L.Polyline([], this.options);
         }
     }
 
     onAdd(map: L.Map): this {
-        this.polygon.addTo(map);
+        this.polyline.addTo(map);
         return this;
     }
 
     onRemove(): this {
-        this.polygon.remove();
+        this.polyline.remove();
         return this;
     }
 
     private update():void {
         const latlngs = this.geom.circle(this.center, this.radius);
-        this.polygon.setLatLngs(latlngs);
+        this.polyline.setLatLngs([latlngs]);
     }
 
     distanceTo(latlng: L.LatLngExpression): number {

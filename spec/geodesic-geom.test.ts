@@ -52,7 +52,6 @@ const SeattleCapetown17: L.LatLngLiteral[] = [
 ];
 
 const geom = new GeodesicGeometry();
-const circlegeom = new GeodesicGeometry({ steps: 6 });
 const eps = 0.000001;
 
 function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][]): void {
@@ -286,26 +285,10 @@ describe("splitMultiLineString - test cases for bugs", function () {
     });
 });
 
-describe("circle function", function () {
-    it("1000km around Berlin", function () {
-        const fixture: L.LatLngLiteral[][] = [
-            [
-                { lat: 61.479983, lng: 13.349999 },
-                { lat: 56.219051, lng: 27.392553 },
-                { lat: 47.396791, lng: 24.852190 },
-                { lat: 43.506398, lng: 13.350000 },
-                { lat: 47.396791, lng: 1.847809 },
-                { lat: 56.219051, lng: -0.692553 }]];
-
-        const circle = circlegeom.circle(Berlin, 1000*1000);
-        checkFixture([circle], fixture);
-    });
-});
-
 describe("distance function (wrapper for vincenty inverse)", function () {
     it("FlindersPeak to Buninyong", function () {
         const res = geom.distance(FlindersPeak, Buninyong);
         expect(res).to.be.a("number");
         expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits
-    });    
+    });
 });

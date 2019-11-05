@@ -1,8 +1,7 @@
 import L from "leaflet";
 
 export interface GeodesicOptions extends L.PolylineOptions {
-    split?: boolean,
-    wrap?: boolean, // for compatibility-reasons with the javascript-implementation
+    wrap?: boolean,
     steps?: number,
     radius?: number
 }
@@ -22,7 +21,7 @@ export class GeodesicCore {
     // /** used as maximal deviation for all iterative calculation. Smaller value increases computational effort */
     // protected ε = 1e-12;
 
-    readonly options: GeodesicOptions = { split: true, steps: 3 };
+    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     readonly ellipsoid = {
         a: 6378137,
         b: 6356752.3142,
