@@ -1,4 +1,5 @@
 import L from "leaflet";
+import * as geojson from "geojson";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
@@ -52,6 +53,27 @@ export class GeodesicLine extends L.Layer {
 
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         this.update(latlngs);
+        return this;
+    }
+
+    fromGeoJson(input: geojson.GeoJSON): this {
+        let latlngs: L.LatLngExpression[][] = [];
+        if (input.type === "FeatureCollection") {
+            input.features.forEach((feature: geojson.Feature) => {
+                switch (feature.geometry.type) {
+                    case "MultiPoint":
+                    case "LineString":
+                        latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
+                        break;
+                    case "MultiLineString":
+                    case "Polygon":
+                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
+                        break;
+                }
+            })
+        }
+        // console.log(latlngs);
+        this.setLatLngs(latlngs);
         return this;
     }
 

@@ -22,6 +22,8 @@ sudo npm install -g np npm
 
 - [Calculate distance, bearing and more between Latitude/Longitude points](https://www.movable-type.co.uk/scripts/latlong.html)
 - [Geodetic Calculations - Vincenty's Formulae, Inverse Method](https://www.ga.gov.au/geodesy/datums/vincenty_inverse.jsp)
+- [The GeoJSON Format](https://tools.ietf.org/html/rfc7946)
+- [GeoJSONLint](http://geojsonlint.com/)
 
 ## Leaflet 
 
