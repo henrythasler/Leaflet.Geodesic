@@ -125,36 +125,107 @@ describe("GeoJSON-Support", function () {
         map.remove();
     });
 
-    it("Read LineString", async function () {
+    it("Just a Linestring", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
-        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}simple-linestring.geojson`, "utf8"));
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometry-line.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
+    });     
+
+    it("Feature with Linestring", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}feature-line.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
+    });     
+
+    it("FeatureCollection with LineString", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
-    it("Read Polygon", async function () {
+    it("FeatureCollection with Polygon", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
-        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}simple-polygon.geojson`, "utf8"));
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
-    it("Read MultiPoint", async function () {
+    it("FeatureCollection with Polygon incl. hole", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
-        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}simple-multipoint.geojson`, "utf8"));
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon-hole.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}polygon-hole.fixture.json`, "utf8")));
+    });    
+
+    it("FeatureCollection with MultiPoint", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipoint.geojson`, "utf8"));
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
-    it("Read MultiLineString", async function () {
+    it("FeatureCollection with MultiLineString", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
-        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}simple-multilinestring.geojson`, "utf8"));
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multiline.geojson`, "utf8"));
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multiline.fixture.json`, "utf8")));
     });
+
+    it("FeatureCollection with MultiPolygon", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipolygon.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8")));
+    });
+
+    it("FeatureCollection with LineString and MultiPolygon", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line-multipolygon.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        const fixture = [
+            ...JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")),
+            ...JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8"))];
+        checkFixture(latlngs, fixture);
+    });
+
+    it("FeatureCollection with Point", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}point.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        expect(latlngs).to.be.an("array");
+        expect(latlngs).to.be.length(0);
+    });    
+
+    it("Mixed FeatureCollection", async function () {
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}mixed.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}mixed.fixture.json`, "utf8")));
+    });
+
+    it("GeometryCollection", async function () {
+        console.log = jest.fn();
+
+        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
+        line.fromGeoJson(geojson);
+        const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
+        expect(latlngs).to.be.an("array");
+        expect(latlngs).to.be.length(0);
+    });     
 
 });

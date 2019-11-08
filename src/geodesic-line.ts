@@ -58,21 +58,42 @@ export class GeodesicLine extends L.Layer {
 
     fromGeoJson(input: geojson.GeoJSON): this {
         let latlngs: L.LatLngExpression[][] = [];
+        let features: geojson.Feature[] = [];
+
         if (input.type === "FeatureCollection") {
-            input.features.forEach((feature: geojson.Feature) => {
-                switch (feature.geometry.type) {
-                    case "MultiPoint":
-                    case "LineString":
-                        latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
-                        break;
-                    case "MultiLineString":
-                    case "Polygon":
-                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
-                        break;
-                }
-            })
+            features = input.features;
         }
-        // console.log(latlngs);
+        else if (input.type === "Feature") {
+            features = [input];
+        }
+        else if (["MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(input.type)) {
+            features = [{
+                type: "Feature",
+                geometry: input,
+                properties: {}
+            }]
+        }
+        else {
+            console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${input.type}" not supported.`);
+        }
+
+        features.forEach((feature: geojson.Feature) => {
+            switch (feature.geometry.type) {
+                case "MultiPoint":
+                case "LineString":
+                    latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
+                    break;
+                case "MultiLineString":
+                case "Polygon":
+                    latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
+                    break;
+                case "MultiPolygon":
+                    feature.geometry.coordinates.forEach((item) => {
+                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1)]
+                    })
+                    break;
+            }
+        });
         this.setLatLngs(latlngs);
         return this;
     }
