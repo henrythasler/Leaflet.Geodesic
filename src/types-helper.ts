@@ -2,7 +2,7 @@ import L from "leaflet";
 
 export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
     return ((typeof object === "object")
-        && (typeof object !== null)
+        && (object !== null)
         && ('lat' in object)
         && ('lng' in object)
         && (typeof object.lat === "number")

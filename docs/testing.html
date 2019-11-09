@@ -77,10 +77,6 @@
             steps: 5,
         }).addTo(map);
 
-        const Berlin = [52.5, 13.35];
-const LosAngeles = [33.82, -118.38];
-const geodesic2 = new L.Geodesic([Berlin, LosAngeles], {weight: 6}).addTo(map);
-
         A.on('drag', (e) => {
             // console.log(`A=${e.latlng}`);
             A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
