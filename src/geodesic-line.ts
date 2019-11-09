@@ -92,9 +92,14 @@ export class GeodesicLine extends L.Layer {
                         latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1)]
                     })
                     break;
+                default:
+                    console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${feature.geometry.type}" not supported.`);
             }
         });
-        this.setLatLngs(latlngs);
+
+        if(latlngs.length) {
+            this.setLatLngs(latlngs);
+        }
         return this;
     }
 

@@ -17,24 +17,19 @@
             width: 100%;
         }
 
-        .distance-container {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            z-index: 1;
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+	        margin: 0 0 5px;
+	        color: #777;
         }
 
-        .distance-container>* {
-            background-color: #fff;
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 18px;
-            display: block;
-            margin: 0;
-            padding: 5px 10px;
-            border-radius: 3px;
-        }
     </style>
     <title>Leaflet.Geodesic demo</title>
 
@@ -52,7 +47,6 @@
 
 <body>
     <div id="map"></div>
-    <div id='distance' class='distance-container'></div>
 
     <script type="text/javascript">
 
@@ -82,6 +76,10 @@
             color: 'red',
             steps: 5,
         }).addTo(map);
+
+        const Berlin = [52.5, 13.35];
+const LosAngeles = [33.82, -118.38];
+const geodesic2 = new L.Geodesic([Berlin, LosAngeles], {weight: 6}).addTo(map);
 
         A.on('drag', (e) => {
             // console.log(`A=${e.latlng}`);

@@ -116,6 +116,23 @@ const geodesic = new L.Geodesic(places).addTo(map);
 
 ![multilinestring](docs/img/multilinestring.png)
 
+### GeoJSON-Support
+
+GeoJSON-data can be used to create geodesic lines with the `fromGeoJson()` method:
+
+```JavaScript
+const geojson = {
+    "type": "LineString",
+    "coordinates": [
+        [13.35, 52.5], [-122.33, 47.56], [18.39, -33.94], [116.39, 39.92], [13.35, 52.5]
+    ]
+};
+const geodesic = new L.Geodesic().addTo(map);
+geodesic.fromGeoJson(geojson);
+```
+
+![geojson](docs/img/geojson.png)
+
 ### Updating the geometry
 
 Each Geodesic-Class provides a `setLatLngs()`-Method, that can be used to update the geometry of an existing geodesic-object:
@@ -138,7 +155,7 @@ The most important options are:
 Option  | Type | Default | Description
 ---|---|---|---
 color |	String | "#3388ff" | Stroke color
-weight | Number | 3 | Stroke width in pixels (on your screen)
+weight | Number | 3 | Stroke width in pixels
 opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
 
 Example:
@@ -147,7 +164,7 @@ Example:
 const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
 const options = {
-    weight: 10,
+    weight: 20,
     opacity: 0.5,
     color: 'red',
 };
@@ -178,12 +195,11 @@ Option  | Type | Default | Description
 radius | Number | 1000*1000 | Radius in **meters**
 steps | Number | 24 | Number of segments that are used to approximate the circle.
 fill | boolean | true | Draws a filled circle.
+color |	String | "#3388ff" | Stroke color
+weight | Number | 3 | Stroke width in pixels
+opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
 
-Please refer to the options for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for additional options.
-
-## 🚧 GeoJSON Support
-
-(coming soon)
+Please refer to the options for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for additional settings.
 
 ## Scientific background
 

@@ -116,9 +116,12 @@ describe("Main functionality", function () {
 
 describe("GeoJSON-Support", function () {
     let map: L.Map;
+    const mockLog = jest.fn();
+    console.log = mockLog;
 
     beforeEach(function () {
         map = L.map(document.createElement('div'));
+        mockLog.mockClear();
     });
 
     afterEach(function () {
@@ -207,6 +210,7 @@ describe("GeoJSON-Support", function () {
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
+        expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
     });    
 
     it("Mixed FeatureCollection", async function () {
@@ -215,17 +219,17 @@ describe("GeoJSON-Support", function () {
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}mixed.fixture.json`, "utf8")));
+        expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
     });
 
     it("GeometryCollection", async function () {
-        console.log = jest.fn();
-
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: geojson.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
+        expect(mockLog.mock.calls[0][0]).to.match(/Type "GeometryCollection" not supported/);
     });     
 
 });

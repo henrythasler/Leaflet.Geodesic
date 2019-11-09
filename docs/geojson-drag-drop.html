@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
+    <script src="leaflet.geodesic.umd.min.js"></script>
+
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        var map = L.map('map', {
+            maxBounds: [
+                [-90, -180],
+                [90, 180]
+            ],
+            center: [51.505, -0.09],
+            zoom: 2
+        });
+        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+
+        var info = L.control();
+
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            this._div.innerHTML = "<h4>Drag'n'drop a GeoJSON-file into the map.</h4>";
+            return this._div;
+        };
+        info.addTo(map);
+
+        const Berlin = new L.LatLng(52.5, 13.35);
+        const Beijing = new L.LatLng(39.92, 116.39 );        
+
+        const geodesic = L.geodesic([Berlin, Beijing], {
+            weight: 7,
+            opacity: 0.5,
+            color: 'red',
+            steps: 5,
+        }).addTo(map);
+
+        // Drag'n'Drop handler
+        function handleDragOver(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        }
+
+        function handleFileSelect(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            let files = evt.dataTransfer.files; // FileList object.
+
+            // files is a FileList of File objects. List some properties.
+            for (let i = 0, f; f = files[i]; i++) {
+                console.log(escape(f.name) + ', ' + f.size + ' Bytes');
+                let reader = new FileReader();
+
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        let newFeatures = {};
+                        if (f.name.endsWith("json")) {
+                            geodesic.fromGeoJson(JSON.parse(e.target.result));
+                        }
+                        else {
+                            return;
+                        }
+                    };
+                })(f);
+                reader.readAsText(f);
+            }
+        }
+        var dropZone = document.getElementById('map');
+        dropZone.addEventListener('dragover', handleDragOver, false);
+        dropZone.addEventListener('drop', handleFileSelect, false);
+
+    </script>
+</body>
+
+</html>

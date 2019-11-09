@@ -19,3 +19,7 @@ use-site-title: true
 ## Interactive Circle
 
 [![circle-interactive](img/circle-interactive.png)](circle-interactive.html)
+
+## GeoJSON import
+
+[![geojson-drag-drop](img/geojson-drag-drop.png)](geojson-drag-drop.html)
