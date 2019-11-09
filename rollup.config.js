@@ -8,11 +8,14 @@ import { terser } from 'rollup-plugin-terser';
 import autoprefixer from 'autoprefixer';
 import assets from 'postcss-assets';
 
+const banner = `/*! Leaflet.Geodesic ${pkg.version} - (c) Henry Thasler - https://github.com/henrythasler/Leaflet.Geodesic */`;
+
 const bundle = (format, filename, options = {}) => ({
   input: 'src/index.ts',
   output: {
     file: filename,
     format: format,
+    banner: banner,
     name: 'leaflet.geodesic',
     sourcemap: false,
     globals: {

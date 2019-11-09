@@ -58,7 +58,8 @@
     "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
     "integrity:create": "shasum -b -a 512 dist/leaflet.geodesic.umd.min.js | awk '{ print $1 }' | xxd -r -p | base64 -w 0 >> dist/leaflet.geodesic.umd.min.js.sha256",
     "integrity:show": "printf 'integrity=\"sha512-' && cat dist/leaflet.geodesic.umd.min.js.sha256 && printf '\"\n'",
-    "build": "rm -f dist/* && rollup -c && npm run integrity:create && npm run integrity:show && cp dist/leaflet.geodesic.umd.min.js docs/"
+    "build:stats": "wc -c dist/leaflet.geodesic.umd.min.js",
+    "build": "rm -f dist/* && rollup -c && npm run integrity:create && npm run integrity:show && npm run build:stats && cp dist/leaflet.geodesic.umd.min.js docs/"
   },
   "np": {
     "publish": false,

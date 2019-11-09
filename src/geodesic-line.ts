@@ -3,10 +3,18 @@ import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
+interface Statistics {
+    distanceArray: number[],
+    totalDistance: number,
+    points: number,
+    vertices: number
+}
+
 export class GeodesicLine extends L.Layer {
     polyline: L.Polyline;
     options: GeodesicOptions = { wrap: true, steps: 3 };
     private geom: GeodesicGeometry;
+    statistics: Statistics = {} as any;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super();
@@ -15,7 +23,10 @@ export class GeodesicLine extends L.Layer {
         this.geom = new GeodesicGeometry(this.options);
 
         if (latlngs) {
-            const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+            const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
+            const geodesic = this.geom.multiLineString(latLngLiteral);
+            this.updateStatistics(latLngLiteral, geodesic);            
+
             if (this.options.wrap) {
                 const split = this.geom.splitMultiLineString(geodesic);
                 this.polyline = new L.Polyline(split, this.options);
@@ -39,8 +50,10 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
-    private update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
-        const geodesic = this.geom.multiLineString(latlngExpressionArraytoLiteralArray(latlngs));
+    private updateLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+        const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
+        const geodesic = this.geom.multiLineString(latLngLiteral);
+        this.updateStatistics(latLngLiteral, geodesic);
         if (this.options.wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
             this.polyline.setLatLngs(split);
@@ -50,8 +63,21 @@ export class GeodesicLine extends L.Layer {
         }
     }
 
+    private updateStatistics(points: L.LatLngLiteral[][], vertices: L.LatLngLiteral[][]): void {
+        this.statistics.distanceArray = this.geom.multilineDistance(points);
+        this.statistics.totalDistance = this.statistics.distanceArray.reduce((x, y) => x + y, 0);
+        this.statistics.points = 0; 
+        points.forEach( (item) => {
+            this.statistics.points += item.reduce((x) => x + 1, 0);
+        });
+        this.statistics.vertices = 0; 
+        vertices.forEach( (item) => {
+            this.statistics.vertices += item.reduce((x) => x + 1, 0);
+        });
+    }
+
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.update(latlngs);
+        this.updateLatLngs(latlngs);
         return this;
     }
 

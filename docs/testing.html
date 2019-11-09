@@ -81,13 +81,13 @@
             // console.log(`A=${e.latlng}`);
             A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
-            // console.log(geodesic.getLatLngs());
+            console.log(`${geodesic.statistics.totalDistance/1000}km`);
         });
         B.on('drag', (e) => {
             // console.log(`B=${e.latlng}`);
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
-            // console.log(geodesic.getLatLngs());
+            console.log(`${geodesic.statistics.totalDistance/1000}km`);
         });
 
     </script>

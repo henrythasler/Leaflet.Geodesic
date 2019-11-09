@@ -168,6 +168,17 @@ const geodesic = new L.Geodesic([Berlin, LosAngeles], options).addTo(map);
 
 ![lineoptions](docs/img/lineoptions.png)
 
+### Line Statistics
+
+The `L.Geodesic`-class provides a `statistics`-Object with the following properties:
+
+Property | Type | Description
+---|---|---
+totalDistance |	Number | The total distance of all geodesic lines in meters
+distanceArray | Number[] | The distance for each separate linestring in meters
+points | Number | Number of points that were given on creation or with `setLatLngs()`
+vertices | Number | Number of vertices of all geodesic lines that were calculated
+
 ## Geodesic Circles
 
 Circles can be added with another class called `GeodesicCircle` as follows:

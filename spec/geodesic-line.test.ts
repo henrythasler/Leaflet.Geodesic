@@ -13,14 +13,8 @@ import "jest";
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
 const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
 const Capetown: L.LatLngLiteral = { lat: -33.94, lng: 18.39 };
-
-const SeattleCapetown5: L.LatLngLiteral[] = [
-    Seattle,
-    { lat: 41.580847, lng: -70.162019 },
-    { lat: 18.849527, lng: -35.885828 },
-    { lat: -8.461111, lng: -10.677708 },
-    Capetown
-];
+const LosAngeles: L.LatLngLiteral = { lat: 33.82, lng: -118.38 };
+const Santiago: L.LatLngLiteral = { lat: -33.44, lng: -70.71 };
 
 const fixturesPath = "spec/fixtures/";
 
@@ -58,12 +52,12 @@ describe("Main functionality", function () {
     });
 
     it("Create class with parameters", function () {
-        const line = new GeodesicLine([Berlin, Seattle], { steps: 0 });
+        const line = new GeodesicLine([], { steps: 0 });
         expect(line.options).to.be.deep.equal({ ...defaultOptions, ...{ steps: 0 } });
     });
 
     it("Create class with parameters", function () {
-        const line = new GeodesicLine([Berlin, Seattle], { wrap: false });
+        const line = new GeodesicLine([], { wrap: false });
         expect(line.options).to.be.deep.equal({ ...defaultOptions, ...{ wrap: false } });
     });
 
@@ -111,6 +105,36 @@ describe("Main functionality", function () {
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
     });
+
+    it("Read LatLngs", async function () {
+        const line = new GeodesicLine().addTo(map);
+        expect(line.options).to.be.deep.equal(defaultOptions);
+        expect(line.polyline).to.be.an("object");
+        expect(map.hasLayer(line)).to.be.true;
+        map.eachLayer(function (layer) {
+            expect(layer).to.be.instanceOf(GeodesicLine);
+        });
+        const latlngs = line.getLatLngs();
+        expect(latlngs).to.be.an("array");
+    });
+
+    it("Statistics calculation (simple)", async function () {
+        const line = new GeodesicLine([[Berlin, Seattle, Capetown]], { steps: 0 }).addTo(map);
+        expect(line.statistics.totalDistance).to.be.closeTo(24569051.081048, eps);
+        expect(line.statistics.distanceArray).to.be.an("array");
+        expect(line.statistics.distanceArray).to.be.length(1);
+        expect(line.statistics.points).to.be.equal(3);
+        expect(line.statistics.vertices).to.be.equal(5);
+    });
+
+    it("Statistics calculation (complex)", async function () {
+        const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]], { steps: 1 }).addTo(map);
+        expect(line.statistics.totalDistance).to.be.closeTo(17319123.023856, eps);
+        expect(line.statistics.distanceArray).to.be.an("array");
+        expect(line.statistics.distanceArray).to.be.length(2);
+        expect(line.statistics.points).to.be.equal(4);
+        expect(line.statistics.vertices).to.be.equal(10);
+    });
 });
 
 describe("GeoJSON-Support", function () {
@@ -133,7 +157,7 @@ describe("GeoJSON-Support", function () {
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
-    });     
+    });
 
     it("Feature with Linestring", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -141,7 +165,7 @@ describe("GeoJSON-Support", function () {
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
-    });     
+    });
 
     it("FeatureCollection with LineString", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -165,7 +189,7 @@ describe("GeoJSON-Support", function () {
         line.fromGeoJson(geojson);
         const latlngs = latlngExpressionArraytoLiteralArray(line.getLatLngs() as L.LatLng[][]); // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}polygon-hole.fixture.json`, "utf8")));
-    });    
+    });
 
     it("FeatureCollection with MultiPoint", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -210,7 +234,7 @@ describe("GeoJSON-Support", function () {
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
-    });    
+    });
 
     it("Mixed FeatureCollection", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -229,5 +253,5 @@ describe("GeoJSON-Support", function () {
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "GeometryCollection" not supported/);
-    });     
+    });
 });

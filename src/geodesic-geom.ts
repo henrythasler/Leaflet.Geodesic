@@ -119,4 +119,16 @@ export class GeodesicGeometry {
     distance(start: L.LatLngLiteral, dest: L.LatLngLiteral): number {
         return this.geodesic.inverse(start, dest).distance;
     }
+
+    multilineDistance(multilinestring: L.LatLngLiteral[][]): number[] {
+        const dist: number[] = [];
+        multilinestring.forEach((linestring) => {
+            let segmentDistance: number = 0;
+            for (let j = 1; j < linestring.length; j++) {
+                segmentDistance += this.distance(linestring[j - 1], linestring[j]);
+            }
+            dist.push(segmentDistance);
+        });
+        return dist;
+    }
 }
