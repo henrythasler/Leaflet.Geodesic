@@ -19,8 +19,7 @@ export class GeodesicGeometry {
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
             geom.splice(geom.length - 2, 2, ...this.recursiveMidpoint(midpoint, dest, iterations - 1));
-        }
-        else {
+        } else {
             geom.splice(1, 0, midpoint);
         }
 
@@ -80,8 +79,7 @@ export class GeodesicGeometry {
         // depending on initial direction, we check for crossing the antimeridian in western or eastern direction
         if (line.initialBearing > 180) {
             intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianWest.point, antimeridianWest.bearing);
-        }
-        else {
+        } else {
             intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianEast.point, antimeridianEast.bearing);
         }
 
@@ -90,8 +88,7 @@ export class GeodesicGeometry {
             if (intersectionDistance.distance < line.distance) {
                 if (intersection.lng < -179.9999) {
                     return [[start, intersection], [{ lat: intersection.lat, lng: intersection.lng + 360 }, dest]];
-                }
-                else if (intersection.lng > 179.9999) {
+                } else if (intersection.lng > 179.9999) {
                     return [[start, intersection], [{ lat: intersection.lat, lng: intersection.lng - 360 }, dest]];
                 }
                 return [[start, intersection], [intersection, dest]];
@@ -108,8 +105,7 @@ export class GeodesicGeometry {
                 const split = this.splitLine(linestring[j - 1], linestring[j]);
                 if (split.length === 1) {
                     segment.push(linestring[j]);
-                }
-                else {
+                } else {
                     segment.push(split[0][1]);
                     result.push(segment);
                     segment = split[1];

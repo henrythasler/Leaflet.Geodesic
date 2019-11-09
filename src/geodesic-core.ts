@@ -48,8 +48,7 @@ export class GeodesicCore {
     wrap360(degrees: number) {
         if (0 <= degrees && degrees < 360) {
             return degrees; // avoid rounding due to arithmetic ops if within range
-        }
-        else {
+        } else {
             return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
         }
     }
@@ -61,8 +60,7 @@ export class GeodesicCore {
     wrap180(degrees: number) {
         if (-180 <= degrees && degrees < 180) {
             return degrees;
-        }
-        else {
+        } else {
             return (((degrees + 180) % 360 + 360) % 360) - 180;
         }
     }
@@ -174,7 +172,7 @@ export class GeodesicCore {
             σ = Math.atan2(sinσ, cosσ);
             sinα = cosU1 * cosU2 * sinλ / sinσ;
             cosSqα = 1 - sinα * sinα;
-            cos2σₘ = (cosSqα != 0) ? (cosσ - 2 * sinU1 * sinU2 / cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
+            cos2σₘ = (cosSqα !== 0) ? (cosσ - 2 * sinU1 * sinU2 / cosSqα) : 0; // on equatorial line cos²α = 0 (§6)
             C = f / 16 * cosSqα * (4 + f * (4 - 3 * cosSqα));
             λʹ = λ;
             λ = dL + (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
@@ -187,8 +185,7 @@ export class GeodesicCore {
         if (iterations >= maxInterations) {
             if (mitigateConvergenceError) {
                 return this.inverse(start, { lat: dest.lat, lng: dest.lng - 0.01 }, maxInterations, mitigateConvergenceError);
-            }
-            else {
+            } else {
                 throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
             }
 
@@ -256,7 +253,7 @@ export class GeodesicCore {
         const α1 = θ13 - θ12; // angle 2-1-3
         const α2 = θ21 - θ23; // angle 1-2-3
 
-        if (Math.sin(α1) == 0 && Math.sin(α2) == 0) {
+        if (Math.sin(α1) === 0 && Math.sin(α2) === 0) {
             return null; // infinite intersections
         }
         if (Math.sin(α1) * Math.sin(α2) < 0) {
