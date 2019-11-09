@@ -1,5 +1,4 @@
 import L from "leaflet";
-import * as geojson from "geojson";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
@@ -56,9 +55,9 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
-    fromGeoJson(input: geojson.GeoJSON): this {
+    fromGeoJson(input: GeoJSON.GeoJSON): this {
         let latlngs: L.LatLngExpression[][] = [];
-        let features: geojson.Feature[] = [];
+        let features: GeoJSON.Feature[] = [];
 
         if (input.type === "FeatureCollection") {
             features = input.features;
@@ -77,7 +76,7 @@ export class GeodesicLine extends L.Layer {
             console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${input.type}" not supported.`);
         }
 
-        features.forEach((feature: geojson.Feature) => {
+        features.forEach((feature: GeoJSON.Feature) => {
             switch (feature.geometry.type) {
                 case "MultiPoint":
                 case "LineString":

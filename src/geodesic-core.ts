@@ -46,8 +46,12 @@ export class GeodesicCore {
      * @return degrees between 0..360
      */
     wrap360(degrees: number) {
-        if (0 <= degrees && degrees < 360) return degrees; // avoid rounding due to arithmetic ops if within range
-        return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
+        if (0 <= degrees && degrees < 360) {
+            return degrees; // avoid rounding due to arithmetic ops if within range
+        }
+        else {
+            return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
+        }
     }
 
     /**
@@ -55,8 +59,12 @@ export class GeodesicCore {
      * @return degrees between -180..+180
      */
     wrap180(degrees: number) {
-        if (-180 <= degrees && degrees < 180) return degrees;
-        return (((degrees + 180) % 360 + 360) % 360) - 180;
+        if (-180 <= degrees && degrees < 180) {
+            return degrees;
+        }
+        else {
+            return (((degrees + 180) % 360 + 360) % 360) - 180;
+        }
     }
 
     /**
@@ -103,7 +111,9 @@ export class GeodesicCore {
             σʹ = σ;
             σ = s / (b * A) + Δσ;
         } while (Math.abs(σ - σʹ) > ε && ++iterations < maxInterations);
-        if (iterations >= maxInterations) throw new EvalError(`Direct vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; bearing=${bearing}; distance=${distance})`); // not possible?
+        if (iterations >= maxInterations) {
+            throw new EvalError(`Direct vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; bearing=${bearing}; distance=${distance})`); // not possible?
+        }
 
         const x = sinU1 * sinσ - cosU1 * cosσ * cosα1;
         const φ2 = Math.atan2(sinU1 * cosσ + cosU1 * sinσ * cosα1, (1 - f) * Math.sqrt(sinα * sinα + x * x));
@@ -156,7 +166,9 @@ export class GeodesicCore {
             sinλ = Math.sin(λ);
             cosλ = Math.cos(λ);
             sinSqσ = (cosU2 * sinλ) * (cosU2 * sinλ) + (cosU1 * sinU2 - sinU1 * cosU2 * cosλ) * (cosU1 * sinU2 - sinU1 * cosU2 * cosλ);
-            if (Math.abs(sinSqσ) < ε) break;  // co-incident/antipodal points (falls back on λ/σ = L)
+            if (Math.abs(sinSqσ) < ε) {
+                break;  // co-incident/antipodal points (falls back on λ/σ = L)
+            }
             sinσ = Math.sqrt(sinSqσ);
             cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ;
             σ = Math.atan2(sinσ, cosσ);
@@ -167,8 +179,11 @@ export class GeodesicCore {
             λʹ = λ;
             λ = dL + (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
             const iterationCheck = antipodal ? Math.abs(λ) - π : Math.abs(λ);
-            if (iterationCheck > π) throw new EvalError('λ > π');
+            if (iterationCheck > π) {
+                throw new EvalError('λ > π');
+            }
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
+
         if (iterations >= maxInterations) {
             if (mitigateConvergenceError) {
                 return this.inverse(start, { lat: dest.lat, lng: dest.lng - 0.01 }, maxInterations, mitigateConvergenceError);
@@ -225,7 +240,9 @@ export class GeodesicCore {
         // angular distance p1-p2
         const δ12 = 2 * Math.asin(Math.sqrt(Math.sin(Δφ / 2) * Math.sin(Δφ / 2)
             + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2)));
-        if (Math.abs(δ12) < ε) return firstPos; // coincident points
+        if (Math.abs(δ12) < ε) {
+            return firstPos; // coincident points
+        }
 
         // initial/final bearings between points
         const cosθa = (Math.sin(φ2) - Math.sin(φ1) * Math.cos(δ12)) / (Math.sin(δ12) * Math.cos(φ1));
@@ -239,8 +256,12 @@ export class GeodesicCore {
         const α1 = θ13 - θ12; // angle 2-1-3
         const α2 = θ21 - θ23; // angle 1-2-3
 
-        if (Math.sin(α1) == 0 && Math.sin(α2) == 0) return null; // infinite intersections
-        if (Math.sin(α1) * Math.sin(α2) < 0) return null;        // ambiguous intersection (antipodal?)
+        if (Math.sin(α1) == 0 && Math.sin(α2) == 0) {
+            return null; // infinite intersections
+        }
+        if (Math.sin(α1) * Math.sin(α2) < 0) {
+            return null;        // ambiguous intersection (antipodal?)
+        }
 
         const cosα3 = -Math.cos(α1) * Math.cos(α2) + Math.sin(α1) * Math.sin(α2) * Math.cos(δ12);
 

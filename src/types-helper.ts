@@ -25,7 +25,9 @@ export function instanceOfLatLngExpression(object: any): object is L.LatLngExpre
     else if (instanceOfLatLngLiteral(object)) {
         return true;
     }
-    else return false;
+    else {
+        return false;
+    }
 }
 
 export function latlngExpressiontoLiteral(input: L.LatLngExpression): L.LatLngLiteral {
@@ -38,15 +40,17 @@ export function latlngExpressiontoLiteral(input: L.LatLngExpression): L.LatLngLi
     else if (instanceOfLatLngLiteral(input)) {
         return input;
     }
-    else throw new Error("L.LatLngExpression expected. Unknown object found.");
+    else {
+        throw new Error("L.LatLngExpression expected. Unknown object found.");
+    }
 }
 
 export function latlngExpressionArraytoLiteralArray(input: L.LatLngExpression[] | L.LatLngExpression[][]): L.LatLngLiteral[][] {
-    let literal: L.LatLngLiteral[][] = [];
-    for (let group of input) {
+    const literal: L.LatLngLiteral[][] = [];
+    for (const group of input) {
         // it's a 1D-Array L.LatLngExpression[]
         if (instanceOfLatLngExpression(group)) {
-            let sub: L.LatLngLiteral[] = [];
+            const sub: L.LatLngLiteral[] = [];
             (input as L.LatLngExpression[]).forEach((point) => {
                 sub.push(latlngExpressiontoLiteral(point));
             });
@@ -56,15 +60,19 @@ export function latlngExpressionArraytoLiteralArray(input: L.LatLngExpression[] 
         // it's a 2D-Array L.LatLngExpression[][]
         else if (group instanceof Array) {
             if (instanceOfLatLngExpression(group[0])) {
-                let sub: L.LatLngLiteral[] = [];
+                const sub: L.LatLngLiteral[] = [];
                 group.forEach((point) => {
                     sub.push(latlngExpressiontoLiteral(point));
                 });
                 literal.push(sub);
             }
-            else throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+            else {
+                throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+            }
         }
-        else throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+        else {
+            throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+        }
     }
     return literal;
 }

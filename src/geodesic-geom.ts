@@ -10,7 +10,7 @@ export class GeodesicGeometry {
     }
 
     recursiveMidpoint(start: L.LatLngLiteral, dest: L.LatLngLiteral, iterations: number): L.LatLngLiteral[] {
-        let geom: L.LatLngLiteral[] = [start, dest];
+        const geom: L.LatLngLiteral[] = [start, dest];
         const midpoint = this.geodesic.midpoint(start, dest)
         if (this.options.wrap) {
             midpoint.lng = this.geodesic.wrap180(midpoint.lng);
@@ -20,7 +20,9 @@ export class GeodesicGeometry {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
             geom.splice(geom.length - 2, 2, ...this.recursiveMidpoint(midpoint, dest, iterations - 1));
         }
-        else geom.splice(1, 0, midpoint);
+        else {
+            geom.splice(1, 0, midpoint);
+        }
 
         return geom;
     }
@@ -40,10 +42,10 @@ export class GeodesicGeometry {
     }
 
     multiLineString(latlngs: L.LatLngLiteral[][]): L.LatLngLiteral[][] {
-        let multiLineString: L.LatLngLiteral[][] = [];
+        const multiLineString: L.LatLngLiteral[][] = [];
 
         latlngs.forEach((linestring) => {
-            let segment: L.LatLngLiteral[] = [];
+            const segment: L.LatLngLiteral[] = [];
             for (let j = 1; j < linestring.length; j++) {
                 segment.splice(segment.length - 1, 1, ...this.line(linestring[j - 1], linestring[j]));
             }
@@ -72,7 +74,7 @@ export class GeodesicGeometry {
         dest.lng = Math.max(-179.9, dest.lng);
         dest.lng = Math.min(179.9, dest.lng);
 
-        let line: GeoDistance = this.geodesic.inverse(start, dest);
+        const line: GeoDistance = this.geodesic.inverse(start, dest);
         let intersection: L.LatLngLiteral | null;
 
         // depending on initial direction, we check for crossing the antimeridian in western or eastern direction
@@ -84,7 +86,7 @@ export class GeodesicGeometry {
         }
 
         if (intersection) {
-            let intersectionDistance = this.geodesic.inverse(start, intersection);
+            const intersectionDistance = this.geodesic.inverse(start, intersection);
             if (intersectionDistance.distance < line.distance) {
                 if (intersection.lng < -179.9999) {
                     return [[start, intersection], [{ lat: intersection.lat, lng: intersection.lng + 360 }, dest]];
@@ -99,11 +101,11 @@ export class GeodesicGeometry {
     }
 
     splitMultiLineString(multilinestring: L.LatLngLiteral[][]): L.LatLngLiteral[][] {
-        let result: L.LatLngLiteral[][] = [];
+        const result: L.LatLngLiteral[][] = [];
         multilinestring.forEach((linestring) => {
             let segment: L.LatLngLiteral[] = [linestring[0]];
             for (let j = 1; j < linestring.length; j++) {
-                let split = this.splitLine(linestring[j - 1], linestring[j]);
+                const split = this.splitLine(linestring[j - 1], linestring[j]);
                 if (split.length === 1) {
                     segment.push(linestring[j]);
                 }
