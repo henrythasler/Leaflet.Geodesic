@@ -13,7 +13,7 @@ Leaflet.Geodesic is available via CDN. Add the following snippet to your html-fi
 
 ```html
 <!-- Make sure you put this AFTER leaflet.js -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 ```
 
 Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic/) and [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic).
