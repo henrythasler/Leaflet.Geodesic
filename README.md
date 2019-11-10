@@ -208,6 +208,30 @@ Property | Type | Description
 `points` | `Number` | Number of points that were given on creation or with `setLatLngs()`
 `vertices` | `Number` | Number of vertices of all geodesic lines that were calculated
 
+## Distance Calculation
+
+The `L.Geodesic` provides a `distance`-function to calculate the precise distance between two points:
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const Beijing = new L.LatLng(39.92, 116.39);
+
+const line = new L.Geodesic();
+const distance = line.distance(Berlin, Beijing);
+console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
+```
+
+The `L.GeodesicCircle`-class provides a `distanceTo`-function to calculate the distance between the current center and any given point:
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const Beijing = new L.LatLng(39.92, 116.39);
+
+const circle = new L.GeodesicCircle(Berlin);
+const distance = circle.distanceTo(Beijing);
+console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
+```
+
 ## Scientific background
 
 All calculations are based on the [WGS84-Ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84) (EPSG:4326) using [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). This method leads to very precise calculations but may fail for some corner-cases (e.g. [Antipodes](https://en.wikipedia.org/wiki/Antipodes)). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn't plan a space mission based on this data. OMG, this section has just become a disclaimer...

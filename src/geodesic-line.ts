@@ -1,7 +1,7 @@
 import L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
-import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
+import { latlngExpressiontoLiteral, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 export class GeodesicLine extends L.Layer {
     polyline: L.Polyline;
@@ -112,4 +112,7 @@ export class GeodesicLine extends L.Layer {
         return this.polyline.getLatLngs();
     }
 
+    distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
+        return this.geom.distance(latlngExpressiontoLiteral(start), latlngExpressiontoLiteral(dest));
+    }
 }

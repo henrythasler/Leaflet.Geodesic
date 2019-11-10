@@ -10,6 +10,10 @@ import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 import "jest";
 
+// test case with distance 54972.271 m
+const FlindersPeak: L.LatLngLiteral = { lat: -37.9510334166667, lng: 144.424867888889 };
+const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.926495527778 };
+
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
 const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
 const Capetown: L.LatLngLiteral = { lat: -33.94, lng: 18.39 };
@@ -135,6 +139,12 @@ describe("Main functionality", function () {
         expect(line.statistics.points).to.be.equal(4);
         expect(line.statistics.vertices).to.be.equal(10);
     });
+
+    it("distance calculation", async function () {
+        const line = new GeodesicLine();
+        const distance = line.distance(FlindersPeak, Buninyong);
+        expect(distance).to.be.closeTo(54972.271, 0.001);
+    });    
 });
 
 describe("GeoJSON-Support", function () {
