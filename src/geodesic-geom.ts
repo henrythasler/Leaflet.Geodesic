@@ -1,6 +1,13 @@
 import L from "leaflet";
 import { GeodesicCore, GeoDistance, GeodesicOptions, WGS84Vector } from "./geodesic-core"
 
+export interface Statistics {
+    distanceArray: number[],
+    totalDistance: number,
+    points: number,
+    vertices: number
+}
+
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
     readonly options: GeodesicOptions = { wrap: true, steps: 3 };
@@ -130,5 +137,21 @@ export class GeodesicGeometry {
             dist.push(segmentDistance);
         });
         return dist;
+    }
+
+    updateStatistics(points: L.LatLngLiteral[][], vertices: L.LatLngLiteral[][]): Statistics {
+        const stats: Statistics = {} as any;
+
+        stats.distanceArray = this.multilineDistance(points);
+        stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);
+        stats.points = 0;
+        points.forEach((item) => {
+            stats.points += item.reduce((x) => x + 1, 0);
+        });
+        stats.vertices = 0;
+        vertices.forEach((item) => {
+            stats.vertices += item.reduce((x) => x + 1, 0);
+        });
+        return stats;
     }
 }

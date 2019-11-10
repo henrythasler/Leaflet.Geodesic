@@ -28,6 +28,7 @@
 
         .info h4 {
             margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
             color: #777;
         }
     </style>
@@ -41,7 +42,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="leaflet.geodesic.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
@@ -64,15 +65,20 @@
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
-
         var info = L.control();
-
         info.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-            this._div.innerHTML = "<h4>Drag'n'drop a GeoJSON-file into the map.</h4>";
             return this._div;
         };
         info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance +
+                '<br/><br/><b>Points</b><br/>' + stats.points +
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
 
         const Berlin = new L.LatLng(52.5, 13.35);
         const Beijing = new L.LatLng(39.92, 116.39 );        
@@ -81,8 +87,10 @@
             weight: 7,
             opacity: 0.5,
             color: 'red',
-            steps: 5,
+            steps: 4,
         }).addTo(map);
+
+        info.update(geodesic.statistics);
 
         // Drag'n'Drop handler
         function handleDragOver(evt) {
@@ -108,6 +116,7 @@
                         let newFeatures = {};
                         if (f.name.endsWith("json")) {
                             geodesic.fromGeoJson(JSON.parse(e.target.result));
+                            info.update(geodesic.statistics);
                         }
                         else {
                             return;

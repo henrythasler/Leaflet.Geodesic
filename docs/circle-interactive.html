@@ -17,23 +17,19 @@
             width: 100%;
         }
 
-        .distance-container {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            z-index: 1;
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
         }
 
-        .distance-container>* {
-            background-color: #fff;
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 18px;
-            display: block;
-            margin: 0;
-            padding: 5px 10px;
-            border-radius: 3px;
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
         }
     </style>
     <title>Leaflet.Geodesic demo</title>
@@ -47,7 +43,6 @@
         crossorigin=""></script>
 
     <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js"></script>
-
 </head>
 
 <body>
@@ -83,7 +78,28 @@
             fill: true,
             steps: 80
         }).addTo(map);
+
         geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+
+        var info = L.control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const circumfence = geodesiccircle.radius * 2 * Math.PI;
+            const circumfenceString = (circumfence ? (circumfence>10000)?(circumfence/1000).toFixed(0)+' km':(circumfence).toFixed(0)+' m' : 'invalid')
+            const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius>10000)?(geodesiccircle.radius/1000).toFixed(0)+' km':(geodesiccircle.radius).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString + 
+                '<br/><br/><b>Circumfence</b><br/>' + circumfenceString + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };   
+
+        info.update(geodesiccircle.statistics);
 
         var diff = {lat:0, lng:0};
         A.on('dragstart', function () {
@@ -98,10 +114,12 @@
             });	// move B parallel to A            
             geodesiccircle.setLatLng(e.latlng);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+            info.update(geodesiccircle.statistics);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
+            info.update(geodesiccircle.statistics);
         });
 
     </script>

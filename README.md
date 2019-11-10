@@ -152,6 +152,7 @@ Option  | Type | Default | Description
 color |	String | "#3388ff" | Stroke color
 weight | Number | 3 | Stroke width in pixels
 opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
+steps | Number | 3 | Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8
 
 Example:
 
@@ -167,17 +168,6 @@ const geodesic = new L.Geodesic([Berlin, LosAngeles], options).addTo(map);
 ```
 
 ![lineoptions](docs/img/lineoptions.png)
-
-### Line Statistics
-
-The `L.Geodesic`-class provides a `statistics`-Object with the following properties:
-
-Property | Type | Description
----|---|---
-totalDistance |	Number | The total distance of all geodesic lines in meters
-distanceArray | Number[] | The distance for each separate linestring in meters
-points | Number | Number of points that were given on creation or with `setLatLngs()`
-vertices | Number | Number of vertices of all geodesic lines that were calculated
 
 ## Geodesic Circles
 
@@ -206,6 +196,17 @@ weight | Number | 3 | Stroke width in pixels
 opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
 
 Please refer to the options for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for additional settings.
+
+## Statistics
+
+The `L.Geodesic` and `L.GeodesicCircle`-class provide a `statistics`-Object with the following properties:
+
+Property | Type | Description
+---|---|---
+totalDistance |	Number | The total distance of all geodesic lines in meters
+distanceArray | Number[] | The distance for each separate linestring in meters
+points | Number | Number of points that were given on creation or with `setLatLngs()`
+vertices | Number | Number of vertices of all geodesic lines that were calculated
 
 ## Scientific background
 

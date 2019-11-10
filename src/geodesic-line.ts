@@ -1,14 +1,7 @@
 import L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
-import { GeodesicGeometry } from "./geodesic-geom";
+import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
-
-interface Statistics {
-    distanceArray: number[],
-    totalDistance: number,
-    points: number,
-    vertices: number
-}
 
 export class GeodesicLine extends L.Layer {
     polyline: L.Polyline;
@@ -25,7 +18,7 @@ export class GeodesicLine extends L.Layer {
         if (latlngs) {
             const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
             const geodesic = this.geom.multiLineString(latLngLiteral);
-            this.updateStatistics(latLngLiteral, geodesic);            
+            this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
 
             if (this.options.wrap) {
                 const split = this.geom.splitMultiLineString(geodesic);
@@ -53,7 +46,7 @@ export class GeodesicLine extends L.Layer {
     private updateLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
         const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
         const geodesic = this.geom.multiLineString(latLngLiteral);
-        this.updateStatistics(latLngLiteral, geodesic);
+        this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
         if (this.options.wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
             this.polyline.setLatLngs(split);
@@ -61,19 +54,6 @@ export class GeodesicLine extends L.Layer {
         else {
             this.polyline.setLatLngs(geodesic);
         }
-    }
-
-    private updateStatistics(points: L.LatLngLiteral[][], vertices: L.LatLngLiteral[][]): void {
-        this.statistics.distanceArray = this.geom.multilineDistance(points);
-        this.statistics.totalDistance = this.statistics.distanceArray.reduce((x, y) => x + y, 0);
-        this.statistics.points = 0; 
-        points.forEach( (item) => {
-            this.statistics.points += item.reduce((x) => x + 1, 0);
-        });
-        this.statistics.vertices = 0; 
-        vertices.forEach( (item) => {
-            this.statistics.vertices += item.reduce((x) => x + 1, 0);
-        });
     }
 
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
@@ -122,7 +102,7 @@ export class GeodesicLine extends L.Layer {
             }
         });
 
-        if(latlngs.length) {
+        if (latlngs.length) {
             this.setLatLngs(latlngs);
         }
         return this;
