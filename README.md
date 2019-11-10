@@ -1,7 +1,7 @@
 # Leaflet.Geodesic
 [![Build Status](https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master)](https://travis-ci.org/henrythasler/Leaflet.Geodesic) [![npm](https://img.shields.io/npm/v/leaflet.geodesic)](https://www.npmjs.com/package/leaflet.geodesic) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic) [![Total alerts](https://img.shields.io/lgtm/alerts/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/alerts/) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/context:javascript)
 
-Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and circles. A geodesic line is the shortest path between two given positions on the earth surface.
+Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It uses [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae) for highest precision.
 
 [![demo](docs/img/demo.png)](https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html)
 
@@ -153,6 +153,7 @@ Option  | Type | Default | Description
 `weight` | `Number` | 3 | Stroke width in pixels
 `opacity` | `Number` | 1.0 | Stroke opacity (0=transparent, 1=opaque)
 `steps` | `Number` | 3 | Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8
+`wrap` | `Boolean` | true | Wrap geodesic line at antimeridian. Set to `false`, to draw a line over the antimeridian. See [no-wrap demo](https://blog.cyclemap.link/Leaflet.Geodesic/nowrap-interactive.html) for example.
 
 Example:
 

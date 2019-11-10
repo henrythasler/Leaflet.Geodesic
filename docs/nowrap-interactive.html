@@ -41,7 +41,7 @@
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
-
+        
     <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 
 </head>
@@ -53,7 +53,7 @@
     <script type="text/javascript">
 
         // create map; set center and zoom
-        var map = L.map('map').setView([0, -180], 2);
+        var map = L.map('map').setView([40, -180], 3);
 
         // add a basic layer
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -72,19 +72,19 @@
 
         // update the statistics with current values
         info.update = function (stats) {
-            const totalDistance = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
-            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance +
-                '<br/><br/><b>Points</b><br/>' + stats.points +
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
         };
 
         // define some places
-        var Beijing = new L.LatLng(39.92, 116.39 - 360);
+        var Beijing = new L.LatLng(39.92, 116.39 - 360);    // shifted over antimeridian for consistent display
         var LosAngeles = new L.LatLng(33.82, -118.38);
 
         // create a marker at each place
-        var A = L.marker(Beijing, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        var B = L.marker(LosAngeles, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
+        var A = L.marker(Beijing, { draggable: true }).addTo(map);
+        var B = L.marker(LosAngeles, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
 
         // draw a geodesic line between these places
         const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
@@ -98,13 +98,11 @@
         info.update(geodesic.statistics);
 
         // update the geodesic line when one of the markers is dragged
-        A.on('drag', (e) => {
-            A.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
+		A.on('drag', (e) => {
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
             info.update(geodesic.statistics);
         });
-        B.on('drag', (e) => {
-            B.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
+		B.on('drag', (e) => {
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
             info.update(geodesic.statistics);
         });

@@ -4,6 +4,8 @@ subtitle: Demos and Tutorials
 use-site-title: true
 ---
 
+Click on an image to open the demo:
+
 ## Basic interactive
 
 [![basic-interactive](img/basic-interactive.png)](basic-interactive.html)
@@ -22,4 +24,8 @@ use-site-title: true
 
 ## GeoJSON import
 
-[![geojson-drag-drop](img/geojson-drag-drop.png)](geojson-drag-drop.html)
+[geojson-drag-drop](geojson-drag-drop.html)
+
+## No Wrap Interactive
+
+[![nowrap-interactive](img/nowrap-interactive.png)](nowrap-interactive.html)
