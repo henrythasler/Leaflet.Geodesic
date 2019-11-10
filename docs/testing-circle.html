@@ -94,7 +94,6 @@
             const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius>10000)?(geodesiccircle.radius/1000).toFixed(0)+' km':(geodesiccircle.radius).toFixed(0)+' m' : 'invalid')
             this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString + 
                 '<br/><br/><b>Circumfence</b><br/>' + circumfenceString + 
-                '<br/><br/><b>Points</b><br/>' + stats.points + 
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
         };   
 
