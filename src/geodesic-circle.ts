@@ -23,6 +23,9 @@ export class GeodesicCircleClass extends L.Layer {
             this.center = latlngExpressiontoLiteral(center);
             let latlngs = this.geom.circle(this.center, this.radius);
             this.statistics = this.geom.updateStatistics([[this.center]], [latlngs]);
+            // circumfence must be re-calculated from geodesic 
+            this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
+
             this.polyline = new L.Polyline(latlngs, this.options);
         }
         else {
@@ -42,7 +45,11 @@ export class GeodesicCircleClass extends L.Layer {
 
     private update(): void {
         const latlngs = this.geom.circle(this.center, this.radius);
+
         this.statistics = this.geom.updateStatistics([[this.center]], [latlngs]);
+        // circumfence must be re-calculated from geodesic 
+        this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
+
         this.polyline.setLatLngs(latlngs);
     }
 

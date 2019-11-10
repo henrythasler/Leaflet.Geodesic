@@ -90,8 +90,7 @@
 
         // method that we will use to update the control based on feature properties passed
         info.update = function (stats) {
-            const circumfence = geodesiccircle.radius * 2 * Math.PI;
-            const circumfenceString = (circumfence ? (circumfence>10000)?(circumfence/1000).toFixed(0)+' km':(circumfence).toFixed(0)+' m' : 'invalid')
+            const circumfenceString = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
             const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius>10000)?(geodesiccircle.radius/1000).toFixed(0)+' km':(geodesiccircle.radius).toFixed(0)+' m' : 'invalid')
             this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString + 
                 '<br/><br/><b>Circumfence</b><br/>' + circumfenceString + 
