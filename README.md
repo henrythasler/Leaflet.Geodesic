@@ -3,7 +3,7 @@
 
 Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and circles. A geodesic line is the shortest path between two given positions on the earth surface.
 
-[![demo](docs/img/demo.png)](https://blog.cyclemap.link/Leaflet.Geodesic/)
+[![demo](docs/img/demo.png)](https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html)
 
 [Live Demos and Tutorials](https://blog.cyclemap.link/Leaflet.Geodesic/)
 
