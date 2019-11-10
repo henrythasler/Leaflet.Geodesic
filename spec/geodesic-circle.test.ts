@@ -15,7 +15,7 @@ const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.9264955277
 const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
 const Beijing: L.LatLngLiteral = { lat: 39.92, lng: 116.39 };
 
-const defaultOptions:GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
+const defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
 
 const eps = 0.000001;
 
@@ -38,8 +38,8 @@ describe("Main functionality", function () {
     });
 
     it("Create class with parameters", function () {
-        const circle = new GeodesicCircleClass(Beijing, {steps: 48});
-        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{steps: 48} });
+        const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
+        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ steps: 48 } });
         expect(circle.polyline).to.be.an("object");
     });
 
@@ -71,7 +71,7 @@ describe("Main functionality", function () {
 
     it("update radius", async function () {
         const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
-        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{radius: radius} });
+        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ radius: radius } });
         expect(circle.polyline).to.be.an("object");
         expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
@@ -88,7 +88,16 @@ describe("Main functionality", function () {
         const circle = new GeodesicCircleClass(FlindersPeak);
         const res = circle.distanceTo(Buninyong);
         expect(res).to.be.a("number");
-        expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits
+        expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is only 3 digits
+    });
+
+    it("Statistics calculation (simple)", async function () {
+        const circle = new GeodesicCircleClass(Beijing, { radius: 1000, steps: 24 });
+        expect(circle.statistics.totalDistance).to.be.closeTo(6265.257177, eps);
+        expect(circle.statistics.distanceArray).to.be.an("array");
+        expect(circle.statistics.distanceArray).to.be.length(1);
+        expect(circle.statistics.points).to.be.equal(1);
+        expect(circle.statistics.vertices).to.be.equal(25);
     });
 
 });

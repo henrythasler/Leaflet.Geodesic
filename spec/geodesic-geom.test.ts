@@ -292,3 +292,39 @@ describe("distance function (wrapper for vincenty inverse)", function () {
         expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits
     });
 });
+
+describe("multilineDistance()", function () {
+    it("FlindersPeak to Buninyong and back", function () {
+        const res = geom.multilineDistance([[FlindersPeak, Buninyong], [Buninyong, FlindersPeak]]);
+        expect(res).to.be.an("array");
+        expect(res).to.be.length(2);
+        const sum = res.reduce((x, y) => x + y, 0);
+        expect(sum).to.be.closeTo(2 * 54972.271, 0.001);
+        expect(res[0]).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is only 3 digits
+        expect(res[1]).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is only 3 digits
+    });
+
+    it("Berlin -> Seattle -> Capetown", function () {
+        const res = geom.multilineDistance([[Berlin, Seattle, Capetown]]);
+        expect(res).to.be.an("array");
+        expect(res).to.be.length(1);
+        const sum = res.reduce((x, y) => x + y, 0);
+        expect(sum).to.be.closeTo(24569051.081048, eps);
+    });
+
+    it("Just a point (invalid)", function () {
+        const res = geom.multilineDistance([[Berlin]]);
+        expect(res).to.be.an("array");
+        expect(res).to.be.length(1);
+        const sum = res.reduce((x, y) => x + y, 0);
+        expect(sum).to.be.closeTo(0, eps);
+    });
+
+    it("empty input", function () {
+        const res = geom.multilineDistance([[]]);
+        expect(res).to.be.an("array");
+        expect(res).to.be.length(1);
+        const sum = res.reduce((x, y) => x + y, 0);
+        expect(sum).to.be.closeTo(0, eps);
+    });    
+});

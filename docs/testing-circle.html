@@ -17,23 +17,19 @@
             width: 100%;
         }
 
-        .distance-container {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            z-index: 1;
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
         }
 
-        .distance-container>* {
-            background-color: #fff;
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
-            line-height: 18px;
-            display: block;
-            margin: 0;
-            padding: 5px 10px;
-            border-radius: 3px;
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
         }
     </style>
     <title>Leaflet.Geodesic demo</title>
@@ -47,7 +43,6 @@
         crossorigin=""></script>
 
     <script src="leaflet.geodesic.umd.min.js"></script>
-
 </head>
 
 <body>
@@ -61,8 +56,8 @@
                 [-90, -180],
                 [90, 180]
             ],
-            center: [0, 0],
-            zoom: 2
+            center: [50, 0],
+            zoom: 4
         });
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
@@ -76,26 +71,33 @@
         var A = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
         var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
-        // var A = L.marker([0, -170], { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        // var B = L.marker(paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
-
-        const greatcircle = new L.GeodesicCircle(A.getLatLng(), {
+        const geodesiccircle = new L.GeodesicCircle(A.getLatLng(), {
             weight: 7,
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 80,
-            radius: 3000*1000
+            steps: 80
         }).addTo(map);
 
-        // const greatcircle2 = new L.GeodesicCircle({ lat: 47.56, lng: -122.33 }, {
-        //     weight: 6,
-        //     // opacity: 0.5,
-        //     // color: 'red',
-        //     radius: 3000*1000,
-        //     // steps: 48,
-        // }).addTo(map);        
+        geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
 
+        var info = L.control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const circumfenceString = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius>10000)?(geodesiccircle.radius/1000).toFixed(0)+' km':(geodesiccircle.radius).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString + 
+                '<br/><br/><b>Circumfence</b><br/>' + circumfenceString + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };   
+
+        info.update(geodesiccircle.statistics);
 
         var diff = {lat:0, lng:0};
         A.on('dragstart', function () {
@@ -108,12 +110,14 @@
                 lat: Math.max(-90, Math.min(90, A.getLatLng().lat - diff.lat)),
                 lng: A.getLatLng().lng - diff.lng
             });	// move B parallel to A            
-            greatcircle.setLatLng(e.latlng);
-            greatcircle.setRadius(greatcircle.distanceTo(B.getLatLng()));
+            geodesiccircle.setLatLng(e.latlng);
+            geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+            info.update(geodesiccircle.statistics);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            greatcircle.setRadius(greatcircle.distanceTo(e.latlng));
+            geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
+            info.update(geodesiccircle.statistics);
         });
 
     </script>

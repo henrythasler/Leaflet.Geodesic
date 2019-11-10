@@ -93,7 +93,7 @@ const geodesic = new L.Geodesic(places).addTo(map);
 
 ### Multi-line-strings
 
-Multiple independent linestrings can be defined as a 2-dimensional array:
+Multiple independent linestrings can be defined as a 2-dimensional array of points:
 
 ```JavaScript
 const places = [
@@ -149,9 +149,10 @@ The most important options are:
 
 Option  | Type | Default | Description
 ---|---|---|---
-color |	String | "#3388ff" | Stroke color
-weight | Number | 3 | Stroke width in pixels
-opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
+`color` |	`String` | "#3388ff" | Stroke color
+`weight` | `Number` | 3 | Stroke width in pixels
+`opacity` | `Number` | 1.0 | Stroke opacity (0=transparent, 1=opaque)
+`steps` | `Number` | 3 | Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8
 
 Example:
 
@@ -170,7 +171,7 @@ const geodesic = new L.Geodesic([Berlin, LosAngeles], options).addTo(map);
 
 ## Geodesic Circles
 
-Circles can be added with another class called `GeodesicCircle` as follows:
+Circles can be added with another class called `L.GeodesicCircle` as follows:
 
 ```Javascript
 const Seattle = new L.LatLng(47.56, -122.33);
@@ -187,14 +188,49 @@ Handling of circles crossing the antimeridian (wrapping) is not yet supported.
 
 Option  | Type | Default | Description
 ---|---|---|---
-radius | Number | 1000*1000 | Radius in **meters**
-steps | Number | 24 | Number of segments that are used to approximate the circle.
-fill | boolean | true | Draws a filled circle.
-color |	String | "#3388ff" | Stroke color
-weight | Number | 3 | Stroke width in pixels
-opacity | Number | 1.0 | Stroke opacity (0=transparent, 1=opaque)
+`radius` | `Number` | 1000*1000 | Radius in **meters**
+`steps` | `Number` | 24 | Number of segments that are used to approximate the circle.
+`fill` | `boolean` | true | Draws a filled circle.
+`color` |	`String` | "#3388ff" | Stroke color
+`weight` | `Number` | 3 | Stroke width in pixels
+`opacity` | `Number` | 1.0 | Stroke opacity (0=transparent, 1=opaque)
 
 Please refer to the options for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for additional settings.
+
+## Statistics
+
+The `L.Geodesic` and `L.GeodesicCircle`-class provide a `statistics`-Object with the following properties:
+
+Property | Type | Description
+---|---|---
+`totalDistance` |	`Number` | The total distance of all geodesic lines in meters. (Circumfence for `L.GeodesicCircle`)
+`distanceArray` | `Number[]` | The distance for each separate linestring in meters
+`points` | `Number` | Number of points that were given on creation or with `setLatLngs()`
+`vertices` | `Number` | Number of vertices of all geodesic lines that were calculated
+
+## Distance Calculation
+
+The `L.Geodesic` provides a `distance`-function to calculate the precise distance between two points:
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const Beijing = new L.LatLng(39.92, 116.39);
+
+const line = new L.Geodesic();
+const distance = line.distance(Berlin, Beijing);
+console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
+```
+
+The `L.GeodesicCircle`-class provides a `distanceTo`-function to calculate the distance between the current center and any given point:
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const Beijing = new L.LatLng(39.92, 116.39);
+
+const circle = new L.GeodesicCircle(Berlin);
+const distance = circle.distanceTo(Beijing);
+console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
+```
 
 ## Scientific background
 

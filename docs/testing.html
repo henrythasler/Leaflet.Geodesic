@@ -21,15 +21,16 @@
             padding: 6px 8px;
             font: 14px/16px Arial, Helvetica, sans-serif;
             background: white;
-            background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
         }
-        .info h4 {
-	        margin: 0 0 5px;
-	        color: #777;
-        }
 
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
     </style>
     <title>Leaflet.Geodesic demo</title>
 
@@ -64,6 +65,21 @@
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
+        var info = L.control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
+
         var berlin = new L.LatLng(52.5, 13.35);
         var losangeles = new L.LatLng(33.82, -118.38);
 
@@ -77,18 +93,22 @@
             steps: 5,
         }).addTo(map);
 
+        info.update(geodesic.statistics);
+
         A.on('drag', (e) => {
             // console.log(`A=${e.latlng}`);
             A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
-            // console.log(geodesic.getLatLngs());
+            info.update(geodesic.statistics);
         });
         B.on('drag', (e) => {
             // console.log(`B=${e.latlng}`);
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
-            // console.log(geodesic.getLatLngs());
+            info.update(geodesic.statistics);
         });
+
+
 
     </script>
 </body>

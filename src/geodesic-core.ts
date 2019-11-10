@@ -18,9 +18,6 @@ export interface GeoDistance {
 
 export class GeodesicCore {
 
-    // /** used as maximal deviation for all iterative calculation. Smaller value increases computational effort */
-    // protected ε = 1e-12;
-
     readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     readonly ellipsoid = {
         a: 6378137,
