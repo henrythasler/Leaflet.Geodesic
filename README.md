@@ -130,7 +130,7 @@ geodesic.fromGeoJson(geojson);
 
 ### Updating the geometry
 
-Each Geodesic-Class provides a `setLatLngs()`-Method, that can be used to update the geometry of an existing geodesic-object:
+The Geodesic-Class provides a `setLatLngs()`-Method, that can be used to update the geometry of an existing `L.Geodesic`-object:
 
 ```Javascript
 const geodesic = new L.Geodesic().addTo(map);   // add empty object to the map
@@ -140,7 +140,7 @@ const LosAngeles = new L.LatLng(33.82, -118.38);
 geodesic.setLatLngs([Berlin, LosAngeles])   // update in-place
 ```
 
-The `setLatLngs()`-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself.
+The `setLatLngs()`-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself. Please refer to the section about geodesic circles below, on how to update a circle geometry.
 
 ### Line Options
 All options defined for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for can be used Leaflet.Geodesic.
@@ -182,6 +182,11 @@ const geodesiccircle = new L.GeodesicCircle(Seattle, {
 ```
 
 ![circle](docs/img/circle.png)
+
+The geometry of a circle can be updated with the following methods:
+
+- `setLatLng(latlng: L.LatLngExpression)` - set a new center
+- `setRadius(radius: number)` - update the radius
 
 Handling of circles crossing the antimeridian (wrapping) is not yet supported.
 
