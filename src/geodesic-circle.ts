@@ -43,6 +43,10 @@ export class GeodesicCircleClass extends L.Layer {
         return this;
     }
 
+    getBounds(): L.LatLngBounds {
+        return this.polyline.getBounds();
+    }
+
     private update(): void {
         const latlngs = this.geom.circle(this.center, this.radius);
 
