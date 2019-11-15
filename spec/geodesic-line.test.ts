@@ -265,3 +265,32 @@ describe("GeoJSON-Support", function () {
         expect(mockLog.mock.calls[0][0]).to.match(/Type "GeometryCollection" not supported/);
     });
 });
+
+describe("Re-Implementing Layer-Functions", function () {
+    let map: L.Map;
+
+    beforeEach(function () {
+        map = L.map(document.createElement('div'));
+    });
+
+    afterEach(function () {
+        map.remove();
+    });
+
+    it("getBounds()", async function () {
+        const line = new GeodesicLine([FlindersPeak, Buninyong]);
+        const group = new L.FeatureGroup([line]).addTo(map);
+
+        expect(line.options).to.be.deep.equal(defaultOptions);
+        expect(line.polyline).to.be.an("object");
+
+        expect(map.hasLayer(group)).to.be.true;
+        map.eachLayer(function (layer) {
+            expect(layer).to.be.instanceOf(L.FeatureGroup);
+        });
+
+        const bounds = group.getBounds();
+        expect(bounds).to.be.instanceOf(L.LatLngBounds);
+        checkFixture([[bounds.getCenter()]], [[{lat: (FlindersPeak.lat+Buninyong.lat)/2, lng: (FlindersPeak.lng+Buninyong.lng)/2}]]);
+    });
+});

@@ -19,6 +19,20 @@ const defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noC
 
 const eps = 0.000001;
 
+function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][]): void {
+    expect(specimen).to.be.an("array");
+    expect(specimen).to.be.length(fixture.length);
+    specimen.forEach((line, k) => {
+        expect(line).to.be.length(fixture[k].length);
+        line.forEach((point, l) => {
+            expect(point).to.be.an("object");
+            expect(point).to.include.all.keys("lat", "lng");
+            expect(point.lat).to.be.closeTo(fixture[k][l].lat, eps);
+            expect(point.lng).to.be.closeTo(fixture[k][l].lng, eps);
+        });
+    });
+}
+
 describe("Main functionality", function () {
     let map: L.Map;
     const radius = 1000 * 1000;
@@ -100,4 +114,35 @@ describe("Main functionality", function () {
         expect(circle.statistics.vertices).to.be.equal(25);
     });
 
+});
+
+describe("Bugs", function () {
+    let map: L.Map;
+
+    beforeEach(function () {
+        map = L.map(document.createElement('div'));
+    });
+
+    afterEach(function () {
+        map.remove();
+    });
+
+    it("Calling getBounds on a GeodesicCircle throws an error (#48)", async function () {
+        const circle = new GeodesicCircleClass(Seattle, { radius: 10});
+        const group = new L.FeatureGroup([circle]).addTo(map);
+
+        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ radius: 10 } });
+        expect(circle.polyline).to.be.an("object");
+        expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
+        expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
+
+        expect(map.hasLayer(group)).to.be.true;
+        map.eachLayer(function (layer) {
+            expect(layer).to.be.instanceOf(L.FeatureGroup);
+        });
+
+        const bounds = group.getBounds();
+        expect(bounds).to.be.instanceOf(L.LatLngBounds);
+        checkFixture([[bounds.getCenter()]], [[Seattle]]);
+    });
 });

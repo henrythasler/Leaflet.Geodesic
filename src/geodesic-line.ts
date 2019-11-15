@@ -43,6 +43,10 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
+    getBounds(): L.LatLngBounds {
+        return this.polyline.getBounds();
+    }
+        
     private updateLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
         const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
         const geodesic = this.geom.multiLineString(latLngLiteral);
