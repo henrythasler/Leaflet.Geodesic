@@ -3,6 +3,9 @@ import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLiteral, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
+/**
+ * Draw geodesic lines based on L.Polyline
+ */
 export class GeodesicLine extends L.Polyline {
     defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
     readonly geom: GeodesicGeometry;
@@ -15,11 +18,15 @@ export class GeodesicLine extends L.Polyline {
         this.geom = new GeodesicGeometry(this.options);
 
         if (latlngs !== undefined) {
-            this.update(latlngs);
+            this.setLatLngs(latlngs);
         }
     }
 
-    private update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+    /**
+     * overwrites the original function with additional functionality to create a geodesic line
+     * @param latlngs an array (or 2d-array) of positions
+     */
+    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
         const geodesic = this.geom.multiLineString(latLngLiteral);
         this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
@@ -30,13 +37,13 @@ export class GeodesicLine extends L.Polyline {
         else {
             super.setLatLngs(geodesic);
         }
-    }
-
-    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.update(latlngs);
         return this;
     }
 
+    /**
+     * Creates geodesic lines from a given GeoJSON-Object.
+     * @param input GeoJSON-Object
+     */
     fromGeoJson(input: GeoJSON.GeoJSON): this {
         let latlngs: L.LatLngExpression[][] = [];
         let features: GeoJSON.Feature[] = [];
@@ -79,11 +86,17 @@ export class GeodesicLine extends L.Polyline {
         });
 
         if (latlngs.length) {
-            this.update(latlngs);
+            this.setLatLngs(latlngs);
         }
         return this;
     }
 
+    /**
+     * Calculates the distance between two geo-positions
+     * @param start 1st position
+     * @param dest 2nd position
+     * @return the distance in meters
+     */
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLiteral(start), latlngExpressiontoLiteral(dest));
     }
