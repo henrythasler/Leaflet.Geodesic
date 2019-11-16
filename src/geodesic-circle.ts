@@ -3,21 +3,21 @@ import { GeodesicGeometry, Statistics } from "./geodesic-geom"
 import { GeodesicOptions } from "./geodesic-core"
 import { latlngExpressiontoLiteral } from "./types-helper";
 
-export class GeodesicCircleClass extends L.Layer {
-    polyline: L.Polyline;
-    options: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
+export class GeodesicCircleClass extends L.Polyline {
+    defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true};
     private geom: GeodesicGeometry;
     center: L.LatLngLiteral = { lat: 0, lng: 0 };
-    radius: number = 0;
+    radius: number = 1000 * 1000;
     statistics: Statistics = {} as any;
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
-        super();
-        this.options = { ...this.options, ...options };  // noClip prevents broken fills
+        super([], options);
+        L.Util.setOptions(this, {...this.defaultOptions, ...options});
+
+        const extendedOptions = this.options as GeodesicOptions;
+        this.radius = (extendedOptions.radius === undefined) ? 1000 * 1000 : extendedOptions.radius;
 
         this.geom = new GeodesicGeometry(this.options);
-
-        this.radius = (this.options.radius === undefined) ? 1000 * 1000 : this.options.radius;
 
         if (center) {
             this.center = latlngExpressiontoLiteral(center);
@@ -25,26 +25,8 @@ export class GeodesicCircleClass extends L.Layer {
             this.statistics = this.geom.updateStatistics([[this.center]], [latlngs]);
             // circumfence must be re-calculated from geodesic 
             this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
-
-            this.polyline = new L.Polyline(latlngs, this.options);
+            this.setLatLngs(latlngs);
         }
-        else {
-            this.polyline = new L.Polyline([], this.options);
-        }
-    }
-
-    onAdd(map: L.Map): this {
-        this.polyline.addTo(map);
-        return this;
-    }
-
-    onRemove(): this {
-        this.polyline.remove();
-        return this;
-    }
-
-    getBounds(): L.LatLngBounds {
-        return this.polyline.getBounds();
     }
 
     private update(): void {
@@ -54,7 +36,7 @@ export class GeodesicCircleClass extends L.Layer {
         // circumfence must be re-calculated from geodesic 
         this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
 
-        this.polyline.setLatLngs(latlngs);
+        this.setLatLngs(latlngs);
     }
 
     distanceTo(latlng: L.LatLngExpression): number {
