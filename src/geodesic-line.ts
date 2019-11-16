@@ -3,65 +3,37 @@ import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLiteral, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
-export class GeodesicLine extends L.Layer {
-    polyline: L.Polyline;
-    options: GeodesicOptions = { wrap: true, steps: 3 };
-    private geom: GeodesicGeometry;
+export class GeodesicLine extends L.Polyline {
+    defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
+    readonly geom: GeodesicGeometry;
     statistics: Statistics = {} as any;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
-        super();
-        this.options = { ...this.options, ...options };
+        super([], options);
+        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         this.geom = new GeodesicGeometry(this.options);
 
-        if (latlngs) {
-            const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
-            const geodesic = this.geom.multiLineString(latLngLiteral);
-            this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
-
-            if (this.options.wrap) {
-                const split = this.geom.splitMultiLineString(geodesic);
-                this.polyline = new L.Polyline(split, this.options);
-            }
-            else {
-                this.polyline = new L.Polyline(geodesic, this.options);
-            }
-        }
-        else {
-            this.polyline = new L.Polyline([], this.options);
+        if (latlngs !== undefined) {
+            this.update(latlngs);
         }
     }
 
-    onAdd(map: L.Map): this {
-        this.polyline.addTo(map);
-        return this;
-    }
-
-    onRemove(): this {
-        this.polyline.remove();
-        return this;
-    }
-
-    getBounds(): L.LatLngBounds {
-        return this.polyline.getBounds();
-    }
-        
-    private updateLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+    private update(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
         const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
         const geodesic = this.geom.multiLineString(latLngLiteral);
         this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
-        if (this.options.wrap) {
+        if ((this.options as GeodesicOptions).wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
-            this.polyline.setLatLngs(split);
+            super.setLatLngs(split);
         }
         else {
-            this.polyline.setLatLngs(geodesic);
+            super.setLatLngs(geodesic);
         }
     }
 
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.updateLatLngs(latlngs);
+        this.update(latlngs);
         return this;
     }
 
@@ -107,13 +79,9 @@ export class GeodesicLine extends L.Layer {
         });
 
         if (latlngs.length) {
-            this.setLatLngs(latlngs);
+            this.update(latlngs);
         }
         return this;
-    }
-
-    getLatLngs(): L.LatLng[] | L.LatLng[][] | L.LatLng[][][] {
-        return this.polyline.getLatLngs();
     }
 
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {

@@ -7,7 +7,7 @@ import { latlngExpressiontoLiteral } from "./types-helper";
  * Can be used to create a geodesic circle based on L.Polyline
  */
 export class GeodesicCircleClass extends L.Polyline {
-    defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true};
+    defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
     readonly geom: GeodesicGeometry;
     center: L.LatLngLiteral;
     radius: number;
@@ -15,12 +15,12 @@ export class GeodesicCircleClass extends L.Polyline {
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
         super([], options);
-        L.Util.setOptions(this, {...this.defaultOptions, ...options});
+        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;
         this.radius = (extendedOptions.radius === undefined) ? 1000 * 1000 : extendedOptions.radius;
-        this.center = (center === undefined) ? { lat: 0, lng: 0 }: latlngExpressiontoLiteral(center);
+        this.center = (center === undefined) ? { lat: 0, lng: 0 } : latlngExpressiontoLiteral(center);
 
         this.geom = new GeodesicGeometry(this.options);
 

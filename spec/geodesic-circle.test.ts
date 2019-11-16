@@ -53,26 +53,26 @@ describe("Main functionality", function () {
 
     it("Create class w/o any parameters", function () {
         const circle = new GeodesicCircleClass();
-        expect(circle).to.be.instanceOf(GeodesicCircleClass);        
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
         compareObject(circle.options, defaultOptions);
     });
 
     it("Create class with parameters", function () {
         const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
-        expect(circle).to.be.instanceOf(GeodesicCircleClass);        
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
         compareObject(circle.options, defaultOptions);
     });
 
     it("Add empty circle to map", async function () {
         const circle = new GeodesicCircleClass().addTo(map);
-        expect(circle).to.be.instanceOf(GeodesicCircleClass);        
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
         compareObject(circle.options, defaultOptions);
         expect(map.hasLayer(circle)).to.be.true;
     });
 
     it("update center", async function () {
         const circle = new GeodesicCircleClass(Seattle).addTo(map);
-        expect(circle).to.be.instanceOf(GeodesicCircleClass);        
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
         compareObject(circle.options, defaultOptions);
         expect(map.hasLayer(circle)).to.be.true;
 
@@ -84,7 +84,7 @@ describe("Main functionality", function () {
 
     it("update radius", async function () {
         const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
-        expect(circle).to.be.instanceOf(GeodesicCircleClass);        
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
         compareObject(circle.options, { ...defaultOptions, ...{ radius: radius } });
         expect(map.hasLayer(circle)).to.be.true;
 
@@ -124,7 +124,7 @@ describe("Bugs", function () {
     });
 
     it("Calling getBounds on a GeodesicCircle throws an error (#48)", async function () {
-        const circle = new GeodesicCircleClass(Seattle, { radius: 10});
+        const circle = new GeodesicCircleClass(Seattle, { radius: 10 });
         const group = new L.FeatureGroup([circle]).addTo(map);
 
         compareObject(circle.options, { ...defaultOptions, ...{ radius: 10 } });
@@ -132,7 +132,7 @@ describe("Bugs", function () {
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
 
         expect(map.hasLayer(group)).to.be.true;
-        
+
         const bounds = group.getBounds();
         expect(bounds).to.be.instanceOf(L.LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[Seattle]]);
