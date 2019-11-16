@@ -45,6 +45,8 @@ Geodesic(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: Geod
 GeodesicCircle(center?: L.LatLngExpression, options?: GeodesicOptions)
 ```
 
+Both classes are extended from [L.Polyline](http://leafletjs.com/reference.html#polyline), so all methods, events and options for `L.Polyline` can be used with `L.Geodesic` and `L.GeodesicCircle` here as well.
+
 ## Geodesic Lines
 
 This draws a line. The geometry (points) to use can be given during creation as:
