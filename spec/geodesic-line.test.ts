@@ -39,87 +39,82 @@ function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][
     });
 }
 
+function compareObject(specimen: object, fixture: object): void {
+    for (let [key, value] of Object.entries(specimen)) {
+        expect(specimen).to.have.own.property(key, value);
+    }
+}
+
 describe("Main functionality", function () {
+    let container: HTMLElement;
     let map: L.Map;
 
     beforeEach(function () {
-        map = L.map(document.createElement('div'));
-    });
-
-    afterEach(function () {
-        map.remove();
+        container = document.createElement('div');
+        container.style.width = '400px';
+        container.style.height = '400px';
+        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("Create class w/o any parameters", function () {
         const line = new GeodesicLine();
-        expect(line.options).to.be.deep.equal(defaultOptions);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
     });
 
     it("Create class with parameters", function () {
         const line = new GeodesicLine([], { steps: 0 });
-        expect(line.options).to.be.deep.equal({ ...defaultOptions, ...{ steps: 0 } });
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, { ...defaultOptions, ...{ steps: 0 } });
     });
 
     it("Create class with parameters", function () {
         const line = new GeodesicLine([], { wrap: false });
-        expect(line.options).to.be.deep.equal({ ...defaultOptions, ...{ wrap: false } });
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, { ...defaultOptions, ...{ wrap: false } });
     });
 
-    it("Add empty line to map", async function () {
+    it("Add empty line to map", function () {
         const line = new GeodesicLine().addTo(map);
-        expect(line.options).to.be.deep.equal(defaultOptions);
-        expect(line.polyline).to.be.an("object");
-
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicLine);
-        });
     });
 
-    it("Modify Line", async function () {
+    it("Modify Line", function () {
         const line = new GeodesicLine().addTo(map);
-        expect(line.options).to.be.deep.equal(defaultOptions);
-        expect(line.polyline).to.be.an("object");
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicLine);
-        });
         line.setLatLngs([Berlin, Capetown]);
     });
 
-    it("Modify Line w/o wrapping", async function () {
+    it("Modify Line w/o wrapping", function () {
         const line = new GeodesicLine([], { wrap: false }).addTo(map);
-        expect(line.options).to.be.deep.equal({ ...defaultOptions, ...{ wrap: false } });
-        expect(line.polyline).to.be.an("object");
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, { ...defaultOptions, ...{ wrap: false } });
         expect(map.hasLayer(line)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicLine);
-        });
         line.setLatLngs([Berlin, Capetown]);
     });
 
-    it("Read LatLngs", async function () {
+    it("Read LatLngs from empty line", function () {
         const line = new GeodesicLine().addTo(map);
-        expect(line.options).to.be.deep.equal(defaultOptions);
-        expect(line.polyline).to.be.an("object");
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicLine);
-        });
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
+        expect(latlngs.length).to.be.equal(0);
     });
 
-    it("Read LatLngs", async function () {
-        const line = new GeodesicLine().addTo(map);
-        expect(line.options).to.be.deep.equal(defaultOptions);
-        expect(line.polyline).to.be.an("object");
+    it("Read LatLngs", function () {
+        const line = new GeodesicLine([Berlin, Capetown]).addTo(map);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicLine);
-        });
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
+        expect(latlngs.length).to.be.equal(1);
     });
 
     it("Statistics calculation (simple)", async function () {
@@ -144,22 +139,27 @@ describe("Main functionality", function () {
         const line = new GeodesicLine();
         const distance = line.distance(FlindersPeak, Buninyong);
         expect(distance).to.be.closeTo(54972.271, 0.001);
-    });    
+    });
 });
 
 describe("GeoJSON-Support", function () {
+    let container: HTMLElement;
     let map: L.Map;
     const mockLog = jest.fn();
-    console.log = mockLog;
+    const originalLog = console.log;
 
     beforeEach(function () {
-        map = L.map(document.createElement('div'));
+        container = document.createElement('div');
+        container.style.width = '400px';
+        container.style.height = '400px';
+        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
+
         mockLog.mockClear();
     });
 
     afterEach(function () {
-        map.remove();
-    });
+        console.log = originalLog;
+    })
 
     it("Just a Linestring", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -237,6 +237,8 @@ describe("GeoJSON-Support", function () {
     });
 
     it("FeatureCollection with Point", async function () {
+        console.log = mockLog;
+
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}point.geojson`, "utf8"));
         line.fromGeoJson(geojson);
@@ -247,6 +249,8 @@ describe("GeoJSON-Support", function () {
     });
 
     it("Mixed FeatureCollection", async function () {
+        console.log = mockLog;
+
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}mixed.geojson`, "utf8"));
         line.fromGeoJson(geojson);
@@ -256,6 +260,8 @@ describe("GeoJSON-Support", function () {
     });
 
     it("GeometryCollection", async function () {
+        console.log = mockLog;
+
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
         line.fromGeoJson(geojson);
@@ -266,31 +272,38 @@ describe("GeoJSON-Support", function () {
     });
 });
 
-describe("Re-Implementing Layer-Functions", function () {
+describe("Usage of base-class functions", function () {
+    let container: HTMLElement;
     let map: L.Map;
 
     beforeEach(function () {
-        map = L.map(document.createElement('div'));
-    });
-
-    afterEach(function () {
-        map.remove();
+        container = document.createElement('div');
+        container.style.width = '400px';
+        container.style.height = '400px';
+        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("getBounds()", async function () {
+        const line = new GeodesicLine([FlindersPeak, Buninyong]).addTo(map);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
+        expect(map.hasLayer(line)).to.be.true;
+
+        const bounds = line.getBounds();
+        expect(bounds).to.be.instanceOf(L.LatLngBounds);
+        checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
+    });
+
+    it("getBounds() in FeatureGroup", async function () {
         const line = new GeodesicLine([FlindersPeak, Buninyong]);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
+
         const group = new L.FeatureGroup([line]).addTo(map);
-
-        expect(line.options).to.be.deep.equal(defaultOptions);
-        expect(line.polyline).to.be.an("object");
-
         expect(map.hasLayer(group)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(L.FeatureGroup);
-        });
 
         const bounds = group.getBounds();
         expect(bounds).to.be.instanceOf(L.LatLngBounds);
-        checkFixture([[bounds.getCenter()]], [[{lat: (FlindersPeak.lat+Buninyong.lat)/2, lng: (FlindersPeak.lng+Buninyong.lng)/2}]]);
+        checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
     });
 });

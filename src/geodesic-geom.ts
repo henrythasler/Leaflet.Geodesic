@@ -11,9 +11,11 @@ export interface Statistics {
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
     readonly options: GeodesicOptions = { wrap: true, steps: 3 };
+    steps: number;
 
     constructor(options?: GeodesicOptions) {
         this.options = { ...this.options, ...options };
+        this.steps = (this.options.steps === undefined) ? 3 : this.options.steps;
     }
 
     recursiveMidpoint(start: L.LatLngLiteral, dest: L.LatLngLiteral, iterations: number): L.LatLngLiteral[] {
@@ -34,14 +36,13 @@ export class GeodesicGeometry {
     }
 
     line(start: L.LatLngLiteral, dest: L.LatLngLiteral): L.LatLngLiteral[] {
-        return this.recursiveMidpoint(start, dest, Math.min(8, (this.options.steps === undefined) ? 3 : this.options.steps));
+        return this.recursiveMidpoint(start, dest, Math.min(8, this.steps));
     }
 
     circle(center: L.LatLngLiteral, radius: number): L.LatLngLiteral[] {
-        const steps = (this.options.steps === undefined) ? 24 : this.options.steps;
         const points: L.LatLngLiteral[] = [];
-        for (let i = 0; i < steps + 1; i++) {
-            const point: WGS84Vector = this.geodesic.direct(center, 360 / steps * i, radius);
+        for (let i = 0; i < this.steps + 1; i++) {
+            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
             points.push({ lat: point.lat, lng: point.lng } as L.LatLngLiteral);
         }
         return points;

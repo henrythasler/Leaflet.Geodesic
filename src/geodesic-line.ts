@@ -3,68 +3,47 @@ import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLiteral, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
-export class GeodesicLine extends L.Layer {
-    polyline: L.Polyline;
-    options: GeodesicOptions = { wrap: true, steps: 3 };
-    private geom: GeodesicGeometry;
+/**
+ * Draw geodesic lines based on L.Polyline
+ */
+export class GeodesicLine extends L.Polyline {
+    defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
+    readonly geom: GeodesicGeometry;
     statistics: Statistics = {} as any;
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
-        super();
-        this.options = { ...this.options, ...options };
+        super([], options);
+        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         this.geom = new GeodesicGeometry(this.options);
 
-        if (latlngs) {
-            const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
-            const geodesic = this.geom.multiLineString(latLngLiteral);
-            this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
-
-            if (this.options.wrap) {
-                const split = this.geom.splitMultiLineString(geodesic);
-                this.polyline = new L.Polyline(split, this.options);
-            }
-            else {
-                this.polyline = new L.Polyline(geodesic, this.options);
-            }
-        }
-        else {
-            this.polyline = new L.Polyline([], this.options);
+        if (latlngs !== undefined) {
+            this.setLatLngs(latlngs);
         }
     }
 
-    onAdd(map: L.Map): this {
-        this.polyline.addTo(map);
-        return this;
-    }
-
-    onRemove(): this {
-        this.polyline.remove();
-        return this;
-    }
-
-    getBounds(): L.LatLngBounds {
-        return this.polyline.getBounds();
-    }
-        
-    private updateLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): void {
+    /**
+     * overwrites the original function with additional functionality to create a geodesic line
+     * @param latlngs an array (or 2d-array) of positions
+     */
+    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
         const geodesic = this.geom.multiLineString(latLngLiteral);
         this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
-        if (this.options.wrap) {
+        if ((this.options as GeodesicOptions).wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
-            this.polyline.setLatLngs(split);
+            super.setLatLngs(split);
         }
         else {
-            this.polyline.setLatLngs(geodesic);
+            super.setLatLngs(geodesic);
         }
-    }
-
-    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.updateLatLngs(latlngs);
         return this;
     }
 
+    /**
+     * Creates geodesic lines from a given GeoJSON-Object.
+     * @param input GeoJSON-Object
+     */
     fromGeoJson(input: GeoJSON.GeoJSON): this {
         let latlngs: L.LatLngExpression[][] = [];
         let features: GeoJSON.Feature[] = [];
@@ -112,10 +91,12 @@ export class GeodesicLine extends L.Layer {
         return this;
     }
 
-    getLatLngs(): L.LatLng[] | L.LatLng[][] | L.LatLng[][][] {
-        return this.polyline.getLatLngs();
-    }
-
+    /**
+     * Calculates the distance between two geo-positions
+     * @param start 1st position
+     * @param dest 2nd position
+     * @return the distance in meters
+     */
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLiteral(start), latlngExpressiontoLiteral(dest));
     }

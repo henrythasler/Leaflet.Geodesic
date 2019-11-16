@@ -68,6 +68,14 @@ function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][
     });
 }
 
+describe("constructor and properties", function () {
+    it("no additional settings given", function () {
+        expect(geom.steps).to.be.equal(3);
+        expect(geom.options.steps).to.be.equal(3);
+        expect(geom.options.wrap).to.be.true;
+    });
+});
+
 describe("recursiveMidpoint method", function () {
     it("Seatle to Capetown, zero iterations (just the midpoint)", function () {
         const n = 0;
@@ -326,5 +334,5 @@ describe("multilineDistance()", function () {
         expect(res).to.be.length(1);
         const sum = res.reduce((x, y) => x + y, 0);
         expect(sum).to.be.closeTo(0, eps);
-    });    
+    });
 });

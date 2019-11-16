@@ -77,9 +77,10 @@
             color: 'red',
             fill: true,
             steps: 80
-        }).addTo(map);
+        }).bindTooltip("<Area>").bindPopup("GeodesicCircle").addTo(map);
 
         geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+        geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
 
         var info = L.control();
         info.onAdd = function (map) {
@@ -113,11 +114,13 @@
             geodesiccircle.setLatLng(e.latlng);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
             info.update(geodesiccircle.statistics);
+            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
             info.update(geodesiccircle.statistics);
+            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
         });
 
     </script>

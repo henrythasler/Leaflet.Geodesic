@@ -33,69 +33,65 @@ function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][
     });
 }
 
+function compareObject(specimen: object, fixture: object): void {
+    for (let [key, value] of Object.entries(specimen)) {
+        expect(specimen).to.have.own.property(key, value);
+    }
+}
+
 describe("Main functionality", function () {
+    let container: HTMLElement;
     let map: L.Map;
     const radius = 1000 * 1000;
 
     beforeEach(function () {
-        map = L.map(document.createElement('div'));
-    });
-
-    afterEach(function () {
-        map.remove();
+        container = document.createElement('div');
+        container.style.width = '400px';
+        container.style.height = '400px';
+        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("Create class w/o any parameters", function () {
         const circle = new GeodesicCircleClass();
-        expect(circle.options).to.be.deep.equal(defaultOptions);
-        expect(circle.polyline).to.be.an("object");
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, defaultOptions);
     });
 
     it("Create class with parameters", function () {
         const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
-        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ steps: 48 } });
-        expect(circle.polyline).to.be.an("object");
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, defaultOptions);
     });
 
     it("Add empty circle to map", async function () {
         const circle = new GeodesicCircleClass().addTo(map);
-        expect(circle.options).to.be.deep.equal(defaultOptions);
-        expect(circle.polyline).to.be.an("object");
-
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, defaultOptions);
         expect(map.hasLayer(circle)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicCircleClass);
-        });
     });
 
     it("update center", async function () {
         const circle = new GeodesicCircleClass(Seattle).addTo(map);
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, defaultOptions);
+        expect(map.hasLayer(circle)).to.be.true;
+
         circle.setLatLng(Beijing);
-        expect(circle.options).to.be.deep.equal(defaultOptions);
-        expect(circle.polyline).to.be.an("object");
         expect(circle.center.lat).to.be.closeTo(Beijing.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Beijing.lng, eps);
         expect(circle.radius).to.be.closeTo(radius, eps);
-
-        expect(map.hasLayer(circle)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicCircleClass);
-        });
     });
 
     it("update radius", async function () {
         const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
-        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ radius: radius } });
-        expect(circle.polyline).to.be.an("object");
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, { ...defaultOptions, ...{ radius: radius } });
+        expect(map.hasLayer(circle)).to.be.true;
+
         expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
         circle.setRadius(2 * radius);
         expect(circle.radius).to.be.closeTo(2 * radius, eps);
-
-        expect(map.hasLayer(circle)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(GeodesicCircleClass);
-        });
     });
 
     it("distance function (wrapper for vincenty inverse)", function () {
@@ -117,29 +113,25 @@ describe("Main functionality", function () {
 });
 
 describe("Bugs", function () {
+    let container: HTMLElement;
     let map: L.Map;
 
     beforeEach(function () {
-        map = L.map(document.createElement('div'));
-    });
-
-    afterEach(function () {
-        map.remove();
+        container = document.createElement('div');
+        container.style.width = '400px';
+        container.style.height = '400px';
+        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("Calling getBounds on a GeodesicCircle throws an error (#48)", async function () {
-        const circle = new GeodesicCircleClass(Seattle, { radius: 10});
+        const circle = new GeodesicCircleClass(Seattle, { radius: 10 });
         const group = new L.FeatureGroup([circle]).addTo(map);
 
-        expect(circle.options).to.be.deep.equal({ ...defaultOptions, ...{ radius: 10 } });
-        expect(circle.polyline).to.be.an("object");
+        compareObject(circle.options, { ...defaultOptions, ...{ radius: 10 } });
         expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
 
         expect(map.hasLayer(group)).to.be.true;
-        map.eachLayer(function (layer) {
-            expect(layer).to.be.instanceOf(L.FeatureGroup);
-        });
 
         const bounds = group.getBounds();
         expect(bounds).to.be.instanceOf(L.LatLngBounds);
