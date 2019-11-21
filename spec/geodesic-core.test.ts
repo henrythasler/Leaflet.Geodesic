@@ -197,7 +197,7 @@ describe("Intersection - regular test cases", function () {
             new L.LatLng(0, -1), 90,
             new L.LatLng(-1, 0), 0);
         if (res) {
-            expect(res).to.be.instanceOf(L.LatLng);        
+            expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(0, eps);
             expect(res.lng).to.be.closeTo(0, eps);
         }
@@ -214,7 +214,7 @@ describe("Intersection - regular test cases", function () {
             Seattle, path2.initialBearing
         );
         if (res) {
-            expect(res).to.be.instanceOf(L.LatLng);        
+            expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(17.099091, eps);  // checked with QGIS
             expect(res.lng).to.be.closeTo(-33.681335, eps);
         }
@@ -229,7 +229,7 @@ describe("Intersection - regular test cases", function () {
             new L.LatLng(49.0034, 2.5735), 32.435
         );
         if (res) {
-            expect(res).to.be.instanceOf(L.LatLng);        
+            expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(50.9078, 0.0001);
             expect(res.lng).to.be.closeTo(4.5084, 0.0001);
         }
@@ -245,7 +245,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             Berlin, 0,
             Berlin, 0);
         if (res) {
-            expect(res).to.be.instanceOf(L.LatLng);        
+            expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(Berlin.lat, eps);
             expect(res.lng).to.be.closeTo(Berlin.lng, eps);
         }
@@ -266,7 +266,7 @@ describe("Intersection - Corner-cases and error handling", function () {
 describe("midpoint - regular test cases", function () {
     it("Seattle and Capetown", function () {
         const res = geodesic.midpoint(Seattle, Capetown);
-        expect(res).to.be.instanceOf(L.LatLng);        
+        expect(res).to.be.instanceOf(L.LatLng);
         expect(res.lat).to.be.closeTo(18.849527, eps);
         expect(res.lng).to.be.closeTo(-35.885828, eps);
     });

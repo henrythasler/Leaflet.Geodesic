@@ -6,7 +6,6 @@ import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";
 import { expect } from "chai";
-import { latlngExpressionArraytoLiteralArray } from "../src/types-helper";
 
 import "jest";
 
