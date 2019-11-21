@@ -1,7 +1,7 @@
 import L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
-import { latlngExpressiontoLiteral, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
+import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
 /**
  * Draw geodesic lines based on L.Polyline
@@ -10,7 +10,7 @@ export class GeodesicLine extends L.Polyline {
     defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
     readonly geom: GeodesicGeometry;
     statistics: Statistics = {} as any;
-    points: L.LatLngLiteral[][] = [];
+    points: L.LatLng[][] = [];
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
@@ -42,13 +42,13 @@ export class GeodesicLine extends L.Polyline {
      * @param latlngs an array (or 2d-array) of positions
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        this.points = latlngExpressionArraytoLiteralArray(latlngs);
+        this.points = latlngExpressionArraytoLatLngArray(latlngs);
         this.updateGeometry();
         return this;
     }
 
     addLatLng(latlng: L.LatLngExpression, latlngs?: L.LatLng[]): this {
-        const point: L.LatLngLiteral = latlngExpressiontoLiteral(latlng);
+        const point = latlngExpressiontoLatLng(latlng);
         if (this.points.length === 0) {
             this.points.push([point]);
         }
@@ -117,6 +117,6 @@ export class GeodesicLine extends L.Polyline {
      * @return the distance in meters
      */
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
-        return this.geom.distance(latlngExpressiontoLiteral(start), latlngExpressiontoLiteral(dest));
+        return this.geom.distance(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest));
     }
 }

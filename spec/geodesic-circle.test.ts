@@ -9,24 +9,33 @@ import { expect } from "chai";
 import "jest";
 
 // test case with distance 54972.271 m
-const FlindersPeak: L.LatLngLiteral = { lat: -37.9510334166667, lng: 144.424867888889 };
-const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.926495527778 };
+const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
+const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
 
-const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
-const Beijing: L.LatLngLiteral = { lat: 39.92, lng: 116.39 };
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+
+const Seattle = new L.LatLng(47.56, -122.33);
+const Santiago = new L.LatLng(-33.44, -70.71);
+const Capetown = new L.LatLng(-33.94, 18.39);
+
+const Tokyo = new L.LatLng(35.47, 139.15);
+const Sydney = new L.LatLng(-33.91, 151.08);
+
+const Beijing = new L.LatLng(39.92, 116.39);
+
 
 const defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
 
 const eps = 0.000001;
 
-function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][]): void {
+function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
     expect(specimen).to.be.an("array");
     expect(specimen).to.be.length(fixture.length);
     specimen.forEach((line, k) => {
         expect(line).to.be.length(fixture[k].length);
         line.forEach((point, l) => {
-            expect(point).to.be.an("object");
-            expect(point).to.include.all.keys("lat", "lng");
+            expect(point).to.be.instanceOf(L.LatLng);
             expect(point.lat).to.be.closeTo(fixture[k][l].lat, eps);
             expect(point.lng).to.be.closeTo(fixture[k][l].lng, eps);
         });

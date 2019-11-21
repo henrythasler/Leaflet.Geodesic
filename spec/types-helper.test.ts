@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { latlngExpressiontoLiteral, instanceOfLatLngExpression, latlngExpressionArraytoLiteralArray } from "../src/types-helper";
+import { latlngExpressiontoLiteral, instanceOfLatLngExpression, latlngExpressionArraytoLiteralArray, latlngExpressiontoLatLng } from "../src/types-helper";
 import { expect } from "chai";
 
 import "jest";
@@ -58,6 +58,37 @@ describe("latlngExpressiontoLiteral", function () {
     });    
 });
 
+describe("latlngExpressiontoLatLng", function () {
+    it("LatLng-Class", function () {
+        const point = latlngExpressiontoLatLng(new L.LatLng(Berlin.lat, Berlin.lng));
+        expect(point).to.be.instanceOf(L.LatLng);
+        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
+        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+    });
+
+    it("LatLng-Array", function () {
+        const point = latlngExpressiontoLatLng([Berlin.lat, Berlin.lng]);
+        expect(point).to.be.instanceOf(L.LatLng);
+        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
+        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+    });
+
+    it("LatLngLiteral", function () {
+        const point = latlngExpressiontoLatLng(Berlin);
+        expect(point).to.be.instanceOf(L.LatLng);
+        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
+        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+    });
+
+    it("unknown Object (string instead of number)", function () {
+        try {
+            latlngExpressiontoLatLng({lat: Berlin.lat, lng: `${Berlin.lng}`} as any);
+        } catch (e) {
+            expect(e).to.be.an("Error");
+            expect(e.message).to.have.match(/Unknown object found/);            
+        }
+    });    
+});
 
 
 describe("latlngExpressionArraytoLiteralArray", function () {

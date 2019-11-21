@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 
@@ -6,16 +9,18 @@ import L from "leaflet";
 import "jest";
 
 // test case with distance 54972.271 m
-const FlindersPeak: L.LatLngLiteral = { lat: -37.9510334166667, lng: 144.424867888889 };
-const Buninyong: L.LatLngLiteral = { lat: -37.6528211388889, lng: 143.926495527778 };
+const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
+const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
 
-const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
-const Seattle: L.LatLngLiteral = { lat: 47.56, lng: -122.33 };
-const Capetown: L.LatLngLiteral = { lat: -33.94, lng: 18.39 };
-const Tokyo: L.LatLngLiteral = { lat: 35.47, lng: 139.15 };
-const Sydney: L.LatLngLiteral = { lat: -33.91, lng: 151.08 };
-const LosAngeles: L.LatLngLiteral = { lat: 33.82, lng: -118.38 };
-const Santiago: L.LatLngLiteral = { lat: -33.44, lng: -70.71 };
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+
+const Seattle = new L.LatLng(47.56, -122.33);
+const Santiago = new L.LatLng(-33.44, -70.71);
+const Capetown = new L.LatLng(-33.94, 18.39);
+
+const Tokyo = new L.LatLng(35.47, 139.15);
+const Sydney = new L.LatLng(-33.91, 151.08);
 
 const SeattleCapetown3: L.LatLngLiteral[] = [
     Seattle,
@@ -54,14 +59,13 @@ const SeattleCapetown17: L.LatLngLiteral[] = [
 const geom = new GeodesicGeometry();
 const eps = 0.000001;
 
-function checkFixture(specimen: L.LatLngLiteral[][], fixture: L.LatLngLiteral[][]): void {
+function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
     expect(specimen).to.be.an("array");
     expect(specimen).to.be.length(fixture.length);
     specimen.forEach((line, k) => {
         expect(line).to.be.length(fixture[k].length);
         line.forEach((point, l) => {
-            expect(point).to.be.an("object");
-            expect(point).to.include.all.keys("lat", "lng");
+            expect(point).to.be.instanceOf(L.LatLng);
             expect(point.lat).to.be.closeTo(fixture[k][l].lat, eps);
             expect(point.lng).to.be.closeTo(fixture[k][l].lng, eps);
         });
@@ -83,8 +87,7 @@ describe("recursiveMidpoint method", function () {
         expect(line).to.be.an("array");
         expect(line).to.be.length(1 + 2 ** (n + 1));    // 3
         line.forEach((point, index) => {
-            expect(point).to.be.an("object");
-            expect(point).to.include.all.keys("lat", "lng");
+            expect(point).to.be.instanceOf(L.LatLng);
             expect(point.lat).to.be.closeTo(SeattleCapetown3[index].lat, eps);
             expect(point.lng).to.be.closeTo(SeattleCapetown3[index].lng, eps);
         })
@@ -96,8 +99,7 @@ describe("recursiveMidpoint method", function () {
         expect(line).to.be.an("array");
         expect(line).to.be.length(1 + 2 ** (n + 1));    // 5
         line.forEach((point, index) => {
-            expect(point).to.be.an("object");
-            expect(point).to.include.all.keys("lat", "lng");
+            expect(point).to.be.instanceOf(L.LatLng);
             expect(point.lat).to.be.closeTo(SeattleCapetown5[index].lat, eps);
             expect(point.lng).to.be.closeTo(SeattleCapetown5[index].lng, eps);
         })
@@ -187,12 +189,12 @@ describe("splitLine function", function () {
             [{ lat: -76.92061351829682, lng: -24.257812500000004 }, { lat: -90, lng: 155.641042 }],
             [{ lat: -90, lng: 155.641042 }, { lat: -72.28906720017675, lng: 155.7421875 }]
         ];
-        const split = geom.splitLine({ lat: -76.92061351829682, lng: -24.257812500000004 }, { lat: -72.28906720017675, lng: 155.7421875 });
+        const split = geom.splitLine(new L.LatLng(-76.92061351829682, -24.257812500000004), new L.LatLng(-72.28906720017675, 155.7421875));
         checkFixture(split, fixture);
     });
     it("Clamp values if too close to dateline", function () {
         const fixture: L.LatLngLiteral[][] = [[{ lat: -50.6251, lng: -57.1289 }, { lat: -35.34762564469152, lng: -179.9 }]];
-        const split = geom.splitLine({ lat: -50.6251, lng: -57.1289 }, { lat: -35.34762564469152, lng: -179.97352713285602 });
+        const split = geom.splitLine(new L.LatLng(-50.6251, -57.1289), new L.LatLng(-35.34762564469152, -179.97352713285602));
         checkFixture(split, fixture);
     });
 });
@@ -207,7 +209,7 @@ describe("splitLine - test cases for bugs #1", function () {
                 { lat: 51.644339, lng: 180 },
                 { lat: 36.597887451521956, lng: 129.52500015633 }]];
 
-        const split = geom.splitLine(LosAngeles, { lat: 36.597887451521956, lng: 129.52500015633 });
+        const split = geom.splitLine(LosAngeles, new L.LatLng(36.597887451521956, 129.52500015633));
         checkFixture(split, fixture);
     });
 });
@@ -215,7 +217,7 @@ describe("splitLine - test cases for bugs #1", function () {
 
 describe("splitMultiLineString function", function () {
     it("Berlin -> Seattle (no split)", function () {
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(Berlin, Seattle, 1)];
+        const geodesic = [geom.recursiveMidpoint(Berlin, Seattle, 1)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, geodesic);
     });
@@ -232,7 +234,7 @@ describe("splitMultiLineString function", function () {
                 { lat: 46.47098438753966, lng: 157.17353392461567 },
                 { lat: 35.47, lng: 139.15 }]];
 
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(Seattle, Tokyo, 1)];
+        const geodesic = [geom.recursiveMidpoint(Seattle, Tokyo, 1)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, fixture);
     });
@@ -249,7 +251,7 @@ describe("splitMultiLineString function", function () {
                 { lat: 53.86920734446313, lng: -148.18981326309986 },
                 { lat: 47.56, lng: -122.33 }]];
 
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(Tokyo, Seattle, 1)];
+        const geodesic = [geom.recursiveMidpoint(Tokyo, Seattle, 1)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, fixture);
     });
@@ -257,7 +259,7 @@ describe("splitMultiLineString function", function () {
 
 describe("splitMultiLineString - test cases for bugs", function () {
     it("Berlin -> Los Angeles (higher resolution, no split)", function () {
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(Berlin, { lat: 32.54681317351517, lng: -118.82812500000001 }, 2)];
+        const geodesic = [geom.recursiveMidpoint(Berlin, new L.LatLng(32.54681317351517, -118.82812500000001), 2)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, geodesic);
     });
@@ -272,7 +274,7 @@ describe("splitMultiLineString - test cases for bugs", function () {
                 { lat: 48.525174, lng: 180 },
                 { lat: 38.2727, lng: 141.3281 }]];
 
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint(LosAngeles, { lat: 38.2727, lng: 141.3281 }, 0)];
+        const geodesic = [geom.recursiveMidpoint(LosAngeles, new L.LatLng(38.2727, 141.3281), 0)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, fixture);
     });
@@ -287,7 +289,7 @@ describe("splitMultiLineString - test cases for bugs", function () {
                 { lat: -35.221365421334895, lng: 179.99999999989117 },
                 { lat: 35.47, lng: 139.15 }]];
 
-        const geodesic: L.LatLngLiteral[][] = [geom.recursiveMidpoint({ lat: -50.6251, lng: -57.1289 }, Tokyo, 0)];
+        const geodesic = [geom.recursiveMidpoint(new L.LatLng(-50.6251, -57.1289), Tokyo, 0)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, fixture);
     });
