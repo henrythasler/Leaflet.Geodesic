@@ -10,6 +10,7 @@ export class GeodesicLine extends L.Polyline {
     defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
     readonly geom: GeodesicGeometry;
     statistics: Statistics = {} as any;
+    points: L.LatLngLiteral[][] = [];
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
@@ -22,21 +23,39 @@ export class GeodesicLine extends L.Polyline {
         }
     }
 
+    private updateGeometry(): void {
+        if(this.points.length > 0 && this.points[0].length >= 2) {
+            const geodesic = this.geom.multiLineString(this.points);
+            this.statistics = this.geom.updateStatistics(this.points, geodesic);
+            if ((this.options as GeodesicOptions).wrap) {
+                const split = this.geom.splitMultiLineString(geodesic);
+                super.setLatLngs(split);
+            }
+            else {
+                super.setLatLngs(geodesic);
+            }
+        }
+    }
+
     /**
      * overwrites the original function with additional functionality to create a geodesic line
      * @param latlngs an array (or 2d-array) of positions
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
-        const latLngLiteral = latlngExpressionArraytoLiteralArray(latlngs);
-        const geodesic = this.geom.multiLineString(latLngLiteral);
-        this.statistics = this.geom.updateStatistics(latLngLiteral, geodesic);
-        if ((this.options as GeodesicOptions).wrap) {
-            const split = this.geom.splitMultiLineString(geodesic);
-            super.setLatLngs(split);
+        this.points = latlngExpressionArraytoLiteralArray(latlngs);
+        this.updateGeometry();
+        return this;
+    }
+
+    addLatLng(latlng: L.LatLngExpression, latlngs?: L.LatLng[]): this {
+        const point: L.LatLngLiteral = latlngExpressiontoLiteral(latlng);
+        if (this.points.length === 0) {
+            this.points.push([point]);
         }
         else {
-            super.setLatLngs(geodesic);
+            this.points[0].push(point);
         }
+        this.updateGeometry();
         return this;
     }
 

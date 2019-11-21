@@ -82,6 +82,8 @@
 
         var berlin = new L.LatLng(52.5, 13.35);
         var losangeles = new L.LatLng(33.82, -118.38);
+        var Beijing = new L.LatLng(39.92, 116.39 );
+        const Capetown =  new L.LatLng(-33.94, 18.39 );
 
         var A = L.marker(losangeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
         var B = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
@@ -94,6 +96,16 @@
         }).addTo(map);
 
         info.update(geodesic.statistics);
+
+        const geo = L.geodesic();
+        console.log(geo.geom.geodesic.inverse(berlin, losangeles))
+        console.log(geo.geom.geodesic.midpoint(berlin, losangeles))
+
+        geo.addLatLng(losangeles);
+        geo.addLatLng(berlin);
+        geodesic.addLatLng(Beijing);
+        geo.addTo(map);
+        
 
         A.on('drag', (e) => {
             // console.log(`A=${e.latlng}`);
