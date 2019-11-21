@@ -8,6 +8,8 @@ import L from "leaflet";
 
 import "jest";
 
+import { checkFixture, eps } from "./test-toolbox";
+
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
 const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
@@ -57,20 +59,6 @@ const SeattleCapetown17: L.LatLngLiteral[] = [
 ];
 
 const geom = new GeodesicGeometry();
-const eps = 0.000001;
-
-function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
-    expect(specimen).to.be.an("array");
-    expect(specimen).to.be.length(fixture.length);
-    specimen.forEach((line, k) => {
-        expect(line).to.be.length(fixture[k].length);
-        line.forEach((point, l) => {
-            expect(point).to.be.instanceOf(L.LatLng);
-            expect(point.lat).to.be.closeTo(fixture[k][l].lat, eps);
-            expect(point.lng).to.be.closeTo(fixture[k][l].lng, eps);
-        });
-    });
-}
 
 describe("constructor and properties", function () {
     it("no additional settings given", function () {

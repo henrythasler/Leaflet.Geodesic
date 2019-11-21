@@ -8,8 +8,9 @@ import { expect } from "chai";
 import "jest";
 import L from "leaflet";
 
+import { eps } from "./test-toolbox";
+
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
-const eps = 0.000001;
 
 describe("instanceOf-Functions", function () {
     it("instanceOfLatLngExpression", function () {

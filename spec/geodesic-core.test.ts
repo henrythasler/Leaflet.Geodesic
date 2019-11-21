@@ -7,6 +7,8 @@ import { expect } from "chai";
 
 import "jest";
 
+import { eps } from "./test-toolbox";
+
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
 const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
@@ -19,7 +21,6 @@ const Santiago = new L.LatLng(-33.44, -70.71);
 const Capetown = new L.LatLng(-33.94, 18.39);
 
 const geodesic = new GeodesicCore();
-const eps = 0.000001;
 
 describe("Helper functions", function () {
     it("toDegrees() - convert radians to degrees", function () {
