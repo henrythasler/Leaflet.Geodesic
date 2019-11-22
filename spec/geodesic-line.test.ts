@@ -304,9 +304,9 @@ describe("Usage of base-class functions", function () {
     });
 
     it("addLatLng() to empty line", async function () {
-        const line = new GeodesicLine([], { steps: 0 }).addTo(map);
+        const line = new GeodesicLine([]).addTo(map);
         expect(line).to.be.instanceOf(GeodesicLine);
-        compareObject(line.options, { ...defaultOptions, ...{ steps: 0 } });
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(LosAngeles);
@@ -314,9 +314,9 @@ describe("Usage of base-class functions", function () {
     });
 
     it("addLatLng() to existing point", async function () {
-        const line = new GeodesicLine([LosAngeles], { steps: 0 }).addTo(map);
+        const line = new GeodesicLine([LosAngeles]).addTo(map);
         expect(line).to.be.instanceOf(GeodesicLine);
-        compareObject(line.options, { ...defaultOptions, ...{ steps: 0 } });
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Berlin);
@@ -324,12 +324,43 @@ describe("Usage of base-class functions", function () {
     });
 
     it("addLatLng() to existing line", async function () {
-        const line = new GeodesicLine([LosAngeles, Berlin], { steps: 1 }).addTo(map);
+        const line = new GeodesicLine([LosAngeles, Berlin]).addTo(map);
         expect(line).to.be.instanceOf(GeodesicLine);
-        compareObject(line.options, { ...defaultOptions, ...{ steps: 1 } });
+        compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Beijing);
         checkFixture(line.points, [[LosAngeles, Berlin, Beijing]])
     });
+
+    it("addLatLng() to multiline", async function () {
+        const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
+        expect(map.hasLayer(line)).to.be.true;
+
+        line.addLatLng(Beijing);
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing]])
+    });
+
+    it("addLatLng() to multiline with given segment #0", async function () {
+        const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
+        expect(map.hasLayer(line)).to.be.true;
+
+        line.addLatLng(Beijing, line.points[0]);
+        checkFixture(line.points, [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]])
+    });
+
+    it("addLatLng() to multiline with given segment #1", async function () {
+        const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown], [Tokyo, Sydney]]).addTo(map);
+        expect(line).to.be.instanceOf(GeodesicLine);
+        compareObject(line.options, defaultOptions);
+        expect(map.hasLayer(line)).to.be.true;
+
+        line.addLatLng(Beijing, line.points[1]);
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing], [Tokyo, Sydney]])
+    });
+
 });

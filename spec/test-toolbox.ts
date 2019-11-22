@@ -19,7 +19,7 @@ export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][
 }
 
 export function compareObject(specimen: object, fixture: object): void {
-    for (let [key, value] of Object.entries(specimen)) {
-        expect(specimen).to.have.own.property(key, value);
+    for (let [key, value] of Object.entries(fixture)) {
+        expect(specimen).to.have.deep.own.property(key, value);
     }
 }

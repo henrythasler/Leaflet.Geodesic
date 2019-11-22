@@ -7,10 +7,14 @@ import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "..
  * Draw geodesic lines based on L.Polyline
  */
 export class GeodesicLine extends L.Polyline {
+    /** these should be good for most use-cases */
     defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
+    /** does the actual geometry calculations */
     readonly geom: GeodesicGeometry;
+    /** use this if you need some detailled info about the current geometry */
     statistics: Statistics = {} as any;
-    points: L.LatLng[][] = [];
+    /** stores all positions that are used to create the geodesic line */ 
+    points: L.LatLng[][] = [];  
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
@@ -23,10 +27,11 @@ export class GeodesicLine extends L.Polyline {
         }
     }
 
+    /** calculates the geodesics and update the polyline-object accordingly */
     private updateGeometry(): void {
-        if(this.points.length > 0 && this.points[0].length >= 2) {
-            const geodesic = this.geom.multiLineString(this.points);
-            this.statistics = this.geom.updateStatistics(this.points, geodesic);
+        let geodesic: L.LatLng[][] = [];
+        if (this.points.length > 0 && this.points[0].length >= 2) {
+            geodesic = this.geom.multiLineString(this.points);
             if ((this.options as GeodesicOptions).wrap) {
                 const split = this.geom.splitMultiLineString(geodesic);
                 super.setLatLngs(split);
@@ -35,6 +40,7 @@ export class GeodesicLine extends L.Polyline {
                 super.setLatLngs(geodesic);
             }
         }
+        this.statistics = this.geom.updateStatistics(this.points, geodesic);
     }
 
     /**
@@ -47,13 +53,23 @@ export class GeodesicLine extends L.Polyline {
         return this;
     }
 
+    /**
+     * add a given point to the geodesic line object
+     * @param latlng point to add
+     * @param latlngs Read current 
+     */
     addLatLng(latlng: L.LatLngExpression, latlngs?: L.LatLng[]): this {
         const point = latlngExpressiontoLatLng(latlng);
         if (this.points.length === 0) {
             this.points.push([point]);
         }
         else {
-            this.points[0].push(point);
+            if (latlngs === undefined) {
+                this.points[this.points.length - 1].push(point);
+            }
+            else {
+                latlngs.push(point);
+            }
         }
         this.updateGeometry();
         return this;

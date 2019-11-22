@@ -8,7 +8,7 @@ import L from "leaflet";
 
 import "jest";
 
-import { checkFixture, eps } from "./test-toolbox";
+import { checkFixture, compareObject, eps } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -74,11 +74,7 @@ describe("recursiveMidpoint method", function () {
         const line = geom.recursiveMidpoint(Seattle, Capetown, n);
         expect(line).to.be.an("array");
         expect(line).to.be.length(1 + 2 ** (n + 1));    // 3
-        line.forEach((point, index) => {
-            expect(point).to.be.instanceOf(L.LatLng);
-            expect(point.lat).to.be.closeTo(SeattleCapetown3[index].lat, eps);
-            expect(point.lng).to.be.closeTo(SeattleCapetown3[index].lng, eps);
-        })
+        checkFixture([line], [SeattleCapetown3]);
     });
 
     it("Seatle to Capetown, one iteration", function () {
@@ -86,11 +82,7 @@ describe("recursiveMidpoint method", function () {
         const line = geom.recursiveMidpoint(Seattle, Capetown, n);
         expect(line).to.be.an("array");
         expect(line).to.be.length(1 + 2 ** (n + 1));    // 5
-        line.forEach((point, index) => {
-            expect(point).to.be.instanceOf(L.LatLng);
-            expect(point.lat).to.be.closeTo(SeattleCapetown5[index].lat, eps);
-            expect(point.lng).to.be.closeTo(SeattleCapetown5[index].lng, eps);
-        })
+        checkFixture([line], [SeattleCapetown5]);
     });
 
     it("Seatle to Capetown, 2 iteration", function () {
@@ -325,4 +317,42 @@ describe("multilineDistance()", function () {
         const sum = res.reduce((x, y) => x + y, 0);
         expect(sum).to.be.closeTo(0, eps);
     });
+});
+
+describe("Statistics Calculation", function () {
+    it("with empty geodesic", function () {
+        const res = geom.updateStatistics([], []);
+        compareObject(res, { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 });
+    });
+
+    it("with single point", function () {
+        const res = geom.updateStatistics([[FlindersPeak]], []);
+        compareObject(res, { distanceArray: [0], totalDistance: 0, points: 1, vertices: 0 });
+    });
+
+    it("with two point", function () {
+        const n = 2;
+        const line = geom.recursiveMidpoint(FlindersPeak, Buninyong, n);
+        const res = geom.updateStatistics([[FlindersPeak, Buninyong]], [line]);
+        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices"); 
+        expect(res.distanceArray).to.be.an("array");
+        expect(res.distanceArray).to.be.length(1);
+        expect(res.distanceArray[0]).to.be.closeTo(54972.271, 0.001);
+        expect(res.totalDistance).to.be.closeTo(54972.271, 0.001);
+        expect(res).to.include({ points: 2, vertices: 1 + 2 ** (n + 1) });
+    });
+
+    it("with two lines", function () {
+        const n = 2;
+        const line = geom.recursiveMidpoint(FlindersPeak, Buninyong, n);
+        const res = geom.updateStatistics([[FlindersPeak, Buninyong], [FlindersPeak, Buninyong]], [line, line]);
+        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices"); 
+        expect(res.distanceArray).to.be.an("array");
+        expect(res.distanceArray).to.be.length(2);
+        expect(res.distanceArray[0]).to.be.closeTo(54972.271, 0.001);
+        expect(res.distanceArray[1]).to.be.closeTo(54972.271, 0.001);
+        expect(res.totalDistance).to.be.closeTo(2*54972.271, 0.001);
+        expect(res).to.include({ points: 4, vertices: 2 * (1 + 2 ** (n + 1)) });
+    });
+    
 });

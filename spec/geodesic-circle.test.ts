@@ -50,7 +50,7 @@ describe("Main functionality", function () {
     it("Create class with parameters", function () {
         const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
         expect(circle).to.be.instanceOf(GeodesicCircleClass);
-        compareObject(circle.options, defaultOptions);
+        compareObject(circle.options, {...defaultOptions, ...{steps: 48}});
     });
 
     it("Add empty circle to map", async function () {
