@@ -1,10 +1,15 @@
 import L from "leaflet";
 import { GeodesicCore, GeoDistance, GeodesicOptions, WGS84Vector } from "./geodesic-core"
 
+/** detailled information of the current geometry */
 export interface Statistics {
+    /** Stores the distance for each individual geodesic line */
     distanceArray: number[],
+    /** overall distance of all lines */
     totalDistance: number,
+    /** number of positions that the geodesic lines are created from */
     points: number,
+    /** number vertices that were created during geometry calculation */
     vertices: number
 }
 

@@ -50,11 +50,12 @@
     "rollup-plugin-typescript2": "^0.24.3",
     "rollup-plugin-visualizer": "^2.6.1",
     "ts-jest": "^24.1.0",
-    "typedoc": "^0.15.0",
+    "typedoc": "^0.15.2",
     "typescript": "^3.6.4"
   },
   "scripts": {
     "test": "jest --coverage --",
+    "docs": "node node_modules/typedoc/bin/typedoc",
     "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
     "integrity:create": "shasum -b -a 512 dist/leaflet.geodesic.umd.min.js | awk '{ print $1 }' | xxd -r -p | base64 -w 0 >> dist/leaflet.geodesic.umd.min.js.sha256",
     "integrity:show": "printf 'integrity=\"sha512-' && cat dist/leaflet.geodesic.umd.min.js.sha256 && printf '\"\n'",
