@@ -16,6 +16,7 @@
             bottom: 0;
             width: 100%;
         }
+
         .info {
             padding: 6px 8px;
             font: 14px/16px Arial, Helvetica, sans-serif;
@@ -29,6 +30,16 @@
             margin: 0 0 5px;
             font: 22px/24px Arial, Helvetica, sans-serif;
             color: #777;
+        }
+
+        .trash {
+            background: rgba(255, 255, 255, 0.8);
+            width: 30px;
+            height: 30px;
+            background-position: center center;
+            background-size: 70%;
+            background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='iso-8859-1'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='792.024px' height='792.024px' viewBox='0 0 792.024 792.024' style='enable-background:new 0 0 792.024 792.024;' xml:space='preserve'%3E%3Cg%3E%3Cg id='_x34_3'%3E%3Cg%3E%3Cpath d='M585.817,235.853H209.213c-39.622,0-71.729,32.107-71.729,71.729l38.841,412.664c0,39.622,32.107,71.778,71.729,71.778 h304.924c39.622,0,71.729-32.156,71.729-71.778l32.888-412.664C657.596,267.96,625.439,235.853,585.817,235.853z M301.876,666.375c0,19.762-16.054,35.913-35.865,35.913s-35.865-16.151-35.865-35.913V343.349 c0-19.762,16.054-35.816,35.865-35.816s35.865,16.005,35.865,35.816V666.375z M427.427,666.375 c0,19.762-16.053,35.913-35.865,35.913c-19.811,0-35.865-16.151-35.865-35.913V343.349c0-19.762,16.054-35.816,35.865-35.816 c19.812,0,35.865,16.005,35.865,35.816V666.375z M552.979,666.375c0,19.762-16.054,35.913-35.865,35.913 c-19.811,0-35.864-16.151-35.864-35.913V343.349c0-19.762,16.054-35.816,35.864-35.816c19.812,0,35.865,16.005,35.865,35.816 V666.375z M190.037,199.939L624.317,88.246c24.007-6.148,38.45-30.644,32.254-54.602c-6.197-24.007-30.595-38.402-54.603-32.205 L468.172,35.84c-12.346-18.347-34.89-28.106-57.53-22.3l-52.114,13.468c-22.641,5.807-37.67,25.227-39.67,47.234l-151.168,38.89 c-23.959,6.1-38.402,30.595-32.254,54.553C141.631,191.644,166.078,206.087,190.037,199.939z'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3C/svg%3E%0A");
+            background-repeat: no-repeat;
         }
     </style>
     <title>Leaflet.Geodesic demo</title>
@@ -65,7 +76,7 @@
             color: 'red',
         }).addTo(map);
 
-        var marker = L.marker(Berlin).addTo(map).bindPopup("Click somewhere else on the map to start the measurement.").openPopup();
+        const marker = L.marker(Berlin).addTo(map).bindTooltip('Hi There!').bindPopup("Click somewhere else on the map to start the measurement.").openPopup();
 
         var info = L.control();
         info.onAdd = function (map) {
@@ -76,44 +87,42 @@
 
         // method that we will use to update the control based on feature properties passed
         info.update = function (stats) {
-            const totalDistance = (stats.totalDistance !== undefined ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
-            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
-                '<br/><br/><b>Points</b><br/>' + stats.points + 
+            const totalDistance = (stats.totalDistance !== undefined ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance +
+                '<br/><br/><b>Points</b><br/>' + stats.points +
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
         };
-       
+
         info.update(geodesic.statistics);
 
         map.on('click', (e) => {
-                    geodesic.addLatLng(e.latlng);
-                    marker.setLatLng(e.latlng);
+            geodesic.addLatLng(e.latlng);
+            let vector = geodesic.geom.geodesic.inverse(marker.getLatLng(), e.latlng);
+            const totalDistance = (vector.distance !== undefined ? (vector.distance > 10000) ? (vector.distance / 1000).toFixed(0) + ' km' : (vector.distance).toFixed(0) + ' m' : 'invalid')
+            marker.setLatLng(e.latlng);
+            marker.setTooltipContent(`Distance: +${totalDistance}</br>Bearing: ${vector.finalBearing.toFixed(0)}°`);
+            marker.openTooltip();
+            info.update(geodesic.statistics);
+        });
+
+        var Clear = L.Control.extend({
+            options: {
+                position: 'topleft'
+            },
+            onAdd: function (map) {
+                var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom trash');
+
+                container.onclick = function (e) {
+                    e.stopPropagation();
+                    geodesic.setLatLngs([marker.getLatLng()]);
+                    marker.setTooltipContent(`Distance: 0 m</br>Bearing: -`);
                     info.update(geodesic.statistics);
-                });        
+                }
+                return container;
+            },
+        });
 
-
-        // function updateGeodesic() {
-        //     let currentMultiline = [];
-        //     for (let subMarker of markers) {
-        //         let currentLine = [];
-        //         for (let point of subMarker) {
-        //             currentLine.push(point.getLatLng());
-        //         }
-        //         currentMultiline.push(currentLine);
-        //     }
-        //     geodesic.setLatLngs(currentMultiline);
-        // }
-
-        // for (let line of multiline) {
-        //     var subMarker = [];
-        //     for (let place of line) {
-        //         var marker = L.marker(place, { draggable: true }).addTo(map);
-        //         marker.on('drag', (e) => {
-        //             updateGeodesic();
-        //         });
-        //         subMarker.push(marker);
-        //     }
-        //     markers.push(subMarker);
-        // }
+        map.addControl(new Clear());
 
     </script>
 </body>

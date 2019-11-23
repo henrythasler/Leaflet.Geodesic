@@ -113,7 +113,7 @@ export class GeodesicGeometry {
     splitMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
         multilinestring.forEach((linestring) => {
-            let segment: L.LatLng[] = [linestring[0]];
+            let segment: L.LatLng[] = [linestring[0]];  // FIXME: this will fail if multilinestring===[[]]
             for (let j = 1; j < linestring.length; j++) {
                 const split = this.splitLine(linestring[j - 1], linestring[j]);
                 if (split.length === 1) {
