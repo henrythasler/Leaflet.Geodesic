@@ -7,6 +7,8 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 
 [Live Demos and Tutorials](https://blog.cyclemap.link/Leaflet.Geodesic/)
 
+[API-Documentation](https://blog.cyclemap.link/Leaflet.Geodesic/api)
+
 ## Add the plugin to your project
 
 Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have [included leaflet.js](https://leafletjs.com/examples/quick-start/).
@@ -139,10 +141,22 @@ const geodesic = new L.Geodesic().addTo(map);   // add empty object to the map
 
 const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
+
 geodesic.setLatLngs([Berlin, LosAngeles])   // update in-place
 ```
 
 The `setLatLngs()`-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself. Please refer to the section about geodesic circles below, on how to update a circle geometry.
+
+Points can be added to existing geodesic lines with `addLatLng()`:
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+const Beijing = new L.LatLng(39.92, 116.39);
+
+const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);   // add empty object to the map
+geodesic.addLatLng(Beijing)
+```
 
 ### Line Options
 All options defined for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for can be used Leaflet.Geodesic.

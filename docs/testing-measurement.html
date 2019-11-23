@@ -100,7 +100,7 @@
             let vector = geodesic.geom.geodesic.inverse(marker.getLatLng(), e.latlng);
             const totalDistance = (vector.distance !== undefined ? (vector.distance > 10000) ? (vector.distance / 1000).toFixed(0) + ' km' : (vector.distance).toFixed(0) + ' m' : 'invalid')
             marker.setLatLng(e.latlng);
-            marker.setTooltipContent(`Distance: +${totalDistance}</br>Bearing: ${vector.finalBearing.toFixed(0)}°`);
+            marker.setTooltipContent(`<b>Segment</b></br>Distance: +${totalDistance}</br>Bearing: ${vector.finalBearing.toFixed(0)}°`);
             marker.openTooltip();
             info.update(geodesic.statistics);
         });

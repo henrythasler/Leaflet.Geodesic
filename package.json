@@ -63,7 +63,6 @@
     "build": "rm -f dist/* && rollup -c && npm run integrity:create && npm run integrity:show && npm run build:stats && cp dist/leaflet.geodesic.umd.min.js docs/"
   },
   "np": {
-    "publish": false,
-    "releaseDraft": false
+    "publish": false
   }
 }
