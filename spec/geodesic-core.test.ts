@@ -261,6 +261,14 @@ describe("Intersection - Corner-cases and error handling", function () {
             new L.LatLng(1, 0), 90);
         expect(res).to.be.null;
     });
+
+    it("Over southpole with φ3=NaN", function () {
+        const res = geodesic.intersection(
+            new L.LatLng(-77.6966041375563, 18.28125000000003), 179.99999999999994,
+            new L.LatLng(89, 180), 180);
+        expect(res).to.be.null;
+    });
+
 });
 
 

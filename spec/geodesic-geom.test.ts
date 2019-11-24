@@ -334,7 +334,7 @@ describe("Statistics Calculation", function () {
         const n = 2;
         const line = geom.recursiveMidpoint(FlindersPeak, Buninyong, n);
         const res = geom.updateStatistics([[FlindersPeak, Buninyong]], [line]);
-        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices"); 
+        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices");
         expect(res.distanceArray).to.be.an("array");
         expect(res.distanceArray).to.be.length(1);
         expect(res.distanceArray[0]).to.be.closeTo(54972.271, 0.001);
@@ -346,13 +346,13 @@ describe("Statistics Calculation", function () {
         const n = 2;
         const line = geom.recursiveMidpoint(FlindersPeak, Buninyong, n);
         const res = geom.updateStatistics([[FlindersPeak, Buninyong], [FlindersPeak, Buninyong]], [line, line]);
-        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices"); 
+        expect(res).to.have.all.keys("distanceArray", "totalDistance", "points", "vertices");
         expect(res.distanceArray).to.be.an("array");
         expect(res.distanceArray).to.be.length(2);
         expect(res.distanceArray[0]).to.be.closeTo(54972.271, 0.001);
         expect(res.distanceArray[1]).to.be.closeTo(54972.271, 0.001);
-        expect(res.totalDistance).to.be.closeTo(2*54972.271, 0.001);
+        expect(res.totalDistance).to.be.closeTo(2 * 54972.271, 0.001);
         expect(res).to.include({ points: 4, vertices: 2 * (1 + 2 ** (n + 1)) });
     });
-    
+
 });
