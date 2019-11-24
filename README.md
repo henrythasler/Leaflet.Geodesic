@@ -134,6 +134,8 @@ geodesic.fromGeoJson(geojson);
 
 ### Updating the geometry
 
+#### Set new geometry
+
 The Geodesic-Class provides a `setLatLngs()`-Method, that can be used to update the geometry of an existing `L.Geodesic`-object:
 
 ```Javascript
@@ -147,6 +149,12 @@ geodesic.setLatLngs([Berlin, LosAngeles])   // update in-place
 
 The `setLatLngs()`-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself. Please refer to the section about geodesic circles below, on how to update a circle geometry.
 
+#### Delete geometry
+
+Delete the existing geometry by setting an empty array `geodesic.setLatLngs([])`.
+
+#### adding points
+
 Points can be added to existing geodesic lines with `addLatLng()`:
 
 ```Javascript
@@ -156,6 +164,13 @@ const Beijing = new L.LatLng(39.92, 116.39);
 
 const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);   // add empty object to the map
 geodesic.addLatLng(Beijing)
+```
+
+The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the `points` property before and hand ofer a specific linestring as second parameter:
+
+```Javascript
+const geodesic = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
+line.addLatLng(Beijing, line.points[0]);    // results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]
 ```
 
 ### Line Options
