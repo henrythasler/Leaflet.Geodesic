@@ -48,7 +48,7 @@ export class GeodesicGeometry {
         const points: L.LatLng[] = [];
         for (let i = 0; i < this.steps + 1; i++) {
             const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
-            points.push(new L.LatLng( point.lat, point.lng ));
+            points.push(new L.LatLng(point.lat, point.lng));
         }
         return points;
     }
@@ -102,7 +102,7 @@ export class GeodesicGeometry {
                 if (intersection.lng < -179.9999) {
                     return [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), dest]];
                 } else if (intersection.lng > 179.9999) {
-                    return [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360 ), dest]];
+                    return [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), dest]];
                 }
                 return [[start, intersection], [intersection, dest]];
             }
@@ -136,7 +136,7 @@ export class GeodesicGeometry {
     multilineDistance(multilinestring: L.LatLng[][]): number[] {
         const dist: number[] = [];
         multilinestring.forEach((linestring) => {
-            let segmentDistance: number = 0;
+            let segmentDistance = 0;
             for (let j = 1; j < linestring.length; j++) {
                 segmentDistance += this.distance(linestring[j - 1], linestring[j]);
             }

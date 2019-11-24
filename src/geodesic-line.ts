@@ -13,8 +13,8 @@ export class GeodesicLine extends L.Polyline {
     readonly geom: GeodesicGeometry;
     /** use this if you need some detailled info about the current geometry */
     statistics: Statistics = {} as any;
-    /** stores all positions that are used to create the geodesic line */ 
-    points: L.LatLng[][] = [];  
+    /** stores all positions that are used to create the geodesic line */
+    points: L.LatLng[][] = [];
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
