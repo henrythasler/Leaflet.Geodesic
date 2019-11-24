@@ -73,7 +73,7 @@ export class GeodesicCore {
      * @param maxInterations How many iterations can be made to reach the allowed deviation (`ε`), before an error will be thrown.
      * @return Final point (destination point) and bearing (in degrees)
      */
-    direct(start: L.LatLngLiteral, bearing: number, distance: number, maxInterations: number = 100): WGS84Vector {
+    direct(start: L.LatLng, bearing: number, distance: number, maxInterations: number = 100): WGS84Vector {
         const φ1 = this.toRadians(start.lat)
         const λ1 = this.toRadians(start.lng);
         const α1 = this.toRadians(bearing);
@@ -118,6 +118,7 @@ export class GeodesicCore {
         const λ2 = λ1 + dL;
 
         const α2 = Math.atan2(sinα, -x);
+
         return {
             lat: this.toDegrees(φ2),
             lng: this.toDegrees(λ2),
@@ -134,7 +135,7 @@ export class GeodesicCore {
      * @param dest Latitude/longitude of destination point.
      * @return Object including distance, initialBearing, finalBearing.
      */
-    inverse(start: L.LatLngLiteral, dest: L.LatLngLiteral, maxInterations: number = 100, mitigateConvergenceError: boolean = true): GeoDistance {
+    inverse(start: L.LatLng, dest: L.LatLng, maxInterations: number = 100, mitigateConvergenceError: boolean = true): GeoDistance {
         const p1 = start, p2 = dest;
         const φ1 = this.toRadians(p1.lat), λ1 = this.toRadians(p1.lng);
         const φ2 = this.toRadians(p2.lat), λ2 = this.toRadians(p2.lng);
@@ -181,7 +182,7 @@ export class GeodesicCore {
 
         if (iterations >= maxInterations) {
             if (mitigateConvergenceError) {
-                return this.inverse(start, { lat: dest.lat, lng: dest.lng - 0.01 }, maxInterations, mitigateConvergenceError);
+                return this.inverse(start, new L.LatLng(dest.lat, dest.lng - 0.01), maxInterations, mitigateConvergenceError);
             } else {
                 throw new EvalError(`Inverse vincenty formula failed to converge after ${maxInterations} iterations (start=${start.lat}/${start.lng}; dest=${dest.lat}/${dest.lng})`);
             }
@@ -220,7 +221,7 @@ export class GeodesicCore {
      * @param secondBearing
      */
 
-    intersection(firstPos: L.LatLngLiteral, firstBearing: number, secondPos: L.LatLngLiteral, secondBearing: number): L.LatLngLiteral | null {
+    intersection(firstPos: L.LatLng, firstBearing: number, secondPos: L.LatLng, secondBearing: number): L.LatLng | null {
         const φ1 = this.toRadians(firstPos.lat);
         const λ1 = this.toRadians(firstPos.lng);
         const φ2 = this.toRadians(secondPos.lat);
@@ -258,21 +259,17 @@ export class GeodesicCore {
         }
 
         const cosα3 = -Math.cos(α1) * Math.cos(α2) + Math.sin(α1) * Math.sin(α2) * Math.cos(δ12);
-
         const δ13 = Math.atan2(Math.sin(δ12) * Math.sin(α1) * Math.sin(α2), Math.cos(α2) + Math.cos(α1) * cosα3);
-
         const φ3 = Math.asin(Math.sin(φ1) * Math.cos(δ13) + Math.cos(φ1) * Math.sin(δ13) * Math.cos(θ13));
-
+        if (isNaN(φ3)) {
+            return null;
+        }
         const Δλ13 = Math.atan2(Math.sin(θ13) * Math.sin(δ13) * Math.cos(φ1), Math.cos(δ13) - Math.sin(φ1) * Math.sin(φ3));
         const λ3 = λ1 + Δλ13;
-
-        return {
-            lat: this.toDegrees(φ3),
-            lng: this.toDegrees(λ3)
-        } as L.LatLngLiteral;
+        return new L.LatLng(this.toDegrees(φ3), this.toDegrees(λ3));
     }
 
-    midpoint(start: L.LatLngLiteral, dest: L.LatLngLiteral): L.LatLngLiteral {
+    midpoint(start: L.LatLng, dest: L.LatLng): L.LatLng {
         // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ)² + cos²φ2⋅sin²Δλ ) )
         // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
         // midpoint is sum of vectors to two points: mathforum.org/library/drmath/view/51822.html
@@ -292,9 +289,6 @@ export class GeodesicCore {
         const φm = Math.atan2(C.z, Math.sqrt(C.x * C.x + C.y * C.y));
         const λm = λ1 + Math.atan2(C.y, C.x);
 
-        return {
-            lat: this.toDegrees(φm),
-            lng: this.toDegrees(λm)
-        } as L.LatLngLiteral;
+        return new L.LatLng(this.toDegrees(φm), this.toDegrees(λm));
     }
 }

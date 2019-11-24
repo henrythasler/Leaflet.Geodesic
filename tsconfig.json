@@ -62,5 +62,9 @@
   },
   "include": [
     "src/**/*.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "mode": "file",
+    "out": "docs/api"
+  }  
 }
