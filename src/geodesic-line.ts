@@ -58,8 +58,8 @@ export class GeodesicLine extends L.Polyline {
 
     /**
      * add a given point to the geodesic line object
-     * @param latlng point to add
-     * @param latlngs Read current 
+     * @param latlng point to add. The point will always be added to the last linestring of a multiline
+     * @param latlngs define a linestring to add the new point to. Read from points-property before (e.g. `line.addLatLng(Beijing, line.points[0]);`)
      */
     addLatLng(latlng: L.LatLngExpression, latlngs?: L.LatLng[]): this {
         const point = latlngExpressiontoLatLng(latlng);
