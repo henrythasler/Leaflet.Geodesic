@@ -110,21 +110,35 @@ export class GeodesicGeometry {
         return [[start, dest]];
     }
 
+    /**
+     * Linestrings of a given multilinestring that cross the antimeridian will be split in two separate linestrings. 
+     * This function is used to wrap lines around when they cross the antimeridian
+     * It iterates over all linestrings and reconstructs the step-by-step if no split is needed. 
+     * In case the line was split, the linestring ends at the antimeridian and a new linestring is created for the 
+     * remaining points of the original linestring.
+     * 
+     * @param multilinestring
+     * @return another multilinestring where segments crossing the antimeridian are split
+     */
     splitMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
         multilinestring.forEach((linestring) => {
-            let segment: L.LatLng[] = [linestring[0]];  // FIXME: this will fail if multilinestring===[[]]
-            for (let j = 1; j < linestring.length; j++) {
-                const split = this.splitLine(linestring[j - 1], linestring[j]);
-                if (split.length === 1) {
-                    segment.push(linestring[j]);
-                } else {
-                    segment.push(split[0][1]);
-                    result.push(segment);
-                    segment = split[1];
-                }
+            if (linestring.length === 1) {
+                result.push(linestring);   // just a single point in linestring, no need to split
             }
-            result.push(segment);
+            else {
+                let segment: L.LatLng[] = [];
+                for (let j = 1; j < linestring.length; j++) {
+                    const split = this.splitLine(linestring[j - 1], linestring[j]);
+                    segment.pop();
+                    segment = segment.concat(split[0]);
+                    if (split.length > 1) {
+                        result.push(segment);   // the line was split, so we end the linestring right here
+                        segment = split[1];     // begin the new linestring with the second part of the split line
+                    }
+                }
+                result.push(segment);
+            }
         });
         return result;
     }

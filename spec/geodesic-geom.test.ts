@@ -196,10 +196,33 @@ describe("splitLine - test cases for bugs #1", function () {
 
 
 describe("splitMultiLineString function", function () {
+    it("empty input", function () {
+        const split = geom.splitMultiLineString([]);
+        checkFixture(split, []);
+    });
+
+    it("just a point", function () {
+        const split = geom.splitMultiLineString([[Berlin]]);
+        checkFixture(split, [[Berlin]]);
+    });
+
+    it("Line Berlin -> Seattle (no split)", function () {
+        checkFixture(geom.splitMultiLineString([[Berlin, Seattle]]), [[Berlin, Seattle]]);
+    });
+
     it("Berlin -> Seattle (no split)", function () {
         const geodesic = [geom.recursiveMidpoint(Berlin, Seattle, 1)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, geodesic);
+    });
+
+    it("Line Seattle -> Tokyo", function () {
+        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
+            [Seattle, { lat: 53.130876, lng: -180 }],
+            [{ lat: 53.130876, lng: 180 }, Tokyo]
+        ];
+        const split = geom.splitMultiLineString([[Seattle, Tokyo]]);
+        checkFixture(split, fixture);
     });
 
     it("Seattle -> Tokyo", function () {
