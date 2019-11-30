@@ -70,7 +70,90 @@ export class GeodesicGeometry {
         return this.multiLineString([latlngs])[0];
     }
 
-    splitLine(start: L.LatLng, dest: L.LatLng): L.LatLng[][] {
+    splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
+        const antimeridianWest = {
+            point: new L.LatLng(89.9, -180),
+            bearing: 180
+        };
+        const antimeridianEast = {
+            point: new L.LatLng(89.9, 180),
+            bearing: 180
+        };
+
+        // make a copy to work with
+        let start = JSON.parse(JSON.stringify(startPosition)) as L.LatLng;
+        let dest = JSON.parse(JSON.stringify(destPosition)) as L.LatLng;
+
+        start.lng = this.geodesic.wrap(start.lng, 360);
+        dest.lng = this.geodesic.wrap(dest.lng, 360);
+
+        if ((dest.lng - start.lng) > 180) {
+            dest.lng = dest.lng - 360;
+        } else if ((dest.lng - start.lng) < -180) {
+            dest.lng = dest.lng + 360;
+        }
+
+        console.log(start, startPosition)
+
+        let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180))]];
+
+        // crossing antimeridian from "this" side?
+        if ((start.lng >= -180) && (start.lng <= 180)) {
+            // crossing the "western" antimeridian
+            if (dest.lng < -180) {
+                const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
+                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                if (intersection) {
+                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]];
+                }
+            }
+            // crossing the "eastern" antimeridian
+            else if (dest.lng > 180) {
+                const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
+                const intersection = this.geodesic.intersection(start, bearing, antimeridianEast.point, antimeridianEast.bearing);
+                if (intersection) {
+                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]];
+                }
+            }
+        }
+        // coming back over the antimeridian from the "other" side?
+        else if ((dest.lng >= -180) && (dest.lng <= 180)) {
+            // crossing the "western" antimeridian
+            if (start.lng < -180) {
+                const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
+                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                if (intersection) {
+                    result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(intersection.lat, intersection.lng + 360)], [intersection, dest]];
+                }
+            }
+
+            // crossing the "eastern" antimeridian
+            else if (start.lng > 180) {
+                const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
+                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                if (intersection) {
+                    result = [[new L.LatLng(start.lat, start.lng - 360), new L.LatLng(intersection.lat, intersection.lng - 360)], [intersection, dest]];
+                }
+            }
+        }
+        // both points are on the "other" side. Wrapping required!
+        else if ((start.lng < -180) && (dest.lng < -180)) {
+            console.log("both points are on the 'other' side (west). Wrapping required!");
+            result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]]
+        }
+        // both points are on the "other" side. Wrapping required!
+        else if ((start.lng > 180) && (dest.lng > 180)) {
+            console.log("both points are on the 'other' side (east). Wrapping required!");
+            result = [[new L.LatLng(start.lat, start.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]]
+        }
+        // no wrapping required at all
+        else {
+            console.log("no wrapping required at all");
+        }
+        return result;
+    }
+
+    splitLine2(start: L.LatLng, dest: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
             point: new L.LatLng(89, -180),
             bearing: 180

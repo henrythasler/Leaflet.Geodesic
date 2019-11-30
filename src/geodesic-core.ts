@@ -38,6 +38,18 @@ export class GeodesicCore {
     }
 
     /**
+     * implements scientific modulus
+     * source: http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html 
+     * @param n 
+     * @param p 
+     * @return 
+     */
+    mod(n: number, p: number):number {
+        const r = n % p;
+        return r < 0 ? r + p : r;
+    }
+
+    /**
      * source: https://github.com/chrisveness/geodesy/blob/master/dms.js
      * @param degrees arbitrary value
      * @return degrees between 0..360
@@ -49,6 +61,21 @@ export class GeodesicCore {
             return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
         }
     }
+
+    /**
+     * general wrap function with arbitrary max value
+     * @param degrees arbitrary value
+     * @param max
+     * @return degrees between `-max`..`+max`
+     */
+    wrap(degrees: number, max=360) {
+        if (-max <= degrees && degrees < max) {
+            return degrees;
+        } else {
+            return this.mod((degrees + max), 2*max) - max;
+        }
+    }
+
 
     /**
      * @param degrees arbitrary value
