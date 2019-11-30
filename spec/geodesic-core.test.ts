@@ -43,7 +43,7 @@ describe("Helper functions", function () {
 
     it("wrap() - limit value to -360...+360", function () {
         expect(geodesic.wrap(90)).to.be.closeTo(90, eps);
-        expect(geodesic.wrap(360)).to.be.closeTo(-360, eps);
+        expect(geodesic.wrap(360)).to.be.closeTo(360, eps);
         expect(geodesic.wrap(-360)).to.be.closeTo(-360, eps);
         expect(geodesic.wrap(-90)).to.be.closeTo(-90, eps);
         expect(geodesic.wrap(1000)).to.be.closeTo(280, eps);
@@ -54,7 +54,7 @@ describe("Helper functions", function () {
         expect(geodesic.wrap(90, 180)).to.be.closeTo(90, eps);
         expect(geodesic.wrap(360, 180)).to.be.closeTo(0, eps);
         expect(geodesic.wrap(-360, 180)).to.be.closeTo(0, eps);
-        expect(geodesic.wrap(180, 180)).to.be.closeTo(-180, eps);
+        expect(geodesic.wrap(180, 180)).to.be.closeTo(180, eps);
         expect(geodesic.wrap(-180, 180)).to.be.closeTo(-180, eps);
         expect(geodesic.wrap(-90, 180)).to.be.closeTo(-90, eps);
         expect(geodesic.wrap(1000, 180)).to.be.closeTo(-80, eps);

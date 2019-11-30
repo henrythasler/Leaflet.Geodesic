@@ -57,7 +57,8 @@
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "test": "jest --coverage --",
+    "test": "jest \"^(?!.*benchmark).*$\" --coverage --",
+    "test:solo": "jest --coverage --",
     "benchmark": "jest benchmark",
     "docs": "node node_modules/typedoc/bin/typedoc",
     "coveralls": "jest --coverage && coveralls < coverage/lcov.info",

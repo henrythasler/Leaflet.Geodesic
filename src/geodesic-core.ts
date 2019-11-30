@@ -69,23 +69,10 @@ export class GeodesicCore {
      * @return degrees between `-max`..`+max`
      */
     wrap(degrees: number, max=360) {
-        if (-max <= degrees && degrees < max) {
+        if (-max <= degrees && degrees <= max) {
             return degrees;
         } else {
             return this.mod((degrees + max), 2*max) - max;
-        }
-    }
-
-
-    /**
-     * @param degrees arbitrary value
-     * @return degrees between -180..+180
-     */
-    wrap180(degrees: number) {
-        if (-180 <= degrees && degrees < 180) {
-            return degrees;
-        } else {
-            return (((degrees + 180) % 360 + 360) % 360) - 180;
         }
     }
 

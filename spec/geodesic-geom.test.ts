@@ -24,6 +24,16 @@ const Capetown = new L.LatLng(-33.94, 18.39);
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Sydney = new L.LatLng(-33.91, 151.08);
 
+const SeattleTokyo: L.LatLngLiteral[][] = [
+    [Seattle, { lat: 53.130876, lng: -180 }],
+    [{ lat: 53.130876, lng: 180 }, Tokyo]
+];
+
+const TokyoSeattle: L.LatLngLiteral[][] = [
+    [Tokyo, { lat: 53.095949, lng: 180 }],
+    [{ lat: 53.095949, lng: -180 }, Seattle]
+];
+
 const SeattleCapetown3: L.LatLngLiteral[] = [
     Seattle,
     { lat: 18.849527, lng: -35.885828 },
@@ -147,21 +157,13 @@ describe("splitLine function", function () {
     });
 
     it("Seattle -> Tokyo", function () {
-        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
-            [Seattle, { lat: 53.130876, lng: -180 }],
-            [{ lat: 53.130876, lng: 180 }, Tokyo]
-        ];
         const split = geom.splitLine(Seattle, Tokyo);
-        checkFixture(split, fixture);
+        checkFixture(split, SeattleTokyo);
     });
 
     it("Tokyo -> Seattle", function () {
-        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
-            [Tokyo, { lat: 53.095949, lng: 180 }],
-            [{ lat: 53.095949, lng: -180 }, Seattle]
-        ];
         const split = geom.splitLine(Tokyo, Seattle);
-        checkFixture(split, fixture);
+        checkFixture(split, TokyoSeattle);
     });
 
     it("Over Southpole (no split)", function () {
@@ -203,21 +205,13 @@ describe("splitLine function", function () {
     });
 
     it("Tokyo (shifted west) -> Seattle", function () {
-        const fixture: L.LatLngLiteral[][] = [
-            [Tokyo, { lat: 53.095949, lng: 180 }],
-            [{ lat: 53.095949, lng: -180 }, Seattle]
-        ];
         const split = geom.splitLine(new L.LatLng(Tokyo.lat, Tokyo.lng - 360), Seattle);
-        checkFixture(split, fixture);
+        checkFixture(split, TokyoSeattle);
     });
 
     it("Seattle (shifted east) -> Tokyo ", function () {
-        const fixture: L.LatLngLiteral[][] = [
-            [Seattle, { lat: 53.130876, lng: -180 }],
-            [{ lat: 53.130876, lng: 180 }, Tokyo]
-        ];
         const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 360), Tokyo);
-        checkFixture(split, fixture);
+        checkFixture(split, SeattleTokyo);
     });
 
     it("Berlin (shifted east) -> Seattle (shifted east)", function () {
@@ -229,6 +223,17 @@ describe("splitLine function", function () {
         const split = geom.splitLine(new L.LatLng(Berlin.lat, Berlin.lng + 4 * 360), new L.LatLng(Seattle.lat, Seattle.lng + 4 * 360));
         checkFixture(split, [[Berlin, Seattle]]);
     });
+
+    it("Seattle (shifted east) -> Tokyo (shifted east)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 360), new L.LatLng(Tokyo.lat, Tokyo.lng + 360));
+        checkFixture(split, SeattleTokyo);
+    });
+
+    it("Seattle (shifted 4*east) -> Tokyo (shifted 4*east)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 4*360), new L.LatLng(Tokyo.lat, Tokyo.lng + 4*360));
+        checkFixture(split, SeattleTokyo);
+    });
+
 });
 
 describe("splitLine - test cases for bugs #1", function () {

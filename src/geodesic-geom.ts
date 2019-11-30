@@ -27,7 +27,7 @@ export class GeodesicGeometry {
         const geom: L.LatLng[] = [start, dest];
         const midpoint = this.geodesic.midpoint(start, dest)
         if (this.options.wrap) {
-            midpoint.lng = this.geodesic.wrap180(midpoint.lng);
+            midpoint.lng = this.geodesic.wrap(midpoint.lng, 180);
         }
 
         if (iterations > 0) {
@@ -90,19 +90,19 @@ export class GeodesicGeometry {
         };
 
         // make a copy to work with
-        let start = Object.assign( Object.create( Object.getPrototypeOf(startPosition)), startPosition) as L.LatLng;
-        let dest = Object.assign( Object.create( Object.getPrototypeOf(destPosition)), destPosition) as L.LatLng;
+        let start = Object.assign(Object.create(Object.getPrototypeOf(startPosition)), startPosition) as L.LatLng;
+        let dest = Object.assign(Object.create(Object.getPrototypeOf(destPosition)), destPosition) as L.LatLng;
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
+
+        // console.log(start, dest)
 
         if ((dest.lng - start.lng) > 180) {
             dest.lng = dest.lng - 360;
         } else if ((dest.lng - start.lng) < -180) {
             dest.lng = dest.lng + 360;
         }
-
-        // console.log(startPosition, start)
 
         let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180))]];
 
@@ -147,12 +147,14 @@ export class GeodesicGeometry {
         }
         // both points are on the "other" side. Wrapping required!
         else if ((start.lng < -180) && (dest.lng < -180)) {
-            console.log("both points are on the 'other' side (west). Wrapping required!");
+            // console.log("both points are on the 'other' side (west). Wrapping required!");
+            // console.log(start, dest)
             result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]]
         }
         // both points are on the "other" side. Wrapping required!
         else if ((start.lng > 180) && (dest.lng > 180)) {
-            console.log("both points are on the 'other' side (east). Wrapping required!");
+            // console.log("both points are on the 'other' side (east). Wrapping required!");
+            // console.log(start, dest)
             result = [[new L.LatLng(start.lat, start.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]]
         }
         // no wrapping required at all
@@ -160,54 +162,6 @@ export class GeodesicGeometry {
             console.log("no wrapping required at all");
         }
         return result;
-    }
-
-    /**
-     * 
-     * Benchmark (no split): splitLine2 x 53,652 ops/sec ±0.22% (95 runs sampled)
-     * Benchmark (split):    splitLine2 x 27,721 ops/sec ±1.48% (86 runs sampled  
-     * 
-     * @param start 
-     * @param dest 
-     */
-    splitLine2(start: L.LatLng, dest: L.LatLng): L.LatLng[][] {
-        const antimeridianWest = {
-            point: new L.LatLng(89, -180),
-            bearing: 180
-        };
-        const antimeridianEast = {
-            point: new L.LatLng(89, 180),
-            bearing: 180
-        };
-
-        // we need a significant difference between the points and the antimeridian. So we clamp for +-179.9 for now...
-        start.lng = Math.max(-179.9, start.lng);
-        start.lng = Math.min(179.9, start.lng);
-        dest.lng = Math.max(-179.9, dest.lng);
-        dest.lng = Math.min(179.9, dest.lng);
-
-        const line: GeoDistance = this.geodesic.inverse(start, dest);
-        let intersection: L.LatLng | null;
-
-        // depending on initial direction, we check for crossing the antimeridian in western or eastern direction
-        if (line.initialBearing > 180) {
-            intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianWest.point, antimeridianWest.bearing);
-        } else {
-            intersection = this.geodesic.intersection(start, line.initialBearing, antimeridianEast.point, antimeridianEast.bearing);
-        }
-
-        if (intersection) {
-            const intersectionDistance = this.geodesic.inverse(start, intersection);
-            if (intersectionDistance.distance < line.distance) {
-                if (intersection.lng < -179.9999) {
-                    return [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), dest]];
-                } else if (intersection.lng > 179.9999) {
-                    return [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), dest]];
-                }
-                return [[start, intersection], [intersection, dest]];
-            }
-        }
-        return [[start, dest]];
     }
 
     /**
