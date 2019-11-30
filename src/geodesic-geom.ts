@@ -70,6 +70,15 @@ export class GeodesicGeometry {
         return this.multiLineString([latlngs])[0];
     }
 
+    /**
+     * 
+     * Is much (7x) faster than the previous implementation:
+     * Benchmark (no split):  splitLine x 368,178 ops/sec ±0.25% (91 runs sampled)
+     * Benchmark (split):     splitLine x 40,382 ops/sec ±0.26% (95 runs sampled)
+     * 
+     * @param startPosition 
+     * @param destPosition 
+     */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
             point: new L.LatLng(89.9, -180),
@@ -153,6 +162,14 @@ export class GeodesicGeometry {
         return result;
     }
 
+    /**
+     * 
+     * Benchmark (no split): splitLine2 x 53,652 ops/sec ±0.22% (95 runs sampled)
+     * Benchmark (split):    splitLine2 x 27,721 ops/sec ±1.48% (86 runs sampled  
+     * 
+     * @param start 
+     * @param dest 
+     */
     splitLine2(start: L.LatLng, dest: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
             point: new L.LatLng(89, -180),
