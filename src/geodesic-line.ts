@@ -32,7 +32,6 @@ export class GeodesicLine extends L.Polyline {
         let geodesic: L.LatLng[][] = [];
         if (this.points.length > 0 && this.points[0].length >= 2) {     // FIXME: remove this condition after fixing splitMultiLineString()
             geodesic = this.geom.multiLineString(this.points);
-            // geodesic = this.points;
             if ((this.options as GeodesicOptions).wrap) {
                 const split = this.geom.splitMultiLineString(geodesic);
                 super.setLatLngs(split);

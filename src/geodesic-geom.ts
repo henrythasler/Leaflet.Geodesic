@@ -81,8 +81,8 @@ export class GeodesicGeometry {
         };
 
         // make a copy to work with
-        let start = JSON.parse(JSON.stringify(startPosition)) as L.LatLng;
-        let dest = JSON.parse(JSON.stringify(destPosition)) as L.LatLng;
+        let start = Object.assign( Object.create( Object.getPrototypeOf(startPosition)), startPosition) as L.LatLng;
+        let dest = Object.assign( Object.create( Object.getPrototypeOf(destPosition)), destPosition) as L.LatLng;
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
@@ -93,7 +93,7 @@ export class GeodesicGeometry {
             dest.lng = dest.lng + 360;
         }
 
-        console.log(start, startPosition)
+        // console.log(startPosition, start)
 
         let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180))]];
 
