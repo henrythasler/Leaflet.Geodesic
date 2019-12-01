@@ -80,13 +80,14 @@
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
         };
 
-        var berlin = new L.LatLng(52.5, 13.35);
-        var losangeles = new L.LatLng(33.82, -118.38);
-        var Beijing = new L.LatLng(39.92, 116.39 );
+        const Berlin = new L.LatLng(52.5, 13.35);
+        const LosAngeles = new L.LatLng(33.82, -118.38);
+        const Beijing = new L.LatLng(39.92, 116.39 );
         const Capetown =  new L.LatLng(-33.94, 18.39 );
+        const Santiago = new L.LatLng(-33.44, -70.71);
 
-        var A = L.marker(losangeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        var B = L.marker(berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
+        var A = L.marker(LosAngeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        var B = L.marker(Berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
 
         const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
             weight: 7,
