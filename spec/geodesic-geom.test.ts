@@ -219,6 +219,11 @@ describe("splitLine function", function () {
         checkFixture(split, [[Berlin, Seattle]]);
     });
 
+    it("Seattle (shifted west) -> Berlin (shifted west)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng - 360), new L.LatLng(Berlin.lat, Berlin.lng - 360));
+        checkFixture(split, [[Seattle, Berlin]]);
+    });
+
     it("Berlin (shifted 4*east) -> Seattle (shifted 4*east)", function () {
         const split = geom.splitLine(new L.LatLng(Berlin.lat, Berlin.lng + 4 * 360), new L.LatLng(Seattle.lat, Seattle.lng + 4 * 360));
         checkFixture(split, [[Berlin, Seattle]]);
@@ -230,10 +235,23 @@ describe("splitLine function", function () {
     });
 
     it("Seattle (shifted 4*east) -> Tokyo (shifted 4*east)", function () {
-        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 4*360), new L.LatLng(Tokyo.lat, Tokyo.lng + 4*360));
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 4 * 360), new L.LatLng(Tokyo.lat, Tokyo.lng + 4 * 360));
         checkFixture(split, SeattleTokyo);
     });
 
+    it("Santiago (shifted east) -> Seattle (shifted east)", function () {
+        const split = geom.splitLine(new L.LatLng(Santiago.lat, Santiago.lng + 360), new L.LatLng(Seattle.lat, Seattle.lng + 360));
+        checkFixture(split, [[Santiago, Seattle]]);
+    });
+
+    it("Sydney -> LosAngeles (shifted east)", function () {
+        const fixture: L.LatLngLiteral[][] = [
+            [Sydney, { lat: -15.09323198441759, lng: 179.99999999997758 }],
+            [{ lat: -15.09323198441759, lng: -180.00000000002242 }, LosAngeles]
+        ];
+        const split = geom.splitLine(new L.LatLng(Sydney.lat, Sydney.lng), new L.LatLng(LosAngeles.lat, LosAngeles.lng + 360));
+        checkFixture(split, fixture);
+    });
 });
 
 describe("splitLine - test cases for bugs #1", function () {
@@ -360,6 +378,12 @@ describe("distance function (wrapper for vincenty inverse)", function () {
         const res = geom.distance(FlindersPeak, Buninyong);
         expect(res).to.be.a("number");
         expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits
+    });
+
+    it("λ > π", function () {
+        const res = geom.distance(new L.LatLng(24.206889622398023, 223.94531250000003), new L.LatLng(33.43144133557529, -136.75781250000003));
+        expect(res).to.be.a("number");
+        expect(res).to.be.closeTo(1024686.1978118686, eps);
     });
 });
 

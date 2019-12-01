@@ -44,7 +44,7 @@ export class GeodesicCore {
      * @param p 
      * @return 
      */
-    mod(n: number, p: number):number {
+    mod(n: number, p: number): number {
         const r = n % p;
         return r < 0 ? r + p : r;
     }
@@ -54,11 +54,11 @@ export class GeodesicCore {
      * @param degrees arbitrary value
      * @return degrees between 0..360
      */
-    wrap360(degrees: number) {
+    wrap360(degrees: number): number {
         if (0 <= degrees && degrees < 360) {
             return degrees; // avoid rounding due to arithmetic ops if within range
         } else {
-            return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
+            return this.mod(degrees, 360)
         }
     }
 
@@ -68,11 +68,11 @@ export class GeodesicCore {
      * @param max
      * @return degrees between `-max`..`+max`
      */
-    wrap(degrees: number, max=360) {
+    wrap(degrees: number, max = 360) {
         if (-max <= degrees && degrees <= max) {
             return degrees;
         } else {
-            return this.mod((degrees + max), 2*max) - max;
+            return this.mod((degrees + max), 2 * max) - max;
         }
     }
 

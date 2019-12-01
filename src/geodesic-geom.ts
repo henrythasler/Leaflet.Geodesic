@@ -90,8 +90,8 @@ export class GeodesicGeometry {
         };
 
         // make a copy to work with
-        let start = Object.assign(Object.create(Object.getPrototypeOf(startPosition)), startPosition) as L.LatLng;
-        let dest = Object.assign(Object.create(Object.getPrototypeOf(destPosition)), destPosition) as L.LatLng;
+        let start = new L.LatLng(startPosition.lat, startPosition.lng);
+        let dest = new L.LatLng(destPosition.lat, destPosition.lng);
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
@@ -145,22 +145,6 @@ export class GeodesicGeometry {
                 }
             }
         }
-        // both points are on the "other" side. Wrapping required!
-        else if ((start.lng < -180) && (dest.lng < -180)) {
-            // console.log("both points are on the 'other' side (west). Wrapping required!");
-            // console.log(start, dest)
-            result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]]
-        }
-        // both points are on the "other" side. Wrapping required!
-        else if ((start.lng > 180) && (dest.lng > 180)) {
-            // console.log("both points are on the 'other' side (east). Wrapping required!");
-            // console.log(start, dest)
-            result = [[new L.LatLng(start.lat, start.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]]
-        }
-        // no wrapping required at all
-        else {
-            console.log("no wrapping required at all");
-        }
         return result;
     }
 
@@ -198,7 +182,10 @@ export class GeodesicGeometry {
     }
 
     distance(start: L.LatLng, dest: L.LatLng): number {
-        return this.geodesic.inverse(start, dest).distance;
+        return this.geodesic.inverse(
+            new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)),
+            new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180))
+        ).distance;
     }
 
     multilineDistance(multilinestring: L.LatLng[][]): number[] {
