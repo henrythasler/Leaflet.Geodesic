@@ -52,7 +52,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="leaflet.geodesic.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 
 </head>
 
@@ -72,8 +72,6 @@
 
         const geodesic = L.geodesic([Berlin], {
             weight: 7,
-            opacity: 0.5,
-            color: 'red',
         }).addTo(map);
 
         const marker = L.marker(Berlin, { draggable: true }).addTo(map)
