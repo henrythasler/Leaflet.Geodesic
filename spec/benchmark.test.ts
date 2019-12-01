@@ -39,7 +39,7 @@ describe("function benchmarks", function () {
     it("Seattle -> Berlin (no split)", async function () {
         const res = await benchmark(Seattle, Berlin);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(fastest.hz).to.be.closeTo(350000, 50000);
+        expect(fastest.hz).to.be.closeTo(430000, 50000);
     });
 
     it("Seattle -> Tokyo (with split)", async function () {

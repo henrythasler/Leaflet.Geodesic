@@ -216,7 +216,7 @@ export class GeodesicCore {
         // α = azimuths of the geodesic; α2 the direction P₁ P₂ produced
         const α1 = Math.abs(sinSqσ) < ε ? 0 : Math.atan2(cosU2 * sinλ, cosU1 * sinU2 - sinU1 * cosU2 * cosλ);
         const α2 = Math.abs(sinSqσ) < ε ? π : Math.atan2(cosU1 * sinλ, -sinU1 * cosU2 + cosU1 * sinU2 * cosλ);
-        // console.log(`iterations: ${iterations}`)
+        
         return {
             distance: s,
             initialBearing: Math.abs(s) < ε ? NaN : this.wrap360(this.toDegrees(α1)),

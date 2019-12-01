@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { GeodesicCore, GeoDistance, GeodesicOptions, WGS84Vector } from "./geodesic-core"
+import { GeodesicCore, GeodesicOptions, WGS84Vector } from "./geodesic-core"
 
 /** detailled information of the current geometry */
 export interface Statistics {
@@ -73,8 +73,8 @@ export class GeodesicGeometry {
     /**
      * 
      * Is much (7x) faster than the previous implementation:
-     * Benchmark (no split):  splitLine x 368,178 ops/sec ±0.25% (91 runs sampled)
-     * Benchmark (split):     splitLine x 40,382 ops/sec ±0.26% (95 runs sampled)
+     * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
+     * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
      * 
      * @param startPosition 
      * @param destPosition 
@@ -95,8 +95,6 @@ export class GeodesicGeometry {
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
-
-        // console.log(start, dest)
 
         if ((dest.lng - start.lng) > 180) {
             dest.lng = dest.lng - 360;
