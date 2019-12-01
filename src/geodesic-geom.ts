@@ -73,8 +73,8 @@ export class GeodesicGeometry {
     /**
      * 
      * Is much (7x) faster than the previous implementation:
-     * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
-     * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
+     * `Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)`
+     * `Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)`
      * 
      * @param startPosition 
      * @param destPosition 
@@ -90,8 +90,8 @@ export class GeodesicGeometry {
         };
 
         // make a copy to work with
-        let start = new L.LatLng(startPosition.lat, startPosition.lng);
-        let dest = new L.LatLng(destPosition.lat, destPosition.lng);
+        const start = new L.LatLng(startPosition.lat, startPosition.lng);
+        const dest = new L.LatLng(destPosition.lat, destPosition.lng);
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);

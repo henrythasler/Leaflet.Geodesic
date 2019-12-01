@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/henrythasler/Leaflet.Geodesic#readme",
   "directories": {
-    "example": "examples"
+    "example": "./docs",
+    "test": "./spec"
   },
   "peerDependencies": {
     "leaflet": "^1.5.1"
