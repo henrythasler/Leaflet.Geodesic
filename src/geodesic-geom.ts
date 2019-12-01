@@ -72,9 +72,12 @@ export class GeodesicGeometry {
 
     /**
      * 
-     * Is much (7x) faster than the previous implementation:
-     * `Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)`
-     * `Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)`
+     * Is much (10x) faster than the previous implementation:
+     * 
+     * ```
+     * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
+     * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
+     * ```
      * 
      * @param startPosition 
      * @param destPosition 
