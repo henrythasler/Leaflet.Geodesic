@@ -286,7 +286,15 @@ describe("Intersection - Corner-cases and error handling", function () {
         const res = geodesic.intersection(
             new L.LatLng(-77.6966041375563, 18.28125000000003), 179.99999999999994,
             new L.LatLng(89, 180), 180);
-        expect(res).to.be.null;
+
+        if (res) {
+            expect(res).to.be.instanceOf(L.LatLng);
+            expect(res.lat).to.be.closeTo(-90, eps);
+            expect(res.lng).to.be.closeTo(196.00983852008366, eps);
+        }
+        else {
+            expect.fail();
+        }
     });
 
 });
