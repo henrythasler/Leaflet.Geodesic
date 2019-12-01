@@ -1,7 +1,7 @@
 # Leaflet.Geodesic
-[![Build Status](https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master)](https://travis-ci.org/henrythasler/Leaflet.Geodesic) [![npm](https://img.shields.io/npm/v/leaflet.geodesic)](https://www.npmjs.com/package/leaflet.geodesic) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic) [![Total alerts](https://img.shields.io/lgtm/alerts/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/alerts/) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/context:javascript)
+[![Build Status](https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master)](https://travis-ci.org/henrythasler/Leaflet.Geodesic) [![npm](https://img.shields.io/npm/v/leaflet.geodesic)](https://www.npmjs.com/package/leaflet.geodesic) [![Coverage Status](https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master)](https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status)](https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic)
 
-Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It uses [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae) for highest precision.
+Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid) lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It's based on [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae) implemented by [Chris Veness](https://github.com/chrisveness/geodesy) for highest precision.
 
 [![demo](docs/img/demo.png)](https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html)
 
@@ -18,7 +18,9 @@ Leaflet.Geodesic is available via CDN. Add the following snippet to your html-fi
 <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 ```
 
-Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic/) and [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic).
+Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic/), [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic) and [npmjs](https://www.npmjs.com/package/leaflet.geodesic).
+
+Add it in your nodejs-project with `npm i leaflet.geodesic`.
 
 ## Basic usage
 
@@ -166,11 +168,17 @@ const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);   // add empty
 geodesic.addLatLng(Beijing)
 ```
 
-The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the `points` property before and hand ofer a specific linestring as second parameter:
+The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the `points` property before and hand over a specific linestring as second parameter:
 
 ```Javascript
-const geodesic = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
-line.addLatLng(Beijing, line.points[0]);    // results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+const Beijing = new L.LatLng(39.92, 116.39 );
+const Capetown =  new L.LatLng(-33.94, 18.39 );
+const Santiago = new L.LatLng(-33.44, -70.71);
+
+const geodesic = new L.Geodesic([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
+geodesic.addLatLng(Beijing, geodesic.points[0]);    // results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]
 ```
 
 ### Line Options

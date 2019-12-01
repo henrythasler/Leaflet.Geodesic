@@ -91,9 +91,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#intersection" class="tsd-kind-icon">intersection</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#inverse" class="tsd-kind-icon">inverse</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#midpoint" class="tsd-kind-icon">midpoint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#mod" class="tsd-kind-icon">mod</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#todegrees" class="tsd-kind-icon">to<wbr>Degrees</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#toradians" class="tsd-kind-icon">to<wbr>Radians</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#wrap180" class="tsd-kind-icon">wrap180</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#wrap" class="tsd-kind-icon">wrap</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesiccore.html#wrap360" class="tsd-kind-icon">wrap360</a></li>
 							</ul>
 						</section>
@@ -119,7 +120,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L26">src/geodesic-core.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L26">src/geodesic-core.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -145,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L76">src/geodesic-core.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L90">src/geodesic-core.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -197,12 +198,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L224">src/geodesic-core.ts:224</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L239">src/geodesic-core.ts:239</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Returns the point of intersection of two paths defined by position and bearing.
+										This calculation uses a spherical model of the earth. This will lead to small errors compared to an ellipsiod model.
 										based on the work of Chris Veness (<a href="https://github.com/chrisveness/geodesy">https://github.com/chrisveness/geodesy</a>)
 									source: <a href="https://github.com/chrisveness/geodesy/blob/master/latlon-spherical.js">https://github.com/chrisveness/geodesy/blob/master/latlon-spherical.js</a></p>
 								</div>
@@ -247,7 +249,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L138">src/geodesic-core.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L152">src/geodesic-core.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L272">src/geodesic-core.ts:272</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L287">src/geodesic-core.ts:287</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -310,6 +312,38 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="mod" class="tsd-anchor"></a>
+					<h3>mod</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">mod<span class="tsd-signature-symbol">(</span>n<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, p<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L47">src/geodesic-core.ts:47</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>implements scientific modulus
+									source: <a href="http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html">http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html</a></p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>n: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>p: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="todegrees" class="tsd-anchor"></a>
 					<h3>to<wbr>Degrees</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -319,7 +353,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L36">src/geodesic-core.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L36">src/geodesic-core.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -342,7 +376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L32">src/geodesic-core.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L32">src/geodesic-core.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -356,19 +390,22 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="wrap180" class="tsd-anchor"></a>
-					<h3>wrap180</h3>
+					<a name="wrap" class="tsd-anchor"></a>
+					<h3>wrap</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">wrap180<span class="tsd-signature-symbol">(</span>degrees<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">wrap<span class="tsd-signature-symbol">(</span>degrees<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, max<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L57">src/geodesic-core.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L71">src/geodesic-core.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>general wrap function with arbitrary max value</p>
+								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -378,9 +415,12 @@
 										<p>arbitrary value</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> max: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;360</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-							<p>degrees between -180..+180</p>
+							<p>degrees between <code>-max</code>..<code>+max</code></p>
 						</li>
 					</ul>
 				</section>
@@ -394,7 +434,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L45">src/geodesic-core.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L57">src/geodesic-core.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -425,7 +465,7 @@
 					<div class="tsd-signature tsd-kind-icon">ellipsoid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L22">src/geodesic-core.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L22">src/geodesic-core.ts:22</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -434,7 +474,7 @@
 						<div class="tsd-signature tsd-kind-icon">a<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;6378137</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L23">src/geodesic-core.ts:23</a></li>
+								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L23">src/geodesic-core.ts:23</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -444,7 +484,7 @@
 						<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;6356752.3142</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L24">src/geodesic-core.ts:24</a></li>
+								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L24">src/geodesic-core.ts:24</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -454,7 +494,7 @@
 						<div class="tsd-signature tsd-kind-icon">f<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1 / 298.257223563</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L25">src/geodesic-core.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L25">src/geodesic-core.ts:25</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -465,7 +505,7 @@
 					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -474,17 +514,17 @@
 						<div class="tsd-signature tsd-kind-icon">steps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;3</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="options.wrap" class="tsd-anchor"></a>
+						<a name="options.wrap-1" class="tsd-anchor"></a>
 						<h3>wrap</h3>
 						<div class="tsd-signature tsd-kind-icon">wrap<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/68408a2/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-core.ts#L21">src/geodesic-core.ts:21</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -525,13 +565,16 @@
 								<a href="geodesiccore.html#midpoint" class="tsd-kind-icon">midpoint</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="geodesiccore.html#mod" class="tsd-kind-icon">mod</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="geodesiccore.html#todegrees" class="tsd-kind-icon">to<wbr>Degrees</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="geodesiccore.html#toradians" class="tsd-kind-icon">to<wbr>Radians</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="geodesiccore.html#wrap180" class="tsd-kind-icon">wrap180</a>
+								<a href="geodesiccore.html#wrap" class="tsd-kind-icon">wrap</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="geodesiccore.html#wrap360" class="tsd-kind-icon">wrap360</a>

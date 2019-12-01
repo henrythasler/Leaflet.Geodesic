@@ -24,6 +24,16 @@ const Capetown = new L.LatLng(-33.94, 18.39);
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Sydney = new L.LatLng(-33.91, 151.08);
 
+const SeattleTokyo: L.LatLngLiteral[][] = [
+    [Seattle, { lat: 53.130876, lng: -180 }],
+    [{ lat: 53.130876, lng: 180 }, Tokyo]
+];
+
+const TokyoSeattle: L.LatLngLiteral[][] = [
+    [Tokyo, { lat: 53.095949, lng: 180 }],
+    [{ lat: 53.095949, lng: -180 }, Seattle]
+];
+
 const SeattleCapetown3: L.LatLngLiteral[] = [
     Seattle,
     { lat: 18.849527, lng: -35.885828 },
@@ -147,34 +157,99 @@ describe("splitLine function", function () {
     });
 
     it("Seattle -> Tokyo", function () {
-        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
-            [Seattle, { lat: 53.130876, lng: -180 }],
-            [{ lat: 53.130876, lng: 180 }, Tokyo]
-        ];
         const split = geom.splitLine(Seattle, Tokyo);
-        checkFixture(split, fixture);
+        checkFixture(split, SeattleTokyo);
     });
 
     it("Tokyo -> Seattle", function () {
-        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
-            [Tokyo, { lat: 53.095949, lng: 180 }],
-            [{ lat: 53.095949, lng: -180 }, Seattle]
-        ];
         const split = geom.splitLine(Tokyo, Seattle);
-        checkFixture(split, fixture);
+        checkFixture(split, TokyoSeattle);
     });
 
     it("Over Southpole (no split)", function () {
         const fixture: L.LatLngLiteral[][] = [
-            [{ lat: -76.92061351829682, lng: -24.257812500000004 }, { lat: -90, lng: 155.641042 }],
-            [{ lat: -90, lng: 155.641042 }, { lat: -72.28906720017675, lng: 155.7421875 }]
+            [{ lat: -76.92061351829682, lng: -24.257812500000004 },
+            { lat: -72.28906720017675, lng: 155.7421875 }]
         ];
         const split = geom.splitLine(new L.LatLng(-76.92061351829682, -24.257812500000004), new L.LatLng(-72.28906720017675, 155.7421875));
         checkFixture(split, fixture);
     });
-    it("Clamp values if too close to dateline", function () {
-        const fixture: L.LatLngLiteral[][] = [[{ lat: -50.6251, lng: -57.1289 }, { lat: -35.34762564469152, lng: -179.9 }]];
+
+    it("Values if close to antimeridian", function () {
+        const fixture: L.LatLngLiteral[][] = [[{ lat: -50.6251, lng: -57.1289 }, { lat: -35.34762564469152, lng: -179.97352713285602 }]];
         const split = geom.splitLine(new L.LatLng(-50.6251, -57.1289), new L.LatLng(-35.34762564469152, -179.97352713285602));
+        checkFixture(split, fixture);
+    });
+
+    it("Over Northpole", function () {
+        const fixture: L.LatLngLiteral[][] = [
+            [LosAngeles, { lat: 89.75831966628218, lng: -179.99999999974688 }],
+            [{ lat: 89.75831966628218, lng: 180.00000000025312 }, { lat: 65.3668, lng: 62.2266 }]
+        ];
+        const split = geom.splitLine(LosAngeles, new L.LatLng(65.3668, 62.2266));
+        checkFixture(split, fixture);
+    });
+
+    it("North Canada to Antarctica", function () {
+        const fixture: L.LatLngLiteral[][] = [
+            [{ lat: 83.2777, lng: -168.75 }, { lat: -84.6735, lng: 11.25 }]
+        ];
+        const split = geom.splitLine(new L.LatLng(83.2777, -168.75), new L.LatLng(-84.6735, 11.25));
+        checkFixture(split, fixture);
+    });
+
+    it("Values close to dateline (no split)", function () {
+        const fixture: L.LatLngLiteral[][] = [[{ lat: -50.6251, lng: -57.1289 }, { lat: -35.34762564469152, lng: -179.97352713285602 }]];
+        const split = geom.splitLine(new L.LatLng(-50.6251, -57.1289), new L.LatLng(-35.34762564469152, -179.97352713285602));
+        checkFixture(split, fixture);
+    });
+
+    it("Tokyo (shifted west) -> Seattle", function () {
+        const split = geom.splitLine(new L.LatLng(Tokyo.lat, Tokyo.lng - 360), Seattle);
+        checkFixture(split, TokyoSeattle);
+    });
+
+    it("Seattle (shifted east) -> Tokyo ", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 360), Tokyo);
+        checkFixture(split, SeattleTokyo);
+    });
+
+    it("Berlin (shifted east) -> Seattle (shifted east)", function () {
+        const split = geom.splitLine(new L.LatLng(Berlin.lat, Berlin.lng + 360), new L.LatLng(Seattle.lat, Seattle.lng + 360));
+        checkFixture(split, [[Berlin, Seattle]]);
+    });
+
+    it("Seattle (shifted west) -> Berlin (shifted west)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng - 360), new L.LatLng(Berlin.lat, Berlin.lng - 360));
+        checkFixture(split, [[Seattle, Berlin]]);
+    });
+
+    it("Berlin (shifted 4*east) -> Seattle (shifted 4*east)", function () {
+        const split = geom.splitLine(new L.LatLng(Berlin.lat, Berlin.lng + 4 * 360), new L.LatLng(Seattle.lat, Seattle.lng + 4 * 360));
+        checkFixture(split, [[Berlin, Seattle]]);
+    });
+
+    it("Seattle (shifted east) -> Tokyo (shifted east)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 360), new L.LatLng(Tokyo.lat, Tokyo.lng + 360));
+        checkFixture(split, SeattleTokyo);
+    });
+
+    it("Seattle (shifted 4*east) -> Tokyo (shifted 4*east)", function () {
+        const split = geom.splitLine(new L.LatLng(Seattle.lat, Seattle.lng + 4 * 360), new L.LatLng(Tokyo.lat, Tokyo.lng + 4 * 360));
+        checkFixture(split, SeattleTokyo);
+    });
+
+    it("Santiago (shifted east) -> Seattle (shifted east)", function () {
+        const split = geom.splitLine(new L.LatLng(Santiago.lat, Santiago.lng + 360), new L.LatLng(Seattle.lat, Seattle.lng + 360));
+        checkFixture(split, [[Santiago, Seattle]]);
+    });
+
+    it("Sydney -> LosAngeles (shifted east)", function () {
+        const fixture: L.LatLngLiteral[][] = [
+            [Sydney, { lat: -15.09323198441759, lng: 179.99999999997758 }],
+            [{ lat: -15.09323198441759, lng: -180.00000000002242 }, LosAngeles]
+        ];
+        const split = geom.splitLine(new L.LatLng(Sydney.lat, Sydney.lng), new L.LatLng(LosAngeles.lat, LosAngeles.lng + 360));
         checkFixture(split, fixture);
     });
 });
@@ -196,10 +271,33 @@ describe("splitLine - test cases for bugs #1", function () {
 
 
 describe("splitMultiLineString function", function () {
+    it("empty input", function () {
+        const split = geom.splitMultiLineString([]);
+        checkFixture(split, []);
+    });
+
+    it("just a point", function () {
+        const split = geom.splitMultiLineString([[Berlin]]);
+        checkFixture(split, [[Berlin]]);
+    });
+
+    it("Line Berlin -> Seattle (no split)", function () {
+        checkFixture(geom.splitMultiLineString([[Berlin, Seattle]]), [[Berlin, Seattle]]);
+    });
+
     it("Berlin -> Seattle (no split)", function () {
         const geodesic = [geom.recursiveMidpoint(Berlin, Seattle, 1)];
         const split = geom.splitMultiLineString(geodesic);
         checkFixture(split, geodesic);
+    });
+
+    it("Line Seattle -> Tokyo", function () {
+        const fixture: L.LatLngLiteral[][] = [  // verified with QGIS
+            [Seattle, { lat: 53.130876, lng: -180 }],
+            [{ lat: 53.130876, lng: 180 }, Tokyo]
+        ];
+        const split = geom.splitMultiLineString([[Seattle, Tokyo]]);
+        checkFixture(split, fixture);
     });
 
     it("Seattle -> Tokyo", function () {
@@ -263,10 +361,10 @@ describe("splitMultiLineString - test cases for bugs", function () {
         const fixture: L.LatLngLiteral[][] = [
             [
                 { lat: -50.6251, lng: -57.1289 },
-                { lat: -35.34762564469152, lng: -179.9 },
-                { lat: -35.221365421334895, lng: -180.00000000010883 }],
+                { lat: -35.34762564469152, lng: -179.97352713285602 },
+                { lat: -35.314181797099394, lng: -180.00000000010883 }],
             [
-                { lat: -35.221365421334895, lng: 179.99999999989117 },
+                { lat: -35.314181797099394, lng: 179.99999999989117 },
                 { lat: 35.47, lng: 139.15 }]];
 
         const geodesic = [geom.recursiveMidpoint(new L.LatLng(-50.6251, -57.1289), Tokyo, 0)];
@@ -280,6 +378,12 @@ describe("distance function (wrapper for vincenty inverse)", function () {
         const res = geom.distance(FlindersPeak, Buninyong);
         expect(res).to.be.a("number");
         expect(res).to.be.closeTo(54972.271, 0.001);   // epsilon is larger, because precision of reference value is  only 3 digits
+    });
+
+    it("λ > π", function () {
+        const res = geom.distance(new L.LatLng(24.206889622398023, 223.94531250000003), new L.LatLng(33.43144133557529, -136.75781250000003));
+        expect(res).to.be.a("number");
+        expect(res).to.be.closeTo(1024686.1978118686, eps);
     });
 });
 

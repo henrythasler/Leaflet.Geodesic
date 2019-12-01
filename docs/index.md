@@ -26,6 +26,10 @@ Click on an image to open the demo:
 
 [geojson-drag-drop](geojson-drag-drop.html)
 
+## Interactive measurement
+
+[![measurement-interactive](img/measurement.png)](measurement-interactive.html)
+
 ## No Wrap Interactive
 
 [![nowrap-interactive](img/nowrap-interactive.png)](nowrap-interactive.html)

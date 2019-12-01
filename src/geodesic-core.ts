@@ -38,27 +38,41 @@ export class GeodesicCore {
     }
 
     /**
+     * implements scientific modulus
+     * source: http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html 
+     * @param n 
+     * @param p 
+     * @return 
+     */
+    mod(n: number, p: number): number {
+        const r = n % p;
+        return r < 0 ? r + p : r;
+    }
+
+    /**
      * source: https://github.com/chrisveness/geodesy/blob/master/dms.js
      * @param degrees arbitrary value
      * @return degrees between 0..360
      */
-    wrap360(degrees: number) {
+    wrap360(degrees: number): number {
         if (0 <= degrees && degrees < 360) {
             return degrees; // avoid rounding due to arithmetic ops if within range
         } else {
-            return (degrees % 360 + 360) % 360; // sawtooth wave p:360, a:360
+            return this.mod(degrees, 360)
         }
     }
 
     /**
+     * general wrap function with arbitrary max value
      * @param degrees arbitrary value
-     * @return degrees between -180..+180
+     * @param max
+     * @return degrees between `-max`..`+max`
      */
-    wrap180(degrees: number) {
-        if (-180 <= degrees && degrees < 180) {
+    wrap(degrees: number, max = 360) {
+        if (-max <= degrees && degrees <= max) {
             return degrees;
         } else {
-            return (((degrees + 180) % 360 + 360) % 360) - 180;
+            return this.mod((degrees + max), 2 * max) - max;
         }
     }
 
@@ -202,7 +216,7 @@ export class GeodesicCore {
         // α = azimuths of the geodesic; α2 the direction P₁ P₂ produced
         const α1 = Math.abs(sinSqσ) < ε ? 0 : Math.atan2(cosU2 * sinλ, cosU1 * sinU2 - sinU1 * cosU2 * cosλ);
         const α2 = Math.abs(sinSqσ) < ε ? π : Math.atan2(cosU1 * sinλ, -sinU1 * cosU2 + cosU1 * sinU2 * cosλ);
-        // console.log(`iterations: ${iterations}`)
+
         return {
             distance: s,
             initialBearing: Math.abs(s) < ε ? NaN : this.wrap360(this.toDegrees(α1)),
@@ -261,10 +275,7 @@ export class GeodesicCore {
 
         const cosα3 = -Math.cos(α1) * Math.cos(α2) + Math.sin(α1) * Math.sin(α2) * Math.cos(δ12);
         const δ13 = Math.atan2(Math.sin(δ12) * Math.sin(α1) * Math.sin(α2), Math.cos(α2) + Math.cos(α1) * cosα3);
-        const φ3 = Math.asin(Math.sin(φ1) * Math.cos(δ13) + Math.cos(φ1) * Math.sin(δ13) * Math.cos(θ13));
-        if (isNaN(φ3)) {
-            return null;
-        }
+        const φ3 = Math.asin(Math.min(Math.max(Math.sin(φ1) * Math.cos(δ13) + Math.cos(φ1) * Math.sin(δ13) * Math.cos(θ13), -1), 1));
         const Δλ13 = Math.atan2(Math.sin(θ13) * Math.sin(δ13) * Math.cos(φ1), Math.cos(δ13) - Math.sin(φ1) * Math.sin(φ3));
         const λ3 = λ1 + Δλ13;
         return new L.LatLng(this.toDegrees(φ3), this.toDegrees(λ3));
