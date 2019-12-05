@@ -164,8 +164,8 @@ const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
 const Beijing = new L.LatLng(39.92, 116.39);
 
-const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);   // add empty object to the map
-geodesic.addLatLng(Beijing)
+const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);
+geodesic.addLatLng(Beijing);    // results in [[Berlin, LosAngeles, Beijing]
 ```
 
 The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the `points` property before and hand over a specific linestring as second parameter:

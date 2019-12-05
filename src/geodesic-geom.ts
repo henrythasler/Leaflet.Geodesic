@@ -15,20 +15,30 @@ export interface Statistics {
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
-    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     steps: number;
 
     constructor(options?: GeodesicOptions) {
-        this.options = { ...this.options, ...options };
-        this.steps = (this.options.steps === undefined) ? 3 : this.options.steps;
+        this.steps = (options && options.steps !== undefined) ? options.steps : 3;
     }
 
+    /**
+     * A geodesic line between `start` and `dest` is created with this recursive function. 
+     * It calculates the geodesic midpoint between `start` and `dest` and uses this midpoint to call itself again (twice!).
+     * The results are then merged into one continuous linestring. 
+     * 
+     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations` 
+     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1) 
+     * 
+     * As this is an exponential function, be extra careful to limit the initial value for `iterations` (8 results in 513 vertices).
+     * 
+     * @param start start position 
+     * @param dest destination
+     * @param iterations 
+     * @return resulting linestring
+     */
     recursiveMidpoint(start: L.LatLng, dest: L.LatLng, iterations: number): L.LatLng[] {
         const geom: L.LatLng[] = [start, dest];
         const midpoint = this.geodesic.midpoint(start, dest)
-        if (this.options.wrap) {
-            midpoint.lng = this.geodesic.wrap(midpoint.lng, 180);
-        }
 
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
@@ -36,14 +46,32 @@ export class GeodesicGeometry {
         } else {
             geom.splice(1, 0, midpoint);
         }
-
         return geom;
     }
 
+    /**
+     * This is the wrapper-function to generate a geodesic line. It's just for future backwards-compatibility
+     * if there is another algorithm used to create the actual line.
+     * 
+     * The `steps`-property is used to define the number of resulting vertices of the linestring: vertices == 1 + 2 ** (steps + 1)
+     * The value for `steps` is currently limited to 8 (513 vertices) for performance reasons until another algorithm is found.
+     * 
+     * @param start start position
+     * @param dest destination
+     * @return resulting linestring
+     */
     line(start: L.LatLng, dest: L.LatLng): L.LatLng[] {
         return this.recursiveMidpoint(start, dest, Math.min(8, this.steps));
     }
 
+    /**
+     * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
+     * The number of vertices is calculated with: vertices == steps
+     * 
+     * @param center
+     * @param radius
+     * @return resulting linestring
+     */
     circle(center: L.LatLng, radius: number): L.LatLng[] {
         const points: L.LatLng[] = [];
         for (let i = 0; i < this.steps + 1; i++) {

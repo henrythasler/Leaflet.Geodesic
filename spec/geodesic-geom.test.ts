@@ -73,8 +73,6 @@ const geom = new GeodesicGeometry();
 describe("constructor and properties", function () {
     it("no additional settings given", function () {
         expect(geom.steps).to.be.equal(3);
-        expect(geom.options.steps).to.be.equal(3);
-        expect(geom.options.wrap).to.be.true;
     });
 });
 
