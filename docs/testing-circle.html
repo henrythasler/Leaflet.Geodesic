@@ -52,10 +52,10 @@
     <script type="text/javascript">
 
         var map = L.map('map', {
-            maxBounds: [
-                [-90, -180],
-                [90, 180]
-            ],
+            // maxBounds: [
+            //     [-90, -180],
+            //     [90, 180]
+            // ],
             center: [50, 0],
             zoom: 4
         });
@@ -76,7 +76,8 @@
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 80
+            steps: 5,
+            wrap: true
         }).bindTooltip("<Area>").bindPopup("GeodesicCircle").addTo(map);
 
         geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
@@ -112,7 +113,8 @@
                 lng: A.getLatLng().lng - diff.lng
             });	// move B parallel to A            
             geodesiccircle.setLatLng(e.latlng);
-            geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+            // geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+            geodesiccircle.setRadius(3000*1000);
             info.update(geodesiccircle.statistics);
             geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
         });

@@ -64,23 +64,6 @@ export class GeodesicGeometry {
         return this.recursiveMidpoint(start, dest, Math.min(8, this.steps));
     }
 
-    /**
-     * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
-     * The number of vertices is calculated with: vertices == steps
-     * 
-     * @param center
-     * @param radius
-     * @return resulting linestring
-     */
-    circle(center: L.LatLng, radius: number): L.LatLng[] {
-        const points: L.LatLng[] = [];
-        for (let i = 0; i < this.steps + 1; i++) {
-            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
-            points.push(new L.LatLng(point.lat, point.lng));
-        }
-        return points;
-    }
-
     multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
         const multiLineString: L.LatLng[][] = [];
 
@@ -207,6 +190,34 @@ export class GeodesicGeometry {
                 result.push(segment);
             }
         });
+        return result;
+    }
+
+    /**
+     * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
+     * The number of vertices is calculated with: `vertices == steps + 1` (where 1st == last)
+     * 
+     * @param center
+     * @param radius
+     * @return resulting linestring
+     */
+    circle(center: L.LatLng, radius: number): L.LatLng[] {
+        const points: L.LatLng[] = [];
+        for (let i = 0; i < this.steps + 1; i++) {
+            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
+            points.push(new L.LatLng(point.lat, point.lng));
+        }
+        return points;
+    }
+
+    splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
+        let result: L.LatLng[][] = [];
+        result = this.splitMultiLineString([linestring]);
+        console.log(result);
+        if(result.length === 3) {
+            result[2] = [...result[2], ...result[0]];
+            result.shift();
+        }
         return result;
     }
 

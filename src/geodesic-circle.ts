@@ -38,7 +38,13 @@ export class GeodesicCircleClass extends L.Polyline {
         // circumfence must be re-calculated from geodesic 
         this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
 
-        this.setLatLngs(latlngs);
+        if ((this.options as GeodesicOptions).wrap) {
+            const split = this.geom.splitCircle(latlngs);
+            super.setLatLngs(split);
+        }
+        else {
+            super.setLatLngs(latlngs);
+        }
     }
 
     /**

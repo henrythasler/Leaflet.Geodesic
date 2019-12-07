@@ -46,39 +46,71 @@ describe("circle function", function () {
     });
 });
 
-// describe("splitCircle function", function () {
-//     it("splitting at antimeridian (west)", function () {
-//         const fixture: L.LatLngLiteral[][] = [
-//             [
-//                 { lat: 61.479983, lng: 13.349999 },
-//                 { lat: 56.219051, lng: 27.392553 },
-//                 { lat: 47.396791, lng: 24.852190 },
-//                 { lat: 43.506398, lng: 13.350000 },
-//                 { lat: 47.396791, lng: 1.847809 },
-//                 { lat: 56.219051, lng: -0.692553 }]];
+describe("splitCircle function", function () {
+    // it("splitting at antimeridian (west)", function () {
+    //     const fixture: L.LatLngLiteral[][] = [
+    //         [{ lat: -21.99240471670453, lng: 180.0000000000693 },
+    //         { lat: -13.180500382803578, lng: 166.23330500967688 },
+    //         { lat: 13.180500382803567, lng: 166.23330500967688 },
+    //         { lat: 21.912163369924077, lng: 179.99999999995353 }],
+    //         [{ lat: 21.912163369924077, lng: -180.00000000004647 },
+    //         { lat: 27.11163550749344, lng: -170 },
+    //         { lat: 27.11163550749344, lng: -170 },
+    //         { lat: 13.180500382803567, lng: -146.2333050096769 },
+    //         { lat: -13.180500382803556, lng: -146.2333050096769 },
+    //         { lat: -27.11163550749344, lng: -170 },
+    //         { lat: -21.99240471670453, lng: -179.9999999999307 }]];
 
-//         const circle = geom.circle({ lat: 0, lng: -170 }, 3000 * 1000);
-//         console.log(circle);
-//         const split = geom.splitCircle(circle);
-//         console.log(split);
-//         // checkFixture([circle], fixture);
-//     });
+    //     const circle = geom.circle(new L.LatLng(0, -170), 3000 * 1000);
+    //     const split = geom.splitCircle(circle);
+    //     checkFixture(split, fixture);
+    // });
 
-//     it("splitting at antimeridian (east)", function () {
-//         const fixture: L.LatLngLiteral[][] = [
-//             [
-//                 { lat: 61.479983, lng: 13.349999 },
-//                 { lat: 56.219051, lng: 27.392553 },
-//                 { lat: 47.396791, lng: 24.852190 },
-//                 { lat: 43.506398, lng: 13.350000 },
-//                 { lat: 47.396791, lng: 1.847809 },
-//                 { lat: 56.219051, lng: -0.692553 }]];
+    // it("splitting at antimeridian (east)", function () {
+    //     const fixture: L.LatLngLiteral[][] = [
+    //         [{ lat: 21.99240471665257, lng: -179.99999999997746 },
+    //         { lat: 13.180500382803567, lng: -166.23330500967688 },
+    //         { lat: -13.180500382803556, lng: -166.23330500967688 },
+    //         { lat: -21.912163369932593, lng: -179.99999999996854 }],
+    //         [{ lat: -21.912163369932593, lng: 180.00000000003146 },
+    //         { lat: -27.11163550749344, lng: 170 },
+    //         { lat: -13.180500382803578, lng: 146.2333050096769 },
+    //         { lat: 13.180500382803567, lng: 146.2333050096769 },
+    //         { lat: 27.11163550749344, lng: 170 },
+    //         { lat: 27.11163550749344, lng: 170 },
+    //         { lat: 21.99240471665257, lng: 180.00000000002254 }]
+    //     ];
 
-//         const circle = geom.circle({ lat: 0, lng: 170 }, 3000 * 1000);
-//         const split = geom.splitCircle(circle);
-//         console.log(circle);
-//         console.log(split);
-//         // checkFixture([circle], fixture);
-//     });
+    //     const circle = geom.circle(new L.LatLng(0, 170), 3000 * 1000);
+    //     const split = geom.splitCircle(circle);
+    //     checkFixture(split, fixture);
+    // });
 
-// });
+    it("splitting on antimeridian (east)", function () {
+        const fixture: L.LatLngLiteral[][] = [];
+
+        const circle = geom.circle(new L.LatLng(0.5273, 180), 3000 * 1000);
+        console.log(circle);
+        const split = geom.splitCircle(circle);
+        console.log(split);
+        // checkFixture(split, fixture);
+    });
+
+    //     it("splitting at antimeridian (east)", function () {
+    //         const fixture: L.LatLngLiteral[][] = [
+    //             [
+    //                 { lat: 61.479983, lng: 13.349999 },
+    //                 { lat: 56.219051, lng: 27.392553 },
+    //                 { lat: 47.396791, lng: 24.852190 },
+    //                 { lat: 43.506398, lng: 13.350000 },
+    //                 { lat: 47.396791, lng: 1.847809 },
+    //                 { lat: 56.219051, lng: -0.692553 }]];
+
+    //         const circle = geom.circle({ lat: 0, lng: 170 }, 3000 * 1000);
+    //         const split = geom.splitCircle(circle);
+    //         console.log(circle);
+    //         console.log(split);
+    //         // checkFixture([circle], fixture);
+    //     });
+
+});
