@@ -227,7 +227,7 @@ The geometry of a circle can be updated with the following methods:
 - `setLatLng(latlng: L.LatLngExpression)` - set a new center
 - `setRadius(radius: number)` - update the radius
 
-Handling of circles crossing the antimeridian (wrapping) is not yet supported.
+Handling of **filled** circles crossing the antimeridian (wrapping) is not yet supported. Set `fill: false` in these cases to avoid display artefacts.
 
 ### Circle Options
 

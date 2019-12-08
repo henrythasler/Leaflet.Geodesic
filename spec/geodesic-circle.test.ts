@@ -50,7 +50,7 @@ describe("Main functionality", function () {
     it("Create class with parameters", function () {
         const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
         expect(circle).to.be.instanceOf(GeodesicCircleClass);
-        compareObject(circle.options, {...defaultOptions, ...{steps: 48}});
+        compareObject(circle.options, { ...defaultOptions, ...{ steps: 48 } });
     });
 
     it("Add empty circle to map", async function () {
@@ -82,6 +82,13 @@ describe("Main functionality", function () {
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
         circle.setRadius(2 * radius);
         expect(circle.radius).to.be.closeTo(2 * radius, eps);
+    });
+
+    it("Add non-wrapped circle", function () {
+        const circle = new GeodesicCircleClass(Beijing, { steps: 48, wrap: false }).addTo(map);
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, { ...defaultOptions, ...{ steps: 48, wrap: false } });
+        expect(map.hasLayer(circle)).to.be.true;
     });
 
     it("distance function (wrapper for vincenty inverse)", function () {

@@ -95,11 +95,11 @@ export class GeodesicGeometry {
      */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
-            point: new L.LatLng(89.9, -180),
+            point: new L.LatLng(89.9, -180.0000001),    // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
         const antimeridianEast = {
-            point: new L.LatLng(89.9, 180),
+            point: new L.LatLng(89.9, 180.0000001),     // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
 
@@ -202,25 +202,40 @@ export class GeodesicGeometry {
      * @return resulting linestring
      */
     circle(center: L.LatLng, radius: number): L.LatLng[] {
-        const points: L.LatLng[] = [];
-        for (let i = 0; i < this.steps + 1; i++) {
+        const vertices: L.LatLng[] = [];
+        for (let i = 0; i < this.steps; i++) {
             const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
-            points.push(new L.LatLng(point.lat, point.lng));
+            vertices.push(new L.LatLng(point.lat, point.lng));
         }
-        return points;
+        // append first vertice to the end to close the linestring
+        vertices.push(new L.LatLng(vertices[0].lat, vertices[0].lng));
+        return vertices;
     }
 
+    /**
+     * Handles splitting of circles at the antimeridian.
+     * @param linestring a linestring that resembles the geodesic circle
+     * @return a multilinestring that consist of one or two linestrings
+     */
     splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
         let result: L.LatLng[][] = [];
         result = this.splitMultiLineString([linestring]);
-        console.log(result);
-        if(result.length === 3) {
+
+        // If the circle was split, it results in exactly three linestrings where first and last  
+        // must be re-assembled because they belong to the same "side" of the split circle.
+        if (result.length === 3) {
             result[2] = [...result[2], ...result[0]];
             result.shift();
         }
         return result;
     }
 
+    /**
+     * Calculates the distance between two positions on the earths surface
+     * @param start 1st position
+     * @param dest 2nd position
+     * @return the distance in **meters**
+     */
     distance(start: L.LatLng, dest: L.LatLng): number {
         return this.geodesic.inverse(
             new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)),

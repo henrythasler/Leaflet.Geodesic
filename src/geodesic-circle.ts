@@ -32,18 +32,18 @@ export class GeodesicCircleClass extends L.Polyline {
      * Updates the geometry and re-calculates some statistics
      */
     private update(): void {
-        const latlngs = this.geom.circle(this.center, this.radius);
+        const circle = this.geom.circle(this.center, this.radius);
 
-        this.statistics = this.geom.updateStatistics([[this.center]], [latlngs]);
+        this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
         // circumfence must be re-calculated from geodesic 
-        this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
+        this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
         if ((this.options as GeodesicOptions).wrap) {
-            const split = this.geom.splitCircle(latlngs);
+            const split = this.geom.splitCircle(circle);
             super.setLatLngs(split);
         }
         else {
-            super.setLatLngs(latlngs);
+            super.setLatLngs(circle);
         }
     }
 

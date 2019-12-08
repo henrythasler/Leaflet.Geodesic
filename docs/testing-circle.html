@@ -76,7 +76,7 @@
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 5,
+            steps: 45,
             wrap: true
         }).bindTooltip("<Area>").bindPopup("GeodesicCircle").addTo(map);
 
@@ -113,8 +113,8 @@
                 lng: A.getLatLng().lng - diff.lng
             });	// move B parallel to A            
             geodesiccircle.setLatLng(e.latlng);
-            // geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
-            geodesiccircle.setRadius(3000*1000);
+            geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+            // geodesiccircle.setRadius(3000*1000);
             info.update(geodesiccircle.statistics);
             geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
         });

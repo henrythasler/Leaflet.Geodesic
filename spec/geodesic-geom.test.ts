@@ -181,8 +181,8 @@ describe("splitLine function", function () {
 
     it("Over Northpole", function () {
         const fixture: L.LatLngLiteral[][] = [
-            [LosAngeles, { lat: 89.75831966628218, lng: -179.99999999974688 }],
-            [{ lat: 89.75831966628218, lng: 180.00000000025312 }, { lat: 65.3668, lng: 62.2266 }]
+            [LosAngeles, { lat: 89.75831966628218, lng: -180 }],
+            [{ lat: 89.75831966628218, lng: 180 }, { lat: 65.3668, lng: 62.2266 }]
         ];
         const split = geom.splitLine(LosAngeles, new L.LatLng(65.3668, 62.2266));
         checkFixture(split, fixture);
@@ -244,8 +244,8 @@ describe("splitLine function", function () {
 
     it("Sydney -> LosAngeles (shifted east)", function () {
         const fixture: L.LatLngLiteral[][] = [
-            [Sydney, { lat: -15.09323198441759, lng: 179.99999999997758 }],
-            [{ lat: -15.09323198441759, lng: -180.00000000002242 }, LosAngeles]
+            [Sydney, { lat: -15.09323198441759, lng: 180 }],
+            [{ lat: -15.09323198441759, lng: -180 }, LosAngeles]
         ];
         const split = geom.splitLine(new L.LatLng(Sydney.lat, Sydney.lng), new L.LatLng(LosAngeles.lat, LosAngeles.lng + 360));
         checkFixture(split, fixture);
@@ -263,6 +263,18 @@ describe("splitLine - test cases for bugs #1", function () {
                 { lat: 36.597887451521956, lng: 129.52500015633 }]];
 
         const split = geom.splitLine(LosAngeles, new L.LatLng(36.597887451521956, 129.52500015633));
+        checkFixture(split, fixture);
+    });
+
+    it("Line starts exactly on antimeridian", function () {
+        const fixture: L.LatLngLiteral[][] = [
+            [{ lat: 27.637816560707744, lng: 180 },
+            { lat: 27.637814, lng: 180.000003 }],
+            [{ lat: 27.637814, lng: -179.999996 },
+            { lat: 13.662436, lng: -156.182895 }]
+        ];
+
+        const split = geom.splitLine(new L.LatLng(27.637816560707744, 180), new L.LatLng(13.662436754820993, 203.81710414447366));
         checkFixture(split, fixture);
     });
 });
