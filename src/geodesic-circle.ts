@@ -58,20 +58,24 @@ export class GeodesicCircleClass extends L.Polyline {
     }
 
     /**
-     * Set a new center for the geodesic circle and update the geometry.
-     * @param latlng new geo-position for the center
+     * Set a new center for the geodesic circle and update the geometry. Radius may also be set.
+     * @param center the new center
+     * @param radius the new radius
      */
-    setLatLng(latlng: L.LatLngExpression): void {
-        this.center = latlngExpressiontoLatLng(latlng);
+    setLatLng(center: L.LatLngExpression, radius?: number): void {
+        this.center = latlngExpressiontoLatLng(center);
+        this.radius = radius ? radius : this.radius;
         this.update();
     }
 
     /**
-     * set a new radius for the geodesic circle and update the geometry
-     * @param radius new radius in meters
+     * Set a new radius for the geodesic circle and update the geometry. Center may also be set.
+     * @param radius the new radius
+     * @param center the new center
      */
-    setRadius(radius: number): void {
+    setRadius(radius: number, center?: L.LatLngExpression): void {
         this.radius = radius;
+        this.center = center ? latlngExpressiontoLatLng(center) : this.center;
         this.update();
     }
 }
