@@ -101,15 +101,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#multilinestring" class="tsd-kind-icon">multi<wbr>Line<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#multilinedistance" class="tsd-kind-icon">multiline<wbr>Distance</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#recursivemidpoint" class="tsd-kind-icon">recursive<wbr>Midpoint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#splitcircle" class="tsd-kind-icon">split<wbr>Circle</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#splitline" class="tsd-kind-icon">split<wbr>Line</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#splitmultilinestring" class="tsd-kind-icon">split<wbr>Multi<wbr>Line<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="geodesicgeometry.html#updatestatistics" class="tsd-kind-icon">update<wbr>Statistics</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Object literals</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-object-literal tsd-parent-kind-class"><a href="geodesicgeometry.html#options" class="tsd-kind-icon">options</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,7 +122,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L19">src/geodesic-geom.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L18">src/geodesic-geom.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -149,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">geodesic<span class="tsd-signature-symbol">:</span> <a href="geodesiccore.html" class="tsd-signature-type">GeodesicCore</a><span class="tsd-signature-symbol"> =&nbsp;new GeodesicCore()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L17">src/geodesic-geom.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L17">src/geodesic-geom.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -159,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">steps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L19">src/geodesic-geom.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L18">src/geodesic-geom.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,9 +171,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L47">src/geodesic-geom.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L204">src/geodesic-geom.ts:204</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
+									The number of vertices is calculated with: <code>vertices == steps + 1</code> (where 1st == last)</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -189,6 +190,7 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>resulting linestring</p>
 						</li>
 					</ul>
 				</section>
@@ -202,19 +204,31 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L185">src/geodesic-geom.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L239">src/geodesic-geom.ts:239</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calculates the distance between two positions on the earths surface</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>start: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>1st position</p>
+									</div>
 								</li>
 								<li>
 									<h5>dest: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>2nd position</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>the distance in <strong>meters</strong></p>
 						</li>
 					</ul>
 				</section>
@@ -228,19 +242,34 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L43">src/geodesic-geom.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L63">src/geodesic-geom.ts:63</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This is the wrapper-function to generate a geodesic line. It&#39;s just for future backwards-compatibility
+									if there is another algorithm used to create the actual line.</p>
+								</div>
+								<p>The <code>steps</code>-property is used to define the number of resulting vertices of the linestring: vertices == 1 + 2 ** (steps + 1)
+								The value for <code>steps</code> is currently limited to 8 (513 vertices) for performance reasons until another algorithm is found.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>start: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>start position</p>
+									</div>
 								</li>
 								<li>
 									<h5>dest: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>destination</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>resulting linestring</p>
 						</li>
 					</ul>
 				</section>
@@ -254,7 +283,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L69">src/geodesic-geom.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L80">src/geodesic-geom.ts:80</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -277,7 +306,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L56">src/geodesic-geom.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L67">src/geodesic-geom.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -300,7 +329,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L192">src/geodesic-geom.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L246">src/geodesic-geom.ts:246</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -323,22 +352,71 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L26">src/geodesic-geom.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L39">src/geodesic-geom.ts:39</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A geodesic line between <code>start</code> and <code>dest</code> is created with this recursive function.
+										It calculates the geodesic midpoint between <code>start</code> and <code>dest</code> and uses this midpoint to call itself again (twice!).
+									The results are then merged into one continuous linestring.</p>
+								</div>
+								<p>The number of resulting vertices (incl. <code>start</code> and <code>dest</code>) depends on the initial value for <code>iterations</code>
+								and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1)</p>
+								<p>As this is an exponential function, be extra careful to limit the initial value for <code>iterations</code> (8 results in 513 vertices).</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>start: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>start position</p>
+									</div>
 								</li>
 								<li>
 									<h5>dest: <span class="tsd-signature-type">LatLng</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>destination</p>
+									</div>
 								</li>
 								<li>
 									<h5>iterations: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>resulting linestring</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="splitcircle" class="tsd-anchor"></a>
+					<h3>split<wbr>Circle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">split<wbr>Circle<span class="tsd-signature-symbol">(</span>linestring<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L220">src/geodesic-geom.ts:220</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handles splitting of circles at the antimeridian.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>linestring: <span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>a linestring that resembles the geodesic circle</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">LatLng</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>a multilinestring that consist of one or two linestrings</p>
 						</li>
 					</ul>
 				</section>
@@ -352,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L85">src/geodesic-geom.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L96">src/geodesic-geom.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -387,7 +465,7 @@ Benchmark (split):     splitLine x <span class="hljs-number">42</span>,<span cla
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L162">src/geodesic-geom.ts:162</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L173">src/geodesic-geom.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -420,7 +498,7 @@ Benchmark (split):     splitLine x <span class="hljs-number">42</span>,<span cla
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L204">src/geodesic-geom.ts:204</a></li>
+									<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/385cf05/src/geodesic-geom.ts#L258">src/geodesic-geom.ts:258</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -435,39 +513,6 @@ Benchmark (split):     splitLine x <span class="hljs-number">42</span>,<span cla
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/statistics.html" class="tsd-signature-type">Statistics</a></h4>
 						</li>
 					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Object literals</h2>
-				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-class">
-					<a name="options" class="tsd-anchor"></a>
-					<h3>options</h3>
-					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L18">src/geodesic-geom.ts:18</a></li>
-						</ul>
-					</aside>
-					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="options.steps-1" class="tsd-anchor"></a>
-						<h3>steps</h3>
-						<div class="tsd-signature tsd-kind-icon">steps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;3</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L18">src/geodesic-geom.ts:18</a></li>
-							</ul>
-						</aside>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-						<a name="options.wrap" class="tsd-anchor"></a>
-						<h3>wrap</h3>
-						<div class="tsd-signature tsd-kind-icon">wrap<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/henrythasler/Leaflet.Geodesic/blob/424f750/src/geodesic-geom.ts#L18">src/geodesic-geom.ts:18</a></li>
-							</ul>
-						</aside>
-					</section>
 				</section>
 			</section>
 		</div>
@@ -523,6 +568,9 @@ Benchmark (split):     splitLine x <span class="hljs-number">42</span>,<span cla
 								<a href="geodesicgeometry.html#recursivemidpoint" class="tsd-kind-icon">recursive<wbr>Midpoint</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="geodesicgeometry.html#splitcircle" class="tsd-kind-icon">split<wbr>Circle</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="geodesicgeometry.html#splitline" class="tsd-kind-icon">split<wbr>Line</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -530,9 +578,6 @@ Benchmark (split):     splitLine x <span class="hljs-number">42</span>,<span cla
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="geodesicgeometry.html#updatestatistics" class="tsd-kind-icon">update<wbr>Statistics</a>
-							</li>
-							<li class=" tsd-kind-object-literal tsd-parent-kind-class">
-								<a href="geodesicgeometry.html#options" class="tsd-kind-icon">options</a>
 							</li>
 						</ul>
 					</li>

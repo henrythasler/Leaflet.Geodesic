@@ -67,7 +67,7 @@
 				<a href="#leafletgeodesic" id="leafletgeodesic" style="color: inherit; text-decoration: none;">
 					<h1>Leaflet.Geodesic</h1>
 				</a>
-				<p><a href="https://travis-ci.org/henrythasler/Leaflet.Geodesic"><img src="https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master" alt="Build Status"></a> <a href="https://www.npmjs.com/package/leaflet.geodesic"><img src="https://img.shields.io/npm/v/leaflet.geodesic" alt="npm"></a> <a href="https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master"><img src="https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic"><img src="https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status" alt="Quality Gate Status"></a> <a href="https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/alerts/"><img src="https://img.shields.io/lgtm/alerts/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18" alt="Total alerts"></a> <a href="https://lgtm.com/projects/g/henrythasler/Leaflet.Geodesic/context:javascript"><img src="https://img.shields.io/lgtm/grade/javascript/g/henrythasler/Leaflet.Geodesic.svg?logo=lgtm&logoWidth=18" alt="Language grade: JavaScript"></a></p>
+				<p><a href="https://travis-ci.org/henrythasler/Leaflet.Geodesic"><img src="https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master" alt="Build Status"></a> <a href="https://www.npmjs.com/package/leaflet.geodesic"><img src="https://img.shields.io/npm/v/leaflet.geodesic" alt="npm"></a> <a href="https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master"><img src="https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic"><img src="https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status" alt="Quality Gate Status"></a></p>
 				<p>Add-on for <a href="http://leafletjs.com/">Leaflet</a> to draw <a href="http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid">geodesic</a> lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It&#39;s based on <a href="https://en.wikipedia.org/wiki/Vincenty%27s_formulae">Vincenty&#39;s formulae</a> implemented by <a href="https://github.com/chrisveness/geodesy">Chris Veness</a> for highest precision.</p>
 				<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html"><img src="docs/img/demo.png" alt="demo"></a></p>
 				<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/">Live Demos and Tutorials</a></p>
@@ -78,7 +78,9 @@
 				<p>Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have <a href="https://leafletjs.com/examples/quick-start/">included leaflet.js</a>.</p>
 				<pre><code class="language-html"><span class="hljs-comment">&lt;!-- Make sure you put this AFTER leaflet.js --&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.jsdelivr.net/npm/leaflet.geodesic"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
-				<p>Leaflet.Geodesic is available from <a href="https://unpkg.com/browse/leaflet.geodesic/">unpkg</a> and <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic">jsDelivr</a>.</p>
+				<p>Leaflet.Geodesic is available from <a href="https://unpkg.com/browse/leaflet.geodesic/">unpkg</a>, <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic">jsDelivr</a> and <a href="https://www.npmjs.com/package/leaflet.geodesic">npmjs</a>.</p>
+				<p>Add it in your nodejs-project with <code>npm i leaflet.geodesic</code>.</p>
+				<p>If possible, pin the plug-in to a specific version and use <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity</a>. Check the <a href="https://github.com/henrythasler/Leaflet.Geodesic/releases">release page</a> for the latest version, links and checksum. A checksum can by verified with <code>npm run build</code>, is stored in <code>dist/leaflet.geodesic.umd.min.js.sha256</code> on <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist">jsDelivr</a> and <a href="https://unpkg.com/browse/leaflet.geodesic@2.5.1/dist/leaflet.geodesic.umd.min.js.sha256">unpkg</a> and is shown in the <a href="https://travis-ci.org/henrythasler/Leaflet.Geodesic/builds">build-log</a> for a tagged version.</p>
 				<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
 					<h2>Basic usage</h2>
 				</a>
@@ -187,11 +189,17 @@ geodesic.setLatLngs([Berlin, LosAngeles])   <span class="hljs-comment">// update
 <span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
 <span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span>);
 
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);   <span class="hljs-comment">// add empty object to the map</span>
-geodesic.addLatLng(Beijing)</code></pre>
-				<p>The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the <code>points</code> property before and hand ofer a specific linestring as second parameter:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
-line.addLatLng(Beijing, line.points[<span class="hljs-number">0</span>]);    <span class="hljs-comment">// results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]</span></code></pre>
+<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);
+geodesic.addLatLng(Beijing);    <span class="hljs-comment">// results in [[Berlin, LosAngeles, Beijing]</span></code></pre>
+				<p>The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the <code>points</code> property before and hand over a specific linestring as second parameter:</p>
+				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
+<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
+<span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span> );
+<span class="hljs-keyword">const</span> Capetown =  <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.94</span>, <span class="hljs-number">18.39</span> );
+<span class="hljs-keyword">const</span> Santiago = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.44</span>, <span class="hljs-number">-70.71</span>);
+
+<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
+geodesic.addLatLng(Beijing, geodesic.points[<span class="hljs-number">0</span>]);    <span class="hljs-comment">// results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]</span></code></pre>
 				<a href="#line-options" id="line-options" style="color: inherit; text-decoration: none;">
 					<h3>Line Options</h3>
 				</a>
@@ -261,7 +269,7 @@ line.addLatLng(Beijing, line.points[<span class="hljs-number">0</span>]);    <sp
 					<li><code>setLatLng(latlng: L.LatLngExpression)</code> - set a new center</li>
 					<li><code>setRadius(radius: number)</code> - update the radius</li>
 				</ul>
-				<p>Handling of circles crossing the antimeridian (wrapping) is not yet supported.</p>
+				<p>Handling of <strong>filled</strong> circles crossing the antimeridian (wrapping) is not yet supported. Set <code>fill: false</code> in these cases to avoid display artefacts.</p>
 				<a href="#circle-options" id="circle-options" style="color: inherit; text-decoration: none;">
 					<h3>Circle Options</h3>
 				</a>
