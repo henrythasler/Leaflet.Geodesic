@@ -106,7 +106,9 @@
         });
         B.on('drag', (e) => {
             // console.log(`B=${e.latlng}`);
-            B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
+            // B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
+            B.setTooltipContent(`${map.latLngToLayerPoint(e.latlng)}`);
+            
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
             info.update(geodesic.statistics);
         });

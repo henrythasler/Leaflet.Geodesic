@@ -52,10 +52,10 @@
     <script type="text/javascript">
 
         var map = L.map('map', {
-            // maxBounds: [
-            //     [-90, -180],
-            //     [90, 180]
-            // ],
+            maxBounds: [
+                [-90, -200],
+                [90, 200]
+            ],
             center: [50, 0],
             zoom: 4
         });
@@ -117,6 +117,12 @@
             geodesiccircle.setLatLng(e.latlng, radius);
             info.update(geodesiccircle.statistics);
 
+            // console.log(geodesiccircle.getLatLngs().length);
+
+            geodesiccircle.setStyle({
+                color: (geodesiccircle.getLatLngs().length === 1)?'red':'blue'
+            })
+
             // this is only valid for small radii where the resulting circle is flat compared to the earth surface
             geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
         });
@@ -124,6 +130,10 @@
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
             info.update(geodesiccircle.statistics);
+
+            geodesiccircle.setStyle({
+                color: (geodesiccircle.getLatLngs().length === 1)?'red':'blue'
+            })
             
             // this is only valid for small radii where the resulting circle is flat compared to the earth surface
             geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
