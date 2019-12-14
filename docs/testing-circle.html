@@ -53,8 +53,8 @@
 
         var map = L.map('map', {
             maxBounds: [
-                [-90, -180],
-                [90, 180]
+                [-90, -200],
+                [90, 200]
             ],
             center: [50, 0],
             zoom: 4
@@ -76,11 +76,12 @@
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 80
+            steps: 45,
+            wrap: true
         }).bindTooltip("<Area>").bindPopup("GeodesicCircle").addTo(map);
 
         geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
-        geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
+        geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
 
         var info = L.control();
         info.onAdd = function (map) {
@@ -91,16 +92,16 @@
 
         // method that we will use to update the control based on feature properties passed
         info.update = function (stats) {
-            const circumfenceString = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
-            const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius>10000)?(geodesiccircle.radius/1000).toFixed(0)+' km':(geodesiccircle.radius).toFixed(0)+' m' : 'invalid')
-            this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString + 
-                '<br/><br/><b>Circumfence</b><br/>' + circumfenceString + 
+            const circumfenceString = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius > 10000) ? (geodesiccircle.radius / 1000).toFixed(0) + ' km' : (geodesiccircle.radius).toFixed(0) + ' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString +
+                '<br/><br/><b>Circumfence</b><br/>' + circumfenceString +
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
-        };   
+        };
 
         info.update(geodesiccircle.statistics);
 
-        var diff = {lat:0, lng:0};
+        var diff = { lat: 0, lng: 0 };
         A.on('dragstart', function () {
             diff = { lat: A.getLatLng().lat - B.getLatLng().lat, lng: A.getLatLng().lng - B.getLatLng().lng };	// remember difference between A and B
         });
@@ -111,16 +112,31 @@
                 lat: Math.max(-90, Math.min(90, A.getLatLng().lat - diff.lat)),
                 lng: A.getLatLng().lng - diff.lng
             });	// move B parallel to A            
-            geodesiccircle.setLatLng(e.latlng);
-            geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
+
+            const radius = geodesiccircle.geom.distance(e.latlng, B.getLatLng());
+            geodesiccircle.setLatLng(e.latlng, radius);
             info.update(geodesiccircle.statistics);
-            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
+
+            // console.log(geodesiccircle.getLatLngs().length);
+
+            geodesiccircle.setStyle({
+                color: (geodesiccircle.getLatLngs().length === 1)?'red':'blue'
+            })
+
+            // this is only valid for small radii where the resulting circle is flat compared to the earth surface
+            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
             geodesiccircle.setRadius(geodesiccircle.distanceTo(e.latlng));
             info.update(geodesiccircle.statistics);
-            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius**2*Math.PI/1000**2)} km²`);
+
+            geodesiccircle.setStyle({
+                color: (geodesiccircle.getLatLngs().length === 1)?'red':'blue'
+            })
+            
+            // this is only valid for small radii where the resulting circle is flat compared to the earth surface
+            geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
         });
 
     </script>

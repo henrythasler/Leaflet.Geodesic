@@ -50,7 +50,7 @@ describe("Main functionality", function () {
     it("Create class with parameters", function () {
         const circle = new GeodesicCircleClass(Beijing, { steps: 48 });
         expect(circle).to.be.instanceOf(GeodesicCircleClass);
-        compareObject(circle.options, {...defaultOptions, ...{steps: 48}});
+        compareObject(circle.options, { ...defaultOptions, ...{ steps: 48 } });
     });
 
     it("Add empty circle to map", async function () {
@@ -72,6 +72,18 @@ describe("Main functionality", function () {
         expect(circle.radius).to.be.closeTo(radius, eps);
     });
 
+    it("update center with radius", async function () {
+        const circle = new GeodesicCircleClass(Seattle).addTo(map);
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, defaultOptions);
+        expect(map.hasLayer(circle)).to.be.true;
+
+        circle.setLatLng(Beijing, 2 * radius);
+        expect(circle.center.lat).to.be.closeTo(Beijing.lat, eps);
+        expect(circle.center.lng).to.be.closeTo(Beijing.lng, eps);
+        expect(circle.radius).to.be.closeTo(2 * radius, eps);
+    });
+
     it("update radius", async function () {
         const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
         expect(circle).to.be.instanceOf(GeodesicCircleClass);
@@ -82,6 +94,27 @@ describe("Main functionality", function () {
         expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
         circle.setRadius(2 * radius);
         expect(circle.radius).to.be.closeTo(2 * radius, eps);
+    });
+
+    it("update radius with center", async function () {
+        const circle = new GeodesicCircleClass(Seattle, { radius: radius }).addTo(map);
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, { ...defaultOptions, ...{ radius: radius } });
+        expect(map.hasLayer(circle)).to.be.true;
+
+        expect(circle.center.lat).to.be.closeTo(Seattle.lat, eps);
+        expect(circle.center.lng).to.be.closeTo(Seattle.lng, eps);
+        circle.setRadius(2 * radius, Beijing);
+        expect(circle.radius).to.be.closeTo(2 * radius, eps);
+        expect(circle.center.lat).to.be.closeTo(Beijing.lat, eps);
+        expect(circle.center.lng).to.be.closeTo(Beijing.lng, eps);
+    });
+
+    it("Add non-wrapped circle", function () {
+        const circle = new GeodesicCircleClass(Beijing, { steps: 48, wrap: false }).addTo(map);
+        expect(circle).to.be.instanceOf(GeodesicCircleClass);
+        compareObject(circle.options, { ...defaultOptions, ...{ steps: 48, wrap: false } });
+        expect(map.hasLayer(circle)).to.be.true;
     });
 
     it("distance function (wrapper for vincenty inverse)", function () {

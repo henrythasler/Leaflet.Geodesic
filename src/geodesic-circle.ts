@@ -32,13 +32,19 @@ export class GeodesicCircleClass extends L.Polyline {
      * Updates the geometry and re-calculates some statistics
      */
     private update(): void {
-        const latlngs = this.geom.circle(this.center, this.radius);
+        const circle = this.geom.circle(this.center, this.radius);
 
-        this.statistics = this.geom.updateStatistics([[this.center]], [latlngs]);
+        this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
         // circumfence must be re-calculated from geodesic 
-        this.statistics.totalDistance = this.geom.multilineDistance([latlngs]).reduce((x, y) => x + y, 0);
+        this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
-        this.setLatLngs(latlngs);
+        if ((this.options as GeodesicOptions).wrap) {
+            const split = this.geom.splitCircle(circle);
+            super.setLatLngs(split);
+        }
+        else {
+            super.setLatLngs(circle);
+        }
     }
 
     /**
@@ -52,20 +58,24 @@ export class GeodesicCircleClass extends L.Polyline {
     }
 
     /**
-     * Set a new center for the geodesic circle and update the geometry.
-     * @param latlng new geo-position for the center
+     * Set a new center for the geodesic circle and update the geometry. Radius may also be set.
+     * @param center the new center
+     * @param radius the new radius
      */
-    setLatLng(latlng: L.LatLngExpression): void {
-        this.center = latlngExpressiontoLatLng(latlng);
+    setLatLng(center: L.LatLngExpression, radius?: number): void {
+        this.center = latlngExpressiontoLatLng(center);
+        this.radius = radius ? radius : this.radius;
         this.update();
     }
 
     /**
-     * set a new radius for the geodesic circle and update the geometry
-     * @param radius new radius in meters
+     * Set a new radius for the geodesic circle and update the geometry. Center may also be set.
+     * @param radius the new radius
+     * @param center the new center
      */
-    setRadius(radius: number): void {
+    setRadius(radius: number, center?: L.LatLngExpression): void {
         this.radius = radius;
+        this.center = center ? latlngExpressiontoLatLng(center) : this.center;
         this.update();
     }
 }

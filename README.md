@@ -22,6 +22,8 @@ Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geod
 
 Add it in your nodejs-project with `npm i leaflet.geodesic`.
 
+If possible, pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha256` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic@2.5.1/dist/leaflet.geodesic.umd.min.js.sha256) and is shown in the [build-log](https://travis-ci.org/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
+
 ## Basic usage
 
 - `L.Geodesic` draws geodesic lines between all points of a given line- or multiline-string. 
@@ -164,8 +166,8 @@ const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
 const Beijing = new L.LatLng(39.92, 116.39);
 
-const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);   // add empty object to the map
-geodesic.addLatLng(Beijing)
+const geodesic = new L.Geodesic([Berlin, LosAngeles]).addTo(map);
+geodesic.addLatLng(Beijing);    // results in [[Berlin, LosAngeles, Beijing]
 ```
 
 The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the `points` property before and hand over a specific linestring as second parameter:
@@ -227,7 +229,7 @@ The geometry of a circle can be updated with the following methods:
 - `setLatLng(latlng: L.LatLngExpression)` - set a new center
 - `setRadius(radius: number)` - update the radius
 
-Handling of circles crossing the antimeridian (wrapping) is not yet supported.
+Handling of **filled** circles crossing the antimeridian (wrapping) is not yet supported. Set `fill: false` in these cases to avoid display artefacts.
 
 ### Circle Options
 

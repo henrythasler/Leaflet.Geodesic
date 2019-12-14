@@ -15,20 +15,30 @@ export interface Statistics {
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
-    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
     steps: number;
 
     constructor(options?: GeodesicOptions) {
-        this.options = { ...this.options, ...options };
-        this.steps = (this.options.steps === undefined) ? 3 : this.options.steps;
+        this.steps = (options && options.steps !== undefined) ? options.steps : 3;
     }
 
+    /**
+     * A geodesic line between `start` and `dest` is created with this recursive function. 
+     * It calculates the geodesic midpoint between `start` and `dest` and uses this midpoint to call itself again (twice!).
+     * The results are then merged into one continuous linestring. 
+     * 
+     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations` 
+     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1) 
+     * 
+     * As this is an exponential function, be extra careful to limit the initial value for `iterations` (8 results in 513 vertices).
+     * 
+     * @param start start position 
+     * @param dest destination
+     * @param iterations 
+     * @return resulting linestring
+     */
     recursiveMidpoint(start: L.LatLng, dest: L.LatLng, iterations: number): L.LatLng[] {
         const geom: L.LatLng[] = [start, dest];
         const midpoint = this.geodesic.midpoint(start, dest)
-        if (this.options.wrap) {
-            midpoint.lng = this.geodesic.wrap(midpoint.lng, 180);
-        }
 
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
@@ -36,21 +46,22 @@ export class GeodesicGeometry {
         } else {
             geom.splice(1, 0, midpoint);
         }
-
         return geom;
     }
 
+    /**
+     * This is the wrapper-function to generate a geodesic line. It's just for future backwards-compatibility
+     * if there is another algorithm used to create the actual line.
+     * 
+     * The `steps`-property is used to define the number of resulting vertices of the linestring: vertices == 1 + 2 ** (steps + 1)
+     * The value for `steps` is currently limited to 8 (513 vertices) for performance reasons until another algorithm is found.
+     * 
+     * @param start start position
+     * @param dest destination
+     * @return resulting linestring
+     */
     line(start: L.LatLng, dest: L.LatLng): L.LatLng[] {
         return this.recursiveMidpoint(start, dest, Math.min(8, this.steps));
-    }
-
-    circle(center: L.LatLng, radius: number): L.LatLng[] {
-        const points: L.LatLng[] = [];
-        for (let i = 0; i < this.steps + 1; i++) {
-            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
-            points.push(new L.LatLng(point.lat, point.lng));
-        }
-        return points;
     }
 
     multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
@@ -84,11 +95,11 @@ export class GeodesicGeometry {
      */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
-            point: new L.LatLng(89.9, -180),
+            point: new L.LatLng(89.9, -180.0000001),    // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
         const antimeridianEast = {
-            point: new L.LatLng(89.9, 180),
+            point: new L.LatLng(89.9, 180.0000001),     // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
 
@@ -182,6 +193,49 @@ export class GeodesicGeometry {
         return result;
     }
 
+    /**
+     * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
+     * The number of vertices is calculated with: `vertices == steps + 1` (where 1st == last)
+     * 
+     * @param center
+     * @param radius
+     * @return resulting linestring
+     */
+    circle(center: L.LatLng, radius: number): L.LatLng[] {
+        const vertices: L.LatLng[] = [];
+        for (let i = 0; i < this.steps; i++) {
+            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
+            vertices.push(new L.LatLng(point.lat, point.lng));
+        }
+        // append first vertice to the end to close the linestring
+        vertices.push(new L.LatLng(vertices[0].lat, vertices[0].lng));
+        return vertices;
+    }
+
+    /**
+     * Handles splitting of circles at the antimeridian.
+     * @param linestring a linestring that resembles the geodesic circle
+     * @return a multilinestring that consist of one or two linestrings
+     */
+    splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
+        let result: L.LatLng[][] = [];
+        result = this.splitMultiLineString([linestring]);
+
+        // If the circle was split, it results in exactly three linestrings where first and last  
+        // must be re-assembled because they belong to the same "side" of the split circle.
+        if (result.length === 3) {
+            result[2] = [...result[2], ...result[0]];
+            result.shift();
+        }
+        return result;
+    }
+
+    /**
+     * Calculates the distance between two positions on the earths surface
+     * @param start 1st position
+     * @param dest 2nd position
+     * @return the distance in **meters**
+     */
     distance(start: L.LatLng, dest: L.LatLng): number {
         return this.geodesic.inverse(
             new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)),
