@@ -7,6 +7,8 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 
 [Live Demos and Tutorials](https://blog.cyclemap.link/Leaflet.Geodesic/)
 
+[Observable-Notebook](https://observablehq.com/@henrythasler/leaflet-geodesic)
+
 [API-Documentation](https://blog.cyclemap.link/Leaflet.Geodesic/api)
 
 ## Add the plugin to your project
