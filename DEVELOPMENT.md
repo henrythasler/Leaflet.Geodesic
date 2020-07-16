@@ -10,6 +10,11 @@ sudo npm install -g np npm
 
 ```
 
+## creating a new release
+
+- log-in to github and npm
+- type `np` and follow the instructions
+
 ## References
 
 ## Typescript, Javascript 
