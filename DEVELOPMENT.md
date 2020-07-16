@@ -13,7 +13,8 @@ sudo npm install -g np npm
 ## creating a new release
 
 - log-in to github and npm
-- type `np` and follow the instructions
+- type `np --no-publish` and follow the instructions
+- push the tagged version an let Travis-CI do it's magic
 
 ## References
 
