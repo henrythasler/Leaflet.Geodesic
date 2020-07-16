@@ -1,4 +1,4 @@
-import L from "leaflet";
+import * as L from "leaflet";
 
 export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
     return ((typeof object === "object")

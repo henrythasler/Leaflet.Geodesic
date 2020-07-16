@@ -1,4 +1,4 @@
-import L from "leaflet";
+import * as L from "leaflet";
 import { GeodesicOptions } from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";

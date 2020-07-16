@@ -6,7 +6,7 @@ import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionA
 import { expect } from "chai";
 
 import "jest";
-import L from "leaflet";
+import * as L from "leaflet";
 
 import { eps } from "./test-toolbox";
 

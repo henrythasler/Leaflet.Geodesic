@@ -1,4 +1,4 @@
-import L from "leaflet";
+import * as L from "leaflet";
 import { GeodesicCore, GeodesicOptions, WGS84Vector } from "./geodesic-core"
 
 /** detailled information of the current geometry */

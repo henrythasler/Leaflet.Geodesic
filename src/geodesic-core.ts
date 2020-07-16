@@ -1,4 +1,4 @@
-import L from "leaflet";
+import * as L from "leaflet";
 
 export interface GeodesicOptions extends L.PolylineOptions {
     wrap?: boolean,

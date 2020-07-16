@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import L from "leaflet";
+import * as L from "leaflet";
 import { GeodesicCore, WGS84Vector, GeodesicOptions } from "../src/geodesic-core";
 import { expect } from "chai";
 
