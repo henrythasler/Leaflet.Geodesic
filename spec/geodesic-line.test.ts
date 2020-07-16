@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import L from "leaflet";
+import * as L from "leaflet";
 import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";

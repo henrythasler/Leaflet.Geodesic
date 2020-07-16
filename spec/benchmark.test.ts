@@ -5,7 +5,7 @@ import Benchmark from "benchmark";
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 
-import L from "leaflet";
+import * as L from "leaflet";
 
 import "jest";
 

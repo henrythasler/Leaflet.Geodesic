@@ -5,6 +5,7 @@
   "main": "dist/leaflet.geodesic.js",
   "module": "dist/leaflet.geodesic.esm.js",
   "browser": "dist/leaflet.geodesic.umd.min.js",
+  "types": "dist/leaflet.geodesic.d.ts",
   "files": [
     "dist"
   ],
@@ -48,6 +49,7 @@
     "postcss-assets": "^5.0.0",
     "rollup": "^1.26.3",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-dts": "^1.4.8",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-terser": "^5.1.2",
@@ -55,7 +57,7 @@
     "rollup-plugin-visualizer": "^2.6.1",
     "ts-jest": "^24.1.0",
     "typedoc": "^0.15.2",
-    "typescript": "^3.6.4"
+    "typescript": "^3.9.6"
   },
   "scripts": {
     "test": "jest \"^(?!.*benchmark).*$\" --coverage --",

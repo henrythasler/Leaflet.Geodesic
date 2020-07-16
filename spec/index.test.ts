@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import L from "leaflet";
+import * as L from "leaflet";
 import "../src/index";
 
 import { expect } from "chai";
