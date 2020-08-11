@@ -39,7 +39,8 @@ export class GeodesicLine extends L.Polyline {
             super.setLatLngs(split);
         }
         else {
-            super.setLatLngs(geodesic);
+            super.setLatLngs(this.geom.wrapMultiLineString(geodesic));
+            // super.setLatLngs(geodesic);
         }
     }
 
