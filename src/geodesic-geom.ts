@@ -199,22 +199,24 @@ export class GeodesicGeometry {
         multilinestring.forEach((linestring) => {
             const resultLine: L.LatLng[] = [];
             let offset: number | null = null;
+            let temp: number[] = [];
             linestring.forEach((point) => {
+                // resultLine.push(new L.LatLng(point.lat, this.geodesic.wrap(point.lng, 360)));
                 if (offset === null) {
 
                     offset = Math.sign(point.lng / 180) * Math.ceil(Math.abs(point.lng / 180));
                     resultLine.push(point);
-                    console.log(`offset=${offset}`);
+                    temp.push(offset);
                 }
                 else {
                     const diff = Math.sign(point.lng / 180) * Math.ceil(Math.abs(point.lng / 180)) - offset;
-                    console.log(`diff=${diff}`);
-
+                    temp.push(diff);
                     resultLine.push(new L.LatLng(point.lat, (Math.abs(diff) > 1) ? point.lng - diff * 180 : point.lng));
                 }
 
             });
             result.push(resultLine);
+            console.log(temp);
         });
         return result;
     }
