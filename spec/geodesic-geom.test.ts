@@ -472,46 +472,106 @@ describe("Statistics Calculation", function () {
 });
 
 describe("wrapMultiLineString function", function () {
-    it("simple no-wrap", function () {
-        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 90)]]);
-        checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 90 }]]);
-    });
+    // it("simple no-wrap", function () {
+    //     const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 90)]]);
+    //     checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 90 }]]);
+    // });
 
-    it("simple wrap #1", function () {
-        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 360)]]);
-        checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 0 }]]);
-    });
+    // it("simple wrap #1", function () {
+    //     const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 360)]]);
+    //     checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 0 }]]);
+    // });
 
-    it("simple wrap #2", function () {
-        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, -370), new L.LatLng(0, -110)]]);
-        checkFixture(wrapped, [[{ lat: 0, lng: -370 }, { lat: 0, lng: -470 }]]);
-    });
+    // it("simple wrap #2", function () {
+    //     const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, -370), new L.LatLng(0, -110)]]);
+    //     checkFixture(wrapped, [[{ lat: 0, lng: -370 }, { lat: 0, lng: -470 }]]);
+    // });
 
-    it("simple wrap #3", function () {
-        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 80), new L.LatLng(0, -130)]]);
-        checkFixture(wrapped, [[{ lat: 0, lng: 80 }, { lat: 0, lng: 230 }]]);
-    });
+    // it("simple wrap #3", function () {
+    //     const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 80), new L.LatLng(0, -130)]]);
+    //     checkFixture(wrapped, [[{ lat: 0, lng: 80 }, { lat: 0, lng: 230 }]]);
+    // });
 
 
-    it("corporealfunk's testcase", function () {
+    // it("corporealfunk's testcase", function () {
+    //     const before: L.LatLng[] = [
+    //         new L.LatLng(34, -118),
+    //         new L.LatLng(53, -170),
+    //         new L.LatLng(53, 180),
+    //         new L.LatLng(53, 169),
+    //         new L.LatLng(51, 165),
+    //         new L.LatLng(35, 140),
+    //     ];
+    //     const fixture: L.LatLngLiteral[] = [
+    //         { lat: 34, lng: -118 },
+    //         { lat: 53, lng: -170 },
+    //         { lat: 53, lng: 180 - 360 },
+    //         { lat: 53, lng: 169 - 360 },
+    //         { lat: 51, lng: 165 - 360 },
+    //         { lat: 35, lng: 140 - 360 },
+    //     ];
+
+    //     const wrapped = geom.wrapMultiLineString([before]);
+    //     checkFixture(wrapped, [fixture]);
+    // });
+
+    // it("large span", function () {
+    //     const before: L.LatLng[] = [
+    //         new L.LatLng(23, 92),
+    //         new L.LatLng(52, 112),
+    //         new L.LatLng(69, 176),
+    //         new L.LatLng(51, 235),
+    //         new L.LatLng(21, -105),
+    //     ];
+    //     const fixture: L.LatLngLiteral[] = [
+    //         { lat: 23, lng: 92 },
+    //         { lat: 52, lng: 112 },
+    //         { lat: 69, lng: 176 },
+    //         { lat: 51, lng: 235 },
+    //         { lat: 21, lng: -105 + 360 },
+    //     ];
+
+    //     const wrapped = geom.wrapMultiLineString([before]);
+    //     checkFixture(wrapped, [fixture]);
+    // });
+
+    // it("medium span", function () {
+    //     const before: L.LatLng[] = [
+    //         new L.LatLng(28, -107),
+    //         new L.LatLng(45, -95),
+    //         new L.LatLng(59, -71),
+    //         new L.LatLng(65, -30),
+    //         new L.LatLng(58, -349),
+    //     ];
+    //     const fixture: L.LatLngLiteral[] = [
+    //         { lat: 28, lng: -107 },
+    //         { lat: 45, lng: -95 },
+    //         { lat: 59, lng: -71 },
+    //         { lat: 65, lng: -30 },
+    //         { lat: 58, lng: -349 + 360 },
+    //     ];
+
+    //     const wrapped = geom.wrapMultiLineString([before]);
+    //     checkFixture(wrapped, [fixture]);
+    // });
+
+    it("medium span", function () {
         const before: L.LatLng[] = [
-            new L.LatLng(34, -118),
-            new L.LatLng(53, -170),
-            new L.LatLng(53, 180),
-            new L.LatLng(53, 169),
-            new L.LatLng(51, 165),
-            new L.LatLng(35, 140),
+            new L.LatLng(28, -107),
+            new L.LatLng(45, -95),
+            new L.LatLng(59, -71),
+            new L.LatLng(65, -30),
+            new L.LatLng(58, -349),
         ];
         const fixture: L.LatLngLiteral[] = [
-            { lat: 34, lng: -118 },
-            { lat: 53, lng: -170 },
-            { lat: 53, lng: 180 - 360 },
-            { lat: 53, lng: 169 - 360 },
-            { lat: 51, lng: 165 - 360 },
-            { lat: 35, lng: 140 - 360 },
+            { lat: 28, lng: -107 },
+            { lat: 45, lng: -95 },
+            { lat: 59, lng: -71 },
+            { lat: 65, lng: -30 },
+            { lat: 58, lng: -349 + 360 },
         ];
 
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
-    });
+    });    
 });
