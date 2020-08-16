@@ -42,7 +42,7 @@
         integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
         crossorigin=""></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
+    <script src="leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
@@ -90,10 +90,28 @@
         const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
             weight: 7,
             opacity: 0.5,
+            color: 'blue',
+            wrap: false,
+            steps: 0
+        }).addTo(map);
+
+
+        // const testLineCorrected = L.geodesic([[33.9416, -118.4085], [53, -170], [53, 180 - 360], [53.001222, 169.89275 - 360], [51.430194, 165.55575 - 360], [35.7720, 140.3929 - 360]], {
+        //     weight: 7,
+        //     opacity: 0.5,
+        //     color: 'green',
+        //     wrap: false,
+        //     steps: 0
+        // }).addTo(map);        
+
+        const testLine = L.geodesic([[33.9416, -118.4085], [53, -170], [53, 180], [53.001222, 169.89275], [51.430194, 165.55575], [35.7720, 140.3929]], {
+            weight: 7,
+            opacity: 0.5,
             color: 'red',
             wrap: false,
-            steps: 4
-        }).addTo(map);
+            steps: 0
+        }).addTo(map);        
+
 
         info.update(geodesic.statistics);
 
@@ -102,11 +120,13 @@
             A.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
             info.update(geodesic.statistics);
+            // console.log(geodesic.getLatLngs()[0]);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
             geodesic.setLatLngs([A.getLatLng(), e.latlng])
             info.update(geodesic.statistics);
+            console.log(geodesic.getLatLngs()[0]);
         });
 
     </script>

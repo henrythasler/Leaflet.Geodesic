@@ -193,6 +193,36 @@ export class GeodesicGeometry {
         return result;
     }
 
+    wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
+        const result: L.LatLng[][] = [];
+
+        multilinestring.forEach((linestring) => {
+            const resultLine: L.LatLng[] = [];
+            let previous: L.LatLng | null = null;
+            // let temp: number[][] = [];
+            linestring.forEach((point) => {
+                if (previous === null) {
+                    resultLine.push(point);
+                    previous = point;
+                }
+                else {
+                    const diff = point.lng - previous.lng;
+                    const offset = Math.sign(diff / 180) * Math.ceil(Math.abs(diff / 180));
+                    if(Math.abs(diff) > 180) {
+                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180 )); 
+                    }
+                    else {
+                        resultLine.push(new L.LatLng(point.lat, point.lng));
+                    }
+                    // temp.push([diff, offset]);
+                }
+            });
+            result.push(resultLine);
+            // console.log(temp);
+        });
+        return result;
+    }
+
     /**
      * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
      * The number of vertices is calculated with: `vertices == steps + 1` (where 1st == last)
