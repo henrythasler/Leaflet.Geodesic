@@ -198,25 +198,27 @@ export class GeodesicGeometry {
 
         multilinestring.forEach((linestring) => {
             const resultLine: L.LatLng[] = [];
-            let offset: number | null = null;
-            let temp: number[] = [];
+            let previous: L.LatLng | null = null;
+            // let temp: number[][] = [];
             linestring.forEach((point) => {
-                // resultLine.push(new L.LatLng(point.lat, this.geodesic.wrap(point.lng, 360)));
-                if (offset === null) {
-
-                    offset = Math.sign(point.lng / 180) * Math.ceil(Math.abs(point.lng / 180));
+                if (previous === null) {
                     resultLine.push(point);
-                    temp.push(offset);
+                    previous = point;
                 }
                 else {
-                    const diff = Math.sign(point.lng / 180) * Math.ceil(Math.abs(point.lng / 180)) - offset;
-                    temp.push(diff);
-                    resultLine.push(new L.LatLng(point.lat, (Math.abs(diff) > 1) ? point.lng - diff * 180 : point.lng));
+                    const diff = point.lng - previous.lng;
+                    const offset = Math.sign(diff / 180) * Math.ceil(Math.abs(diff / 180));
+                    if(Math.abs(diff) > 180) {
+                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180 )); 
+                    }
+                    else {
+                        resultLine.push(new L.LatLng(point.lat, point.lng));
+                    }
+                    // temp.push([diff, offset]);
                 }
-
             });
             result.push(resultLine);
-            console.log(temp);
+            // console.log(temp);
         });
         return result;
     }
