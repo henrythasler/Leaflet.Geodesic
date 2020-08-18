@@ -583,7 +583,7 @@ describe("wrapMultiLineString function", function () {
             [
                 LosAngeles,
                 new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng + 1*360),
+                new L.LatLng(Santiago.lat, Santiago.lng - 10*360),
             ];
 
         const fixture: L.LatLng[] =
@@ -594,8 +594,8 @@ describe("wrapMultiLineString function", function () {
             ];
 
         const wrapped = geom.wrapMultiLineString([before]);
-        // console.log(wrapped);
-        // checkFixture(wrapped, [fixture]);    // this still fails and needs a more general solution
+        console.log(wrapped);
+        checkFixture(wrapped, [fixture]);    // this still fails and needs a more general solution
     });    
 
 });
