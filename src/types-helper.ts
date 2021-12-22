@@ -16,18 +16,7 @@ export function instanceOfLatLngTuple(object: any): object is L.LatLngTuple {
 }
 
 export function instanceOfLatLngExpression(object: any): object is L.LatLngExpression {
-    if (object instanceof L.LatLng) {
-        return true;
-    }
-    else if (instanceOfLatLngTuple(object)) {
-        return true;
-    }
-    else if (instanceOfLatLngLiteral(object)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return object instanceof L.LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
 }
 
 export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
@@ -40,39 +29,22 @@ export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
     else if (instanceOfLatLngLiteral(input)) {
         return new L.LatLng(input.lat, input.lng);
     }
-    else {
-        throw new Error("L.LatLngExpression expected. Unknown object found.");
-    }
+    throw new Error("L.LatLngExpression expected. Unknown object found.");
 }
 
 export function latlngExpressionArraytoLatLngArray(input: L.LatLngExpression[] | L.LatLngExpression[][]): L.LatLng[][] {
-    const latlng: L.LatLng[][] = [];
-    for (const group of input) {
-        // it's a 1D-Array L.LatLngExpression[]
-        if (instanceOfLatLngExpression(group)) {
-            const sub: L.LatLng[] = [];
-            (input as L.LatLngExpression[]).forEach((point) => {
-                sub.push(latlngExpressiontoLatLng(point));
-            });
-            latlng.push(sub);
-            break;
-        }
-        // it's a 2D-Array L.LatLngExpression[][]
-        else if (group instanceof Array) {
-            if (instanceOfLatLngExpression(group[0])) {
-                const sub: L.LatLng[] = [];
-                group.forEach((point) => {
-                    sub.push(latlngExpressiontoLatLng(point));
-                });
-                latlng.push(sub);
-            }
-            else {
+    let latlng: L.LatLng[][] = [],
+            iterateOver = (instanceOfLatLngExpression(input[0]) ? [input] : input) as L.LatLngExpression[][];
+
+    for (let group of iterateOver) {
+        let sub = [];
+        for (let point of group) {
+            if (!instanceOfLatLngExpression(point)) {
                 throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
             }
+            sub.push(latlngExpressiontoLatLng(point));
         }
-        else {
-            throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
-        }
+        latlng.push(sub);
     }
     return latlng;
 }

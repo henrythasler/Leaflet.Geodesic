@@ -67,13 +67,13 @@ export class GeodesicGeometry {
     multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
         const multiLineString: L.LatLng[][] = [];
 
-        latlngs.forEach((linestring) => {
+        for (let linestring of latlngs) {
             const segment: L.LatLng[] = [];
             for (let j = 1; j < linestring.length; j++) {
                 segment.splice(segment.length - 1, 1, ...this.line(linestring[j - 1], linestring[j]));
             }
             multiLineString.push(segment);
-        })
+        }
         return multiLineString;
     }
 
@@ -172,54 +172,63 @@ export class GeodesicGeometry {
      */
     splitMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
-        multilinestring.forEach((linestring) => {
+        for (let linestring of multilinestring) {
             if (linestring.length === 1) {
                 result.push(linestring);   // just a single point in linestring, no need to split
+                continue;
             }
-            else {
-                let segment: L.LatLng[] = [];
-                for (let j = 1; j < linestring.length; j++) {
-                    const split = this.splitLine(linestring[j - 1], linestring[j]);
-                    segment.pop();
-                    segment = segment.concat(split[0]);
-                    if (split.length > 1) {
-                        result.push(segment);   // the line was split, so we end the linestring right here
-                        segment = split[1];     // begin the new linestring with the second part of the split line
-                    }
+
+            let segment: L.LatLng[] = [];
+            for (let j = 1; j < linestring.length; j++) {
+                const split = this.splitLine(linestring[j - 1], linestring[j]);
+                segment.pop();
+                segment = segment.concat(split[0]);
+                if (split.length > 1) {
+                    result.push(segment);   // the line was split, so we end the linestring right here
+                    segment = split[1];     // begin the new linestring with the second part of the split line
                 }
-                result.push(segment);
             }
-        });
+            result.push(segment);
+        }
         return result;
+    }
+    /**
+     * Finds in which "map" lies the first point, i.e. what number revolutions should we do to get to given lng.
+     * @param lng {number} Lng to work with
+     * @return Signed number revolutions
+     */
+    private static numberOfRevolutions(lng: number) {
+        return Math.sign(lng) * Math.floor(Math.abs(lng) / 180);
     }
 
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
 
-        multilinestring.forEach((linestring) => {
-            const resultLine: L.LatLng[] = [];
-            let previous: L.LatLng | null = null;
-            // let temp: number[][] = [];
-            linestring.forEach((point) => {
-                if (previous === null) {
-                    resultLine.push(point);
-                    previous = point;
+        for (let linestring of multilinestring) {
+            let resultLine: L.LatLng[] = [], firstLng = linestring[0].lng, prevLng = firstLng,
+                    mapNumber = GeodesicGeometry.numberOfRevolutions(firstLng);
+
+            for (let point of linestring) {
+                // Find map number difference and move current point to the map containing first point.
+                // We could do the same below, but this should be faster and clearer.
+                let lng = point.lng - (GeodesicGeometry.numberOfRevolutions(point.lng) - mapNumber) * 180;
+
+                // If difference between lngs is greater than 90, line will be split. We should shift points with
+                // such difference depending on their position on the map after split (left or right).
+
+                // Thus, we wrapped lines to one map, but if original coordinates do more than one revolution,
+                // we have to adjust lngs accordingly using the same principle.
+                // With more revolutions, problem occur more times, so we'll adjust until we get acceptable difference.
+
+                while (Math.abs(lng - prevLng) > 90) {
+                    lng -= 180 * Math.sign(lng - prevLng);
                 }
-                else {
-                    const diff = point.lng - previous.lng;
-                    const offset = Math.sign(diff / 180) * Math.ceil(Math.abs(diff / 180));
-                    if(Math.abs(diff) > 180) {
-                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180 )); 
-                    }
-                    else {
-                        resultLine.push(new L.LatLng(point.lat, point.lng));
-                    }
-                    // temp.push([diff, offset]);
-                }
-            });
+
+                prevLng = lng;
+                resultLine.push(new L.LatLng(point.lat, lng));
+            }
             result.push(resultLine);
-            // console.log(temp);
-        });
+        }
         return result;
     }
 
@@ -248,8 +257,7 @@ export class GeodesicGeometry {
      * @return a multilinestring that consist of one or two linestrings
      */
     splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
-        let result: L.LatLng[][] = [];
-        result = this.splitMultiLineString([linestring]);
+        let result: L.LatLng[][] = this.splitMultiLineString([linestring]);
 
         // If the circle was split, it results in exactly three linestrings where first and last  
         // must be re-assembled because they belong to the same "side" of the split circle.
@@ -275,13 +283,13 @@ export class GeodesicGeometry {
 
     multilineDistance(multilinestring: L.LatLng[][]): number[] {
         const dist: number[] = [];
-        multilinestring.forEach((linestring) => {
+        for (let linestring of multilinestring) {
             let segmentDistance = 0;
             for (let j = 1; j < linestring.length; j++) {
                 segmentDistance += this.distance(linestring[j - 1], linestring[j]);
             }
             dist.push(segmentDistance);
-        });
+        }
         return dist;
     }
 
@@ -291,13 +299,13 @@ export class GeodesicGeometry {
         stats.distanceArray = this.multilineDistance(points);
         stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);
         stats.points = 0;
-        points.forEach((item) => {
+        for (let item of points) {
             stats.points += item.reduce((x) => x + 1, 0);
-        });
+        }
         stats.vertices = 0;
-        vertices.forEach((item) => {
+        for (let item of vertices) {
             stats.vertices += item.reduce((x) => x + 1, 0);
-        });
+        }
         return stats;
     }
 }
