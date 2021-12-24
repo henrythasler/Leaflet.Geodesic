@@ -12,7 +12,7 @@ const fs = require("fs");
 
 let distDir = "dist";
 if (fs.existsSync(distDir)) {
-  fs.rmdirSync(distDir);
+  fs.rmSync(distDir, {recursive: true});
 }
 
 const banner = `/*! Leaflet.Geodesic ${pkg.version} - (c) Henry Thasler - https://github.com/henrythasler/Leaflet.Geodesic */`;
