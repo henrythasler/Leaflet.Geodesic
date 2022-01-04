@@ -599,7 +599,6 @@ describe("wrapMultiLineString function", function () {
     });
 
     it("Beijing (shifted west) -> Sydney", function () {
-        // starting point defines the "map" (lng= +-180 around it) so all other points need to wrap to this map, if needed.
         const before: L.LatLng[] =
             [
                 new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
@@ -618,7 +617,7 @@ describe("wrapMultiLineString function", function () {
         checkFixture(wrapped, [fixture]);
     });
 
-    it("Santiago -> Tokyo -> Capetown -> Sydney", function () {
+    it("Santiago > Tokyo > Capetown > Sydney, where the latter 3 must be shifted west", function () {
         const before: L.LatLng[] =
             [
                 Santiago,
@@ -638,4 +637,92 @@ describe("wrapMultiLineString function", function () {
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
     });
+
+    it("LosAngeles -> Capetown -> Tokyo -> Santiago, where only Santiago must be shifted (end of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                LosAngeles,
+                Capetown,
+                Tokyo,
+                Santiago,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                LosAngeles,
+                new L.LatLng(Capetown.lat, Capetown.lng),
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Sydney,
+                Capetown,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                Sydney,
+                Capetown,
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Sydney,
+                Capetown,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                Sydney,
+                Capetown,
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Hardcore Testcase with multiple different shifts", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Capetown,
+                Sydney,
+                LosAngeles,
+                Berlin
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                Tokyo,
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                new L.LatLng(Capetown.lat, Capetown.lng + 1 * 360),
+                new L.LatLng(Sydney.lat, Sydney.lng + 1 * 360),
+                new L.LatLng(LosAngeles.lat, LosAngeles.lng + 2 * 360),
+                new L.LatLng(Berlin.lat, Berlin.lng + 2 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });    
 });
