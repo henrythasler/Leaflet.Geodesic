@@ -120,7 +120,7 @@
             A.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
             info.update(geodesic.statistics);
-            // console.log(geodesic.getLatLngs()[0]);
+            console.log(geodesic.getLatLngs()[0]);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);

@@ -24,6 +24,7 @@ const Capetown = new L.LatLng(-33.94, 18.39);
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Sydney = new L.LatLng(-33.91, 151.08);
 const Singapore = new L.LatLng(1.34, 104.01);
+const Beijing = new L.LatLng(39.92, 116.39);
 
 const SeattleTokyo: L.LatLngLiteral[][] = [
     [Seattle, { lat: 53.130876, lng: -180 }],
@@ -575,6 +576,7 @@ describe("wrapMultiLineString function", function () {
     });
 
     it("Los Angeles -> Santiago (shifted east)", function () {
+        // // use this snippet to generate test cases
         // const customGeom = new GeodesicGeometry({ steps: 0 });
         // const before = customGeom.multiLineString([[LosAngeles, new L.LatLng(Santiago.lat, Santiago.lng + 0*360)]]);
         // console.log(before);        
@@ -594,8 +596,29 @@ describe("wrapMultiLineString function", function () {
             ];
 
         const wrapped = geom.wrapMultiLineString([before]);
-        console.log(wrapped);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Beijing (shifted west) -> Sydney", function () {
+        // starting point defines the "map" so all other points need to wrap to this map, if needed.
+        const before: L.LatLng[] =
+            [
+                new L.LatLng(Beijing.lat, Beijing.lng - 1*360),
+                new L.LatLng(3.147636627913074, -225.55932619186368),
+                Sydney,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Beijing.lat, Beijing.lng - 1*360),
+                new L.LatLng(3.147636627913074, -225.55932619186368),
+                new L.LatLng(Sydney.lat, Sydney.lng - 1*360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        // console.log(wrapped);
+        // console.log([fixture]);
         checkFixture(wrapped, [fixture]);    // this still fails and needs a more general solution
-    });    
+    });       
 
 });

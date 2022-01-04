@@ -221,7 +221,7 @@ export class GeodesicGeometry {
                 }
             });
             result.push(resultLine);
-            console.log(temp);
+            // console.log(temp);
         });
         return result;
     }
