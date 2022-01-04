@@ -470,7 +470,6 @@ describe("Statistics Calculation", function () {
         expect(res.totalDistance).to.be.closeTo(2 * 54972.271, 0.001);
         expect(res).to.include({ points: 4, vertices: 2 * (1 + 2 ** (n + 1)) });
     });
-
 });
 
 describe("wrapMultiLineString function", function () {
@@ -619,4 +618,24 @@ describe("wrapMultiLineString function", function () {
         checkFixture(wrapped, [fixture]);
     });
 
+    it("Santiago -> Tokyo -> Capetown -> Sydney", function () {
+        const before: L.LatLng[] =
+            [
+                Santiago,
+                Tokyo,
+                Capetown,
+                Sydney,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                Santiago,
+                new L.LatLng(Tokyo.lat, Tokyo.lng - 1 * 360),
+                new L.LatLng(Capetown.lat, Capetown.lng - 1 * 360),
+                new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
 });

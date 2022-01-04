@@ -195,24 +195,22 @@ export class GeodesicGeometry {
 
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
-        // let previous: L.LatLng | null = null;
 
         for (let linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
+            let previous: L.LatLng | null = null;
 
             for (let point of linestring) {
-                const diff = point.lng - linestring[0].lng;
+                if (previous === null) {
+                    resultLine.push(new L.LatLng(point.lat, point.lng));
+                    previous = point;
+                    continue;
+                }
+                const diff = point.lng - previous.lng;
                 const offset = Math.sign(diff / 360) * Math.round(Math.abs(diff / 360));
                 resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
-                // if (previous) {
-                //         const diff = point.lng - previous.lng;//linestring[0].lng;
-                //         const offset = Math.sign(diff / 360) * Math.round(Math.abs(diff / 360));
-                //         resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
-                //     }
-                //     else {
-                //         resultLine.push(new L.LatLng(point.lat, point.lng));
-                //     }
-                //     previous = point;
+                previous = point;
+                previous.lng = point.lng - offset * 360;
             }
             result.push(resultLine);
         }
