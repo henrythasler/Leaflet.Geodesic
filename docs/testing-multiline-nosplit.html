@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .distance-container {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .distance-container>* {
+            background-color: #fff;
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 18px;
+            display: block;
+            margin: 0;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
+
+    <script src="leaflet.geodesic.umd.min.js"></script>
+
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
+
+    <script type="text/javascript">
+
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: false,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        const multiline = [
+            [   // 1st line
+                new L.LatLng(52.5, 13.35), //Berlin
+                new L.LatLng(71.39, -156.48), // Point Barrow
+                new L.LatLng(33.82, -118.38), // Los Angeles
+            ],
+            [   // 2nd line
+                new L.LatLng(-33.44, -70.71), // Santiago
+                new L.LatLng(35.47, 139.15), // Tokyo
+                new L.LatLng(-33.94, 18.39), // Capetown
+                new L.LatLng(-33.91, 151.08), // Sydney
+            ]
+        ];
+
+        const geodesic = L.geodesic(multiline, {
+            weight: 7,
+            opacity: 0.5,
+            color: 'red',
+            dashArray: [10,20],
+            steps: 50,
+            wrap: false,
+        }).addTo(map);
+
+        var markers = [];
+
+        function updateGeodesic() {
+            let currentMultiline = [];
+            for (let subMarker of markers) {
+                let currentLine = [];
+                for (let point of subMarker) {
+                    currentLine.push(point.getLatLng());
+                }
+                currentMultiline.push(currentLine);
+            }
+            geodesic.setLatLngs(currentMultiline);
+        }
+
+        for (let line of multiline) {
+            var subMarker = [];
+            for (let place of line) {
+                var marker = L.marker(place, { draggable: true }).addTo(map);
+                marker.on('drag', (e) => {
+                    updateGeodesic();
+                });
+                subMarker.push(marker);
+            }
+            markers.push(subMarker);
+        }
+
+    </script>
+</body>
+
+</html>

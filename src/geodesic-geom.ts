@@ -195,34 +195,27 @@ export class GeodesicGeometry {
 
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
+        // let previous: L.LatLng | null = null;
 
-        multilinestring.forEach((linestring) => {
+        for (let linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
-            let previous: L.LatLng | null = null;
-            let temp: number[][] = [];
-            linestring.forEach((point) => {
-                if (previous === null) {
-                    resultLine.push(point);
-                    previous = point;
-                }
-                else {
-                    const diff = point.lng - previous.lng;
-                    const offset = Math.sign(diff / 180) * Math.ceil(Math.abs(diff / 180));
-                    if (Math.abs(diff) > 360) {
-                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180));
-                    }
-                    else if (Math.abs(diff) > 180) {
-                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180));
-                    }
-                    else {
-                        resultLine.push(new L.LatLng(point.lat, point.lng));
-                    }
-                    temp.push([diff, offset]);
-                }
-            });
+
+            for (let point of linestring) {
+                const diff = point.lng - linestring[0].lng;
+                const offset = Math.sign(diff / 360) * Math.round(Math.abs(diff / 360));
+                resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
+                // if (previous) {
+                //         const diff = point.lng - previous.lng;//linestring[0].lng;
+                //         const offset = Math.sign(diff / 360) * Math.round(Math.abs(diff / 360));
+                //         resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
+                //     }
+                //     else {
+                //         resultLine.push(new L.LatLng(point.lat, point.lng));
+                //     }
+                //     previous = point;
+            }
             result.push(resultLine);
-            // console.log(temp);
-        });
+        }
         return result;
     }
 

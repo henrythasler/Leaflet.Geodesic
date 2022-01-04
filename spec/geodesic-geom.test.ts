@@ -580,19 +580,19 @@ describe("wrapMultiLineString function", function () {
         // const customGeom = new GeodesicGeometry({ steps: 0 });
         // const before = customGeom.multiLineString([[LosAngeles, new L.LatLng(Santiago.lat, Santiago.lng + 0*360)]]);
         // console.log(before);        
-        
+
         const before: L.LatLng[] =
             [
                 LosAngeles,
                 new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng - 10*360),
+                new L.LatLng(Santiago.lat, Santiago.lng - 10 * 360),
             ];
 
         const fixture: L.LatLng[] =
             [
                 LosAngeles,
                 new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng + 0*360),
+                new L.LatLng(Santiago.lat, Santiago.lng + 0 * 360),
             ];
 
         const wrapped = geom.wrapMultiLineString([before]);
@@ -600,25 +600,23 @@ describe("wrapMultiLineString function", function () {
     });
 
     it("Beijing (shifted west) -> Sydney", function () {
-        // starting point defines the "map" so all other points need to wrap to this map, if needed.
+        // starting point defines the "map" (lng= +-180 around it) so all other points need to wrap to this map, if needed.
         const before: L.LatLng[] =
             [
-                new L.LatLng(Beijing.lat, Beijing.lng - 1*360),
+                new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
                 new L.LatLng(3.147636627913074, -225.55932619186368),
                 Sydney,
             ];
 
         const fixture: L.LatLng[] =
             [
-                new L.LatLng(Beijing.lat, Beijing.lng - 1*360),
+                new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
                 new L.LatLng(3.147636627913074, -225.55932619186368),
-                new L.LatLng(Sydney.lat, Sydney.lng - 1*360),
+                new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
             ];
 
         const wrapped = geom.wrapMultiLineString([before]);
-        // console.log(wrapped);
-        // console.log([fixture]);
-        checkFixture(wrapped, [fixture]);    // this still fails and needs a more general solution
-    });       
+        checkFixture(wrapped, [fixture]);
+    });
 
 });
