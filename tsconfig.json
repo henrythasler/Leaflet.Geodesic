@@ -64,7 +64,7 @@
     "src/**/*.ts"
   ],
   "typedocOptions": {
-    "mode": "file",
+    "entryPoints": ["src/geodesic-core.ts", "src/geodesic-line.ts", "src/geodesic-circle.ts", "src/geodesic-geom.ts"],
     "out": "docs/api"
   }  
 }
