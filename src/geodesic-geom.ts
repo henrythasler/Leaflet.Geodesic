@@ -196,7 +196,7 @@ export class GeodesicGeometry {
     /**
      * Linestrings of a given multilinestring will be wrapped (+- 360°) to show a continuous line w/o any weird discontinuities
      * when `wrap` is set to `false` in the geodesic class
-     * @param multilinestring 
+     * @param multilinestring
      * @returns another multilinestring where the points of each linestring are wrapped accordingly
      */
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
@@ -215,7 +215,7 @@ export class GeodesicGeometry {
                 }
                 else {  // I prefer clearly defined branches over a continue-operation.
 
-                    // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted 
+                    // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted
                     // to be on the same 'sphere' as the previous one.
                     const offset = Math.round((point.lng - previous.lng) / 360);
                     // shift the point accordingly and add to the result
