@@ -9,8 +9,6 @@ import * as L from "leaflet";
 import "jest";
 
 import { checkFixture, compareObject, eps } from "./test-toolbox";
-import {GeodesicLine} from "../src/geodesic-line";
-import {LatLng} from "leaflet";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -26,6 +24,7 @@ const Capetown = new L.LatLng(-33.94, 18.39);
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Sydney = new L.LatLng(-33.91, 151.08);
 const Singapore = new L.LatLng(1.34, 104.01);
+const Beijing = new L.LatLng(39.92, 116.39);
 
 const SeattleTokyo: L.LatLngLiteral[][] = [
     [Seattle, { lat: 53.130876, lng: -180 }],
@@ -170,7 +169,7 @@ describe("splitLine function", function () {
     it("Over Southpole (no split)", function () {
         const fixture: L.LatLngLiteral[][] = [
             [{ lat: -76.92061351829682, lng: -24.257812500000004 },
-            { lat: -72.28906720017675, lng: 155.7421875 }]
+                { lat: -72.28906720017675, lng: 155.7421875 }]
         ];
         const split = geom.splitLine(new L.LatLng(-76.92061351829682, -24.257812500000004), new L.LatLng(-72.28906720017675, 155.7421875));
         checkFixture(split, fixture);
@@ -272,9 +271,9 @@ describe("splitLine - test cases for bugs #1", function () {
     it("Line starts exactly on antimeridian", function () {
         const fixture: L.LatLngLiteral[][] = [
             [{ lat: 27.637816560707744, lng: 180 },
-            { lat: 27.637814, lng: 180.000003 }],
+                { lat: 27.637814, lng: 180.000003 }],
             [{ lat: 27.637814, lng: -179.999996 },
-            { lat: 13.662436, lng: -156.182895 }]
+                { lat: 13.662436, lng: -156.182895 }]
         ];
 
         const split = geom.splitLine(new L.LatLng(27.637816560707744, 180), new L.LatLng(13.662436754820993, 203.81710414447366));
@@ -471,36 +470,26 @@ describe("Statistics Calculation", function () {
         expect(res.totalDistance).to.be.closeTo(2 * 54972.271, 0.001);
         expect(res).to.include({ points: 4, vertices: 2 * (1 + 2 ** (n + 1)) });
     });
-
 });
 
-// This needs to be tested in conjunction with midpoints
 describe("wrapMultiLineString function", function () {
-
-    let geodesic = new GeodesicLine([], {wrap: false}),
-        testGeodesic = (latLngs: L.LatLngExpression[] | L.LatLngExpression[][]) : LatLng[][] => {
-        geodesic.setLatLngs(latLngs);
-        let newLatLngs = geodesic.getLatLngs()[0] as LatLng[];
-        return [[newLatLngs[0], newLatLngs[newLatLngs.length - 1]]];
-    }
-
     it("simple no-wrap", function () {
-        const wrapped = testGeodesic([[new L.LatLng(0, 0), new L.LatLng(0, 90)]]);
+        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 90)]]);
         checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 90 }]]);
     });
 
     it("simple wrap #1", function () {
-        const wrapped = testGeodesic([[new L.LatLng(0, 0), new L.LatLng(0, 360)]]);
+        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 0), new L.LatLng(0, 360)]]);
         checkFixture(wrapped, [[{ lat: 0, lng: 0 }, { lat: 0, lng: 0 }]]);
     });
 
     it("simple wrap #2", function () {
-        const wrapped = testGeodesic([[new L.LatLng(0, -370), new L.LatLng(0, -110)]]);
+        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, -370), new L.LatLng(0, -110)]]);
         checkFixture(wrapped, [[{ lat: 0, lng: -370 }, { lat: 0, lng: -470 }]]);
     });
 
     it("simple wrap #3", function () {
-        const wrapped = testGeodesic([[new L.LatLng(0, 80), new L.LatLng(0, -130)]]);
+        const wrapped = geom.wrapMultiLineString([[new L.LatLng(0, 80), new L.LatLng(0, -130)]]);
         checkFixture(wrapped, [[{ lat: 0, lng: 80 }, { lat: 0, lng: 230 }]]);
     });
 
@@ -529,19 +518,19 @@ describe("wrapMultiLineString function", function () {
 
     it("Berlin -> Los Angeles (no change)", function () {
         const before: L.LatLng[] =
-            [
-                Berlin,
-                new L.LatLng(65.24359311042674, -71.51008528822054),
-                LosAngeles
-            ];
+                [
+                    Berlin,
+                    new L.LatLng(65.24359311042674, -71.51008528822054),
+                    LosAngeles
+                ];
 
 
         const fixture: L.LatLng[] =
-            [
-                Berlin,
-                new L.LatLng(65.24359311042674, -71.51008528822054),
-                LosAngeles
-            ];
+                [
+                    Berlin,
+                    new L.LatLng(65.24359311042674, -71.51008528822054),
+                    LosAngeles
+                ];
 
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
@@ -549,18 +538,18 @@ describe("wrapMultiLineString function", function () {
 
     it("Los Angeles -> Singapore (wrap target)", function () {
         const before: L.LatLng[] =
-            [
-                LosAngeles,
-                new L.LatLng(40.448498633477804, -200.5721420728674),
-                Singapore,
-            ];
+                [
+                    LosAngeles,
+                    new L.LatLng(40.448498633477804, -200.5721420728674),
+                    Singapore,
+                ];
 
         const fixture: L.LatLng[] =
-            [
-                LosAngeles,
-                new L.LatLng(40.448498633477804, -200.5721420728674),
-                new L.LatLng(1.34, 104.01 - 360),
-            ];
+                [
+                    LosAngeles,
+                    new L.LatLng(40.448498633477804, -200.5721420728674),
+                    new L.LatLng(1.34, 104.01 - 360),
+                ];
 
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
@@ -568,44 +557,172 @@ describe("wrapMultiLineString function", function () {
 
     it("Singapore -> Los Angeles (wrap target)", function () {
         const before: L.LatLng[] =
-            [
-                Singapore,
-                new L.LatLng(40.448498633477804, 159.42785792713264),
-                LosAngeles,
-            ];
+                [
+                    Singapore,
+                    new L.LatLng(40.448498633477804, 159.42785792713264),
+                    LosAngeles,
+                ];
 
         const fixture: L.LatLng[] =
-            [
-                Singapore,
-                new L.LatLng(40.448498633477804, 159.42785792713264),
-                new L.LatLng(33.82, -118.38 + 360),
-            ];
+                [
+                    Singapore,
+                    new L.LatLng(40.448498633477804, 159.42785792713264),
+                    new L.LatLng(33.82, -118.38 + 360),
+                ];
 
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
     });
 
     it("Los Angeles -> Santiago (shifted east)", function () {
-        // From @matafokka: I think, you're trying to check whether last point wraps or not.
-        // I removed shift from the fixture and edited shift of the last point of the specimen.
-        // TODO: Please, edit this test to do whatever you planned.
+        // // use this snippet to generate test cases
+        // const customGeom = new GeodesicGeometry({ steps: 0 });
+        // const before = customGeom.multiLineString([[LosAngeles, new L.LatLng(Santiago.lat, Santiago.lng + 0*360)]]);
+        // console.log(before);
 
         const before: L.LatLng[] =
-            [
-                LosAngeles,
-                new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng + 3*360),
-            ];
+                [
+                    LosAngeles,
+                    new L.LatLng(0.20771518159766966, -94.48916772481697),
+                    new L.LatLng(Santiago.lat, Santiago.lng - 10 * 360),
+                ];
 
         const fixture: L.LatLng[] =
-            [
-                LosAngeles,
-                new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng),
-            ];
+                [
+                    LosAngeles,
+                    new L.LatLng(0.20771518159766966, -94.48916772481697),
+                    new L.LatLng(Santiago.lat, Santiago.lng + 0 * 360),
+                ];
 
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
-    });    
+    });
 
+    it("Beijing (shifted west) -> Sydney", function () {
+        const before: L.LatLng[] =
+                [
+                    new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
+                    new L.LatLng(3.147636627913074, -225.55932619186368),
+                    Sydney,
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
+                    new L.LatLng(3.147636627913074, -225.55932619186368),
+                    new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Santiago > Tokyo > Capetown > Sydney, where the latter 3 must be shifted west", function () {
+        const before: L.LatLng[] =
+                [
+                    Santiago,
+                    Tokyo,
+                    Capetown,
+                    Sydney,
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    Santiago,
+                    new L.LatLng(Tokyo.lat, Tokyo.lng - 1 * 360),
+                    new L.LatLng(Capetown.lat, Capetown.lng - 1 * 360),
+                    new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("LosAngeles -> Capetown -> Tokyo -> Santiago, where only Santiago must be shifted (end of linestring)", function () {
+        const before: L.LatLng[] =
+                [
+                    LosAngeles,
+                    Capetown,
+                    Tokyo,
+                    Santiago,
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    LosAngeles,
+                    new L.LatLng(Capetown.lat, Capetown.lng),
+                    new L.LatLng(Tokyo.lat, Tokyo.lng),
+                    new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+                [
+                    Tokyo,
+                    Santiago,
+                    Sydney,
+                    Capetown,
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    new L.LatLng(Tokyo.lat, Tokyo.lng),
+                    new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                    Sydney,
+                    Capetown,
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+                [
+                    Tokyo,
+                    Santiago,
+                    Sydney,
+                    Capetown,
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    new L.LatLng(Tokyo.lat, Tokyo.lng),
+                    new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                    Sydney,
+                    Capetown,
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Hardcore Testcase with multiple different shifts", function () {
+        const before: L.LatLng[] =
+                [
+                    Tokyo,
+                    Santiago,
+                    Capetown,
+                    Sydney,
+                    LosAngeles,
+                    Berlin
+                ];
+
+        const fixture: L.LatLng[] =
+                [
+                    Tokyo,
+                    new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                    new L.LatLng(Capetown.lat, Capetown.lng + 1 * 360),
+                    new L.LatLng(Sydney.lat, Sydney.lng + 1 * 360),
+                    new L.LatLng(LosAngeles.lat, LosAngeles.lng + 2 * 360),
+                    new L.LatLng(Berlin.lat, Berlin.lng + 2 * 360),
+                ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
 });

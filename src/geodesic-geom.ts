@@ -192,40 +192,37 @@ export class GeodesicGeometry {
         }
         return result;
     }
-    /**
-     * Finds in which "map" lies the first point, i.e. what number revolutions should we do to get to given lng.
-     * @param lng {number} Lng to work with
-     * @return Signed number revolutions
-     */
-    private static numberOfRevolutions(lng: number) {
-        return Math.sign(lng) * Math.floor(Math.abs(lng) / 180);
-    }
 
+    /**
+     * Linestrings of a given multilinestring will be wrapped (+- 360°) to show a continuous line w/o any weird discontinuities
+     * when `wrap` is set to `false` in the geodesic class
+     * @param multilinestring
+     * @returns another multilinestring where the points of each linestring are wrapped accordingly
+     */
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
 
-        for (let linestring of multilinestring) {
-            let resultLine: L.LatLng[] = [], firstLng = linestring[0].lng, prevLng = firstLng,
-                    mapNumber = GeodesicGeometry.numberOfRevolutions(firstLng);
+        for (const linestring of multilinestring) {
+            const resultLine: L.LatLng[] = [];
+            let previous: L.LatLng | null = null;
 
-            for (let point of linestring) {
-                // Find map number difference and move current point to the map containing first point.
-                // We could do the same below, but this should be faster and clearer.
-                let lng = point.lng - (GeodesicGeometry.numberOfRevolutions(point.lng) - mapNumber) * 180;
-
-                // If difference between lngs is greater than 90, line will be split. We should shift points with
-                // such difference depending on their position on the map after split (left or right).
-
-                // Thus, we wrapped lines to one map, but if original coordinates do more than one revolution,
-                // we have to adjust lngs accordingly using the same principle.
-                // With more revolutions, problem occur more times, so we'll adjust until we get acceptable difference.
-
-                while (Math.abs(lng - prevLng) > 90) {
-                    lng -= 180 * Math.sign(lng - prevLng);
+            // iterate over every point and check if it needs to be wrapped
+            for (const point of linestring) {
+                if (previous === null) {
+                    // the first point is the anchor of the linestring from which the line will always start (w/o any wrapping applied)
+                    resultLine.push(new L.LatLng(point.lat, point.lng));
+                    previous = new L.LatLng(point.lat, point.lng);
                 }
+                else {  // I prefer clearly defined branches over a continue-operation.
 
-                prevLng = lng;
-                resultLine.push(new L.LatLng(point.lat, lng));
+                    // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted
+                    // to be on the same 'sphere' as the previous one.
+                    const offset = Math.round((point.lng - previous.lng) / 360);
+                    // shift the point accordingly and add to the result
+                    resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
+                    // use the wrapped point as the anchor for the next one
+                    previous = new L.LatLng(point.lat, point.lng - offset * 360);   // Need a new object here, to avoid changing the input data
+                }
             }
             result.push(resultLine);
         }
