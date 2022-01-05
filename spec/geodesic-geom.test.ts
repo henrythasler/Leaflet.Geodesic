@@ -654,7 +654,6 @@ describe("wrapMultiLineString function", function () {
                     new L.LatLng(Tokyo.lat, Tokyo.lng),
                     new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
                 ];
-
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
     });
