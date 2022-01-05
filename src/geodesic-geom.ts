@@ -193,33 +193,39 @@ export class GeodesicGeometry {
         return result;
     }
 
+    /**
+     * Linestrings of a given multilinestring will be wrapped (+- 360°) to show a continuous line w/o any weird discontinuities
+     * when `wrap` is set to `false` in the geodesic class
+     * @param multilinestring 
+     * @returns another multilinestring where the points of each linestring are wrapped accordingly
+     */
     wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
 
-        multilinestring.forEach((linestring) => {
+        for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
             let previous: L.LatLng | null = null;
-            // let temp: number[][] = [];
-            linestring.forEach((point) => {
+
+            // iterate over every point and check if it needs to be wrapped
+            for (const point of linestring) {
                 if (previous === null) {
-                    resultLine.push(point);
-                    previous = point;
+                    // the first point is the anchor of the linestring from which the line will always start (w/o any wrapping applied)
+                    resultLine.push(new L.LatLng(point.lat, point.lng));
+                    previous = new L.LatLng(point.lat, point.lng);
                 }
-                else {
-                    const diff = point.lng - previous.lng;
-                    const offset = Math.sign(diff / 180) * Math.ceil(Math.abs(diff / 180));
-                    if(Math.abs(diff) > 180) {
-                        resultLine.push(new L.LatLng(point.lat, point.lng - offset * 180 )); 
-                    }
-                    else {
-                        resultLine.push(new L.LatLng(point.lat, point.lng));
-                    }
-                    // temp.push([diff, offset]);
+                else {  // I prefer clearly defined branches over a continue-operation.
+
+                    // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted 
+                    // to be on the same 'sphere' as the previous one.
+                    const offset = Math.round((point.lng - previous.lng) / 360);
+                    // shift the point accordingly and add to the result
+                    resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
+                    // use the wrapped point as the anchor for the next one
+                    previous = new L.LatLng(point.lat, point.lng - offset * 360);   // Need a new object here, to avoid changing the input data
                 }
-            });
+            }
             result.push(resultLine);
-            // console.log(temp);
-        });
+        }
         return result;
     }
 

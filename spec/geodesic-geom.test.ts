@@ -24,6 +24,7 @@ const Capetown = new L.LatLng(-33.94, 18.39);
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Sydney = new L.LatLng(-33.91, 151.08);
 const Singapore = new L.LatLng(1.34, 104.01);
+const Beijing = new L.LatLng(39.92, 116.39);
 
 const SeattleTokyo: L.LatLngLiteral[][] = [
     [Seattle, { lat: 53.130876, lng: -180 }],
@@ -469,7 +470,6 @@ describe("Statistics Calculation", function () {
         expect(res.totalDistance).to.be.closeTo(2 * 54972.271, 0.001);
         expect(res).to.include({ points: 4, vertices: 2 * (1 + 2 ** (n + 1)) });
     });
-
 });
 
 describe("wrapMultiLineString function", function () {
@@ -575,27 +575,154 @@ describe("wrapMultiLineString function", function () {
     });
 
     it("Los Angeles -> Santiago (shifted east)", function () {
+        // // use this snippet to generate test cases
         // const customGeom = new GeodesicGeometry({ steps: 0 });
         // const before = customGeom.multiLineString([[LosAngeles, new L.LatLng(Santiago.lat, Santiago.lng + 0*360)]]);
         // console.log(before);        
-        
+
         const before: L.LatLng[] =
             [
                 LosAngeles,
                 new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng + 1*360),
+                new L.LatLng(Santiago.lat, Santiago.lng - 10 * 360),
             ];
 
         const fixture: L.LatLng[] =
             [
                 LosAngeles,
                 new L.LatLng(0.20771518159766966, -94.48916772481697),
-                new L.LatLng(Santiago.lat, Santiago.lng + 0*360),
+                new L.LatLng(Santiago.lat, Santiago.lng + 0 * 360),
             ];
 
         const wrapped = geom.wrapMultiLineString([before]);
-        // console.log(wrapped);
-        // checkFixture(wrapped, [fixture]);    // this still fails and needs a more general solution
-    });    
+        checkFixture(wrapped, [fixture]);
+    });
 
+    it("Beijing (shifted west) -> Sydney", function () {
+        const before: L.LatLng[] =
+            [
+                new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
+                new L.LatLng(3.147636627913074, -225.55932619186368),
+                Sydney,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Beijing.lat, Beijing.lng - 1 * 360),
+                new L.LatLng(3.147636627913074, -225.55932619186368),
+                new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Santiago > Tokyo > Capetown > Sydney, where the latter 3 must be shifted west", function () {
+        const before: L.LatLng[] =
+            [
+                Santiago,
+                Tokyo,
+                Capetown,
+                Sydney,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                Santiago,
+                new L.LatLng(Tokyo.lat, Tokyo.lng - 1 * 360),
+                new L.LatLng(Capetown.lat, Capetown.lng - 1 * 360),
+                new L.LatLng(Sydney.lat, Sydney.lng - 1 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("LosAngeles -> Capetown -> Tokyo -> Santiago, where only Santiago must be shifted (end of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                LosAngeles,
+                Capetown,
+                Tokyo,
+                Santiago,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                LosAngeles,
+                new L.LatLng(Capetown.lat, Capetown.lng),
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Sydney,
+                Capetown,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                Sydney,
+                Capetown,
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Tokyo -> Santiago -> Sydney -> Capetown, where only Santiago must be shifted (middle of linestring)", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Sydney,
+                Capetown,
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                new L.LatLng(Tokyo.lat, Tokyo.lng),
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                Sydney,
+                Capetown,
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });
+
+    it("Hardcore Testcase with multiple different shifts", function () {
+        const before: L.LatLng[] =
+            [
+                Tokyo,
+                Santiago,
+                Capetown,
+                Sydney,
+                LosAngeles,
+                Berlin
+            ];
+
+        const fixture: L.LatLng[] =
+            [
+                Tokyo,
+                new L.LatLng(Santiago.lat, Santiago.lng + 1 * 360),
+                new L.LatLng(Capetown.lat, Capetown.lng + 1 * 360),
+                new L.LatLng(Sydney.lat, Sydney.lng + 1 * 360),
+                new L.LatLng(LosAngeles.lat, LosAngeles.lng + 2 * 360),
+                new L.LatLng(Berlin.lat, Berlin.lng + 2 * 360),
+            ];
+
+        const wrapped = geom.wrapMultiLineString([before]);
+        checkFixture(wrapped, [fixture]);
+    });    
 });
