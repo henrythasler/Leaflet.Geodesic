@@ -5,7 +5,7 @@ import Benchmark = require("benchmark");
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 
-import * as L from "leaflet";
+import L from "leaflet";
 
 import "jest";
 

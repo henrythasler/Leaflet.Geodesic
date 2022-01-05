@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import * as L from "leaflet";
+import L from "leaflet";
 import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicCircleClass } from "../src/geodesic-circle";
 import { expect } from "chai";

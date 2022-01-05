@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import * as L from "leaflet";
-import { GeodesicCore, WGS84Vector, GeodesicOptions } from "../src/geodesic-core";
+import { GeodesicCore } from "../src/geodesic-core";
 import { expect } from "chai";
 
 import "jest";
+import L from "leaflet";
 
 import { eps } from "./test-toolbox";
 
@@ -129,13 +129,7 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
     });
 
     it("Reduced iterations to throw maxIterations-error", function () {
-        try {
-            geodesic.direct(Berlin, 90, 16000000, 3);
-            expect.fail();
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/vincenty formula failed to converge/);
-        }
+        expect(() => geodesic.direct(Berlin, 90, 16000000, 3)).to.throw(/vincenty formula failed to converge/);
     });
 });
 
@@ -182,14 +176,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     });
 
     it("no convergence", function () {
-        try {
-            // reduced maxIterations
-            geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 179.5), 50, false);
-            expect.fail();
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/vincenty formula failed to converge/);
-        }
+        expect(() => geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 179.5), 50, false)).to.throw(/vincenty formula failed to converge/);
     });
 
     it("mitigate convergence Error", function () {
@@ -202,13 +189,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     });
 
     it("λ > π", function () {
-        try {
-            geodesic.inverse(new L.LatLng(-84, -172), new L.LatLng(-70, 190));
-            expect.fail();
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/λ > π/);
-        }
+        expect(() => geodesic.inverse(new L.LatLng(-84, -172), new L.LatLng(-70, 190))).to.throw(/λ > π/);
     });
 });
 
