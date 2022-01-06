@@ -185,6 +185,27 @@ const geodesic = new L.Geodesic([[Berlin, LosAngeles], [Santiago, Capetown]]).ad
 geodesic.addLatLng(Beijing, geodesic.points[0]);    // results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]
 ```
 
+### Drawing over the antimeridian
+
+In some cases it is required to draw over the antimeridian (dateline) to show a continuous path. This is possible by setting the `wrap`-option to false. Leaflet.Geodesic will make sure to shift the individual points to draw a continuous line, even if the coordinates are not properly aligned to a map section. See [interactive example](multiline-nosplit.html)
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+const Beijing = new L.LatLng(39.92, 116.39 );
+const Capetown =  new L.LatLng(-33.94, 18.39 );
+const Santiago = new L.LatLng(-33.44, -70.71);
+const Tokyo = new L.LatLng(35.47, 139.15 + 360);    // these points are in another map section
+const Sydney = new L.LatLng(-33.91, 151.08 + 10 * 360); // but will get shifted accordingly
+
+const geodesic = L.geodesic(
+    [ Santiago, Tokyo, Capetown, Sydney, LosAngeles, Berlin], 
+    { wrap: false
+}).addTo(map);
+```
+
+![nowrap](docs/img/nowrap.png)
+
 ### Line Options
 All options defined for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for can be used Leaflet.Geodesic.
 
