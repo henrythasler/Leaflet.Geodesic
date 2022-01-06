@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+    <script src="leaflet.geodesic.umd.min.js"></script>
+
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script type="text/javascript">
+
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: false,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        var info = L.control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
+
+        const Berlin = new L.LatLng(52.5, 13.35);
+        const LosAngeles = new L.LatLng(33.82, -118.38);
+        const Beijing = new L.LatLng(39.92, 116.39 );
+        const Capetown =  new L.LatLng(-33.94, 18.39 );
+        const Santiago = new L.LatLng(-33.44, -70.71);
+        const Tokyo = new L.LatLng(35.47, 139.15 + 360);    // these points are in another map section
+        const Sydney = new L.LatLng(-33.91, 151.08 + 10 * 360); // but will get shifted accordingly
+
+        const geodesic = L.geodesic(
+            [ Santiago, Tokyo, Capetown, Sydney, LosAngeles, Berlin], 
+            { weight: 6, wrap: false
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
