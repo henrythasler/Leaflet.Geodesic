@@ -67,10 +67,8 @@
     "benchmark": "jest benchmark",
     "docs": "typedoc",
     "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
-    "integrity:create": "shasum -b -a 512 dist/leaflet.geodesic.umd.min.js | awk '{ print $1 }' | xxd -r -p | base64 -w 0 >> dist/leaflet.geodesic.umd.min.js.sha256",
-    "integrity:show": "printf 'integrity=\"sha512-' && cat dist/leaflet.geodesic.umd.min.js.sha256 && printf '\"\n'",
-    "build:stats": "wc -c dist/leaflet.geodesic.umd.min.js",
-    "build": "rollup -c && npm run integrity:create && npm run integrity:show && npm run build:stats && cp dist/leaflet.geodesic.umd.min.js docs/"
+    "postbuild": "node tools/postbuild.js",
+    "build": "rollup -c && npm run postbuild"
   },
   "np": {
     "publish": false
