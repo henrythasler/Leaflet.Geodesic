@@ -8,11 +8,13 @@ import { terser } from 'rollup-plugin-terser';
 import autoprefixer from 'autoprefixer';
 import assets from 'postcss-assets';
 import dts from 'rollup-plugin-dts';
-const fs = require("fs");
+import { existsSync, rmdirSync } from 'fs';
+import { dirname } from 'path';
 
-let distDir = "dist";
-if (fs.existsSync(distDir)) {
-  fs.rmSync(distDir, {recursive: true});
+// clear target folder before bundling
+const distDir = dirname(pkg.main);
+if (existsSync(distDir)) {
+  rmdirSync(distDir, {recursive: true});
 }
 
 const banner = `/*! Leaflet.Geodesic ${pkg.version} - (c) Henry Thasler - https://github.com/henrythasler/Leaflet.Geodesic */`;
