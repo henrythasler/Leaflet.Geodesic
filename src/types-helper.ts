@@ -34,32 +34,27 @@ export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
 
 export function latlngExpressionArraytoLatLngArray(input: L.LatLngExpression[] | L.LatLngExpression[][]): L.LatLng[][] {
     const latlng: L.LatLng[][] = [];
-    for (const group of input) {
-        // it's a 1D-Array L.LatLngExpression[]
-        if (instanceOfLatLngExpression(group)) {
-            const sub: L.LatLng[] = [];
-            (input as L.LatLngExpression[]).forEach((point) => {
-                sub.push(latlngExpressiontoLatLng(point));
-            });
-            latlng.push(sub);
-            break;
+    const iterateOver = (instanceOfLatLngExpression(input[0]) ? [input] : input);
+    const unknownObjectError = new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+
+    if (!(iterateOver instanceof Array)) {
+        throw unknownObjectError;
+    }
+
+    for (const group of iterateOver as L.LatLngExpression[][]) {
+
+        if (!(group instanceof Array)) {
+            throw unknownObjectError;
         }
-        // it's a 2D-Array L.LatLngExpression[][]
-        else if (group instanceof Array) {
-            if (instanceOfLatLngExpression(group[0])) {
-                const sub: L.LatLng[] = [];
-                for(const point of group) {
-                    sub.push(latlngExpressiontoLatLng(point));
-                }
-                latlng.push(sub);
+
+        const sub: L.LatLng[] = [];
+        for (const point of group) {
+            if (!instanceOfLatLngExpression(point)) {
+                throw unknownObjectError;
             }
-            else {
-                throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
-            }
+            sub.push(latlngExpressiontoLatLng(point));
         }
-        else {
-            throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
-        }
+        latlng.push(sub);
     }
     return latlng;
 }

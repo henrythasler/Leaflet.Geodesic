@@ -128,6 +128,10 @@ describe("latlngExpressionArraytoLatLngArray", function () {
         expect(() => latlngExpressionArraytoLatLngArray([{ lat: Berlin.lat, lng: "matafokka" } as any])).to.throw(/Unknown object found/);
     });
 
+    it("1D-Array - unknown Object (string instead of number)", function () {
+        expect(() => latlngExpressionArraytoLatLngArray({ lat: Berlin.lat, lng: Berlin.lng } as any)).to.throw(/Unknown object found/);
+    });
+
     it("2D-Array - unknown Object (string instead of number)", function () {
         const n = 2, m = 2;
         const input = new Array(n).fill((new Array(m) as L.LatLngExpression[]).fill({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any));
