@@ -68,7 +68,8 @@
     "docs": "typedoc",
     "coveralls": "jest --coverage && coveralls < coverage/lcov.info",
     "postbuild": "node tools/postbuild.js",
-    "build": "rollup -c && npm run postbuild"
+    "build": "rollup -c rollup.config.prod.js && npm run postbuild",
+    "build:dev": "rollup -c rollup.config.dev.js && npm run postbuild"
   },
   "np": {
     "publish": false
