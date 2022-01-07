@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import Benchmark from "benchmark";
+import Benchmark = require("benchmark");
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 
-import * as L from "leaflet";
+import L from "leaflet";
 
 import "jest";
 
@@ -39,13 +39,13 @@ describe("function benchmarks", function () {
     it("Seattle -> Berlin (no split)", async function () {
         const res = await benchmark(Seattle, Berlin);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(fastest.hz).to.be.closeTo(430000, 50000);
+        expect(fastest.hz).to.be.closeTo(800000, 50000);
     });
 
     it("Seattle -> Tokyo (with split)", async function () {
         const res = await benchmark(Seattle, Tokyo);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(fastest.hz).to.be.closeTo(40000, 10000);
+        expect(fastest.hz).to.be.closeTo(80000, 10000);
     });
     
 });

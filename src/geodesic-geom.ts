@@ -67,7 +67,7 @@ export class GeodesicGeometry {
     multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
         const multiLineString: L.LatLng[][] = [];
 
-        for (let linestring of latlngs) {
+        for (const linestring of latlngs) {
             const segment: L.LatLng[] = [];
             for (let j = 1; j < linestring.length; j++) {
                 segment.splice(segment.length - 1, 1, ...this.line(linestring[j - 1], linestring[j]));
@@ -172,7 +172,7 @@ export class GeodesicGeometry {
      */
     splitMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
         const result: L.LatLng[][] = [];
-        for (let linestring of multilinestring) {
+        for (const linestring of multilinestring) {
             if (linestring.length === 1) {
                 result.push(linestring);   // just a single point in linestring, no need to split
                 continue;
@@ -254,7 +254,7 @@ export class GeodesicGeometry {
      * @return a multilinestring that consist of one or two linestrings
      */
     splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
-        let result: L.LatLng[][] = this.splitMultiLineString([linestring]);
+        const result: L.LatLng[][] = this.splitMultiLineString([linestring]);
 
         // If the circle was split, it results in exactly three linestrings where first and last  
         // must be re-assembled because they belong to the same "side" of the split circle.
@@ -280,7 +280,7 @@ export class GeodesicGeometry {
 
     multilineDistance(multilinestring: L.LatLng[][]): number[] {
         const dist: number[] = [];
-        for (let linestring of multilinestring) {
+        for (const linestring of multilinestring) {
             let segmentDistance = 0;
             for (let j = 1; j < linestring.length; j++) {
                 segmentDistance += this.distance(linestring[j - 1], linestring[j]);
@@ -296,11 +296,11 @@ export class GeodesicGeometry {
         stats.distanceArray = this.multilineDistance(points);
         stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);
         stats.points = 0;
-        for (let item of points) {
+        for (const item of points) {
             stats.points += item.reduce((x) => x + 1, 0);
         }
         stats.vertices = 0;
-        for (let item of vertices) {
+        for (const item of vertices) {
             stats.vertices += item.reduce((x) => x + 1, 0);
         }
         return stats;

@@ -1,4 +1,4 @@
-import * as L from "leaflet";
+import L from "leaflet";
 import { expect } from "chai";
 
 import "jest";
