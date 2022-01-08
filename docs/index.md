@@ -36,4 +36,4 @@ Click on an image to open the demo:
 
 ## Continuous Drawing
 
-[![multiline-nosplit](img/nowrap.png)](multiline-nosplit.html)
+[![multiline-nosplit](img/multiline-nosplit.png)](multiline-nosplit.html)
