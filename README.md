@@ -24,7 +24,7 @@ Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geod
 
 Add it in your nodejs-project with `npm i leaflet.geodesic`.
 
-If possible, pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha256` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic@2.5.1/dist/leaflet.geodesic.umd.min.js.sha256) and is shown in the [build-log](https://travis-ci.org/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
+If possible, pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha512` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512) and is shown in the [build-log](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
 
 ## Basic usage
 
@@ -184,6 +184,26 @@ const Santiago = new L.LatLng(-33.44, -70.71);
 const geodesic = new L.Geodesic([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
 geodesic.addLatLng(Beijing, geodesic.points[0]);    // results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]
 ```
+
+### Drawing over the antimeridian
+
+In some cases it is required to draw over the antimeridian (dateline) to show a continuous path. This is possible by setting the `wrap`-option to false. Leaflet.Geodesic will make sure to shift the individual points to draw a continuous line, even if the coordinates are not properly aligned to a map section. See [interactive example](https://blog.cyclemap.link/Leaflet.Geodesic/multiline-nosplit.html)
+
+```Javascript
+const Berlin = new L.LatLng(52.5, 13.35);
+const LosAngeles = new L.LatLng(33.82, -118.38);
+const Capetown =  new L.LatLng(-33.94, 18.39 );
+const Santiago = new L.LatLng(-33.44, -70.71);
+const Tokyo = new L.LatLng(35.47, 139.15 + 360);    // these points are in another map section
+const Sydney = new L.LatLng(-33.91, 151.08 + 10 * 360); // but will get shifted accordingly
+
+const geodesic = L.geodesic(
+    [ Santiago, Tokyo, Capetown, Sydney, LosAngeles, Berlin], 
+    { wrap: false
+}).addTo(map);
+```
+
+![nowrap](docs/img/nowrap.png)
 
 ### Line Options
 All options defined for [Polyline](http://leafletjs.com/reference.html#polyline) and [Path](https://leafletjs.com/reference.html#path) for can be used Leaflet.Geodesic.

@@ -34,28 +34,27 @@
     </style>
     <title>Leaflet.Geodesic demo</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
         crossorigin="" />
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
         crossorigin=""></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
+    <script src="leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
 <body>
     <div id="map"></div>
-    <div id='distance' class='distance-container'></div>
 
     <script type="text/javascript">
 
-        var map = L.map('map').setView([0, 0], 2);
+        const map = L.map('map').setView([0, 0], 2);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
-            noWrap: true,
+            noWrap: false,
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
@@ -72,45 +71,19 @@
             this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
                 '<br/><br/><b>Points</b><br/>' + stats.points + 
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
-        };        
+        };
 
-        const places = [
-            new L.LatLng(52.5, 13.35), // Berlin
-            new L.LatLng(71.39, -156.48), // Point Barrow
-            new L.LatLng(33.82, -118.38), // Los Angeles
-            new L.LatLng(-33.44, -70.71), // Santiago
-            new L.LatLng(35.47, 139.15), // Tokyo
-            new L.LatLng(-33.94, 18.39), // Capetown
-            new L.LatLng(-33.91, 151.08), // Sydney
-        ];
+        const Berlin = new L.LatLng(52.5, 13.35);
+        const LosAngeles = new L.LatLng(33.82, -118.38);
+        const Capetown =  new L.LatLng(-33.94, 18.39 );
+        const Santiago = new L.LatLng(-33.44, -70.71);
+        const Tokyo = new L.LatLng(35.47, 139.15 + 360);    // these points are in another map section
+        const Sydney = new L.LatLng(-33.91, 151.08 + 10 * 360); // but will get shifted accordingly
 
-        const geodesic = L.geodesic(places, {
-            weight: 7,
-            opacity: 0.5,
-            color: 'red',
-            steps: 4
+        const geodesic = L.geodesic(
+            [ Santiago, Tokyo, Capetown, Sydney, LosAngeles, Berlin], 
+            { weight: 6, wrap: false
         }).addTo(map);
-
-        info.update(geodesic.statistics);
-
-        var markers = [];
-
-        for (place of places) {
-            var marker = L.marker(place, { draggable: true }).addTo(map);
-            marker.on('drag', (e) => {
-                let loc = [];
-                markers.forEach( (item) => {
-                    loc.push(item.getLatLng());
-                })
-                geodesic.setLatLngs(loc);
-                info.update(geodesic.statistics);
-            });
-
-            markers.push(marker);
-        }
-
-        markers[5].bindPopup("Drag me.").openPopup();
-
     </script>
 </body>
 

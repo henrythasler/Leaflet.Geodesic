@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import * as L from "leaflet";
+import L from "leaflet";
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";
 import { expect } from "chai";

@@ -17,19 +17,23 @@
             width: 100%;
         }
 
-        .info {
-            padding: 6px 8px;
-            font: 14px/16px Arial, Helvetica, sans-serif;
-            background: white;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
+        .distance-container {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 1;
         }
 
-        .info h4 {
-            margin: 0 0 5px;
-            font: 22px/24px Arial, Helvetica, sans-serif;
-            color: #777;
+        .distance-container>* {
+            background-color: #fff;
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 18px;
+            display: block;
+            margin: 0;
+            padding: 5px 10px;
+            border-radius: 3px;
         }
     </style>
     <title>Leaflet.Geodesic demo</title>
@@ -52,39 +56,20 @@
 
     <script type="text/javascript">
 
-        const map = L.map('map').setView([0, 0], 2);
+        const map = L.map('map').setView([0, 180], 2);
         L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             maxZoom: 15,
-            noWrap: true,
+            noWrap: false,
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
-        var info = L.control();
-        info.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-            return this._div;
-        };
-        info.addTo(map);
-
-        // method that we will use to update the control based on feature properties passed
-        info.update = function (stats) {
-            const totalDistance = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
-            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance +
-                '<br/><br/><b>Points</b><br/>' + stats.points +
-                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
-        };
-
         const multiline = [
-            [   // 1st line
-                new L.LatLng(52.5, 13.35), //Berlin
-                new L.LatLng(71.39, -156.48), // Point Barrow
-                new L.LatLng(33.82, -118.38), // Los Angeles
-            ],
-            [   // 2nd line
+            [
                 new L.LatLng(-33.44, -70.71), // Santiago
-                new L.LatLng(35.47, 139.15), // Tokyo
                 new L.LatLng(-33.94, 18.39), // Capetown
-                new L.LatLng(-33.91, 151.08), // Sydney
+                new L.LatLng(35.47, 139.15), // Tokyo
+                new L.LatLng(33.82, -118.38 + 360), // LosAngeles
+                new L.LatLng(52.5, 13.35 + 360), //Berlin
             ]
         ];
 
@@ -92,10 +77,9 @@
             weight: 7,
             opacity: 0.5,
             color: 'red',
-            steps: 4
+            steps: 5,
+            wrap: false,
         }).addTo(map);
-
-        info.update(geodesic.statistics);
 
         var markers = [];
 
@@ -109,7 +93,6 @@
                 currentMultiline.push(currentLine);
             }
             geodesic.setLatLngs(currentMultiline);
-            info.update(geodesic.statistics);
         }
 
         for (let line of multiline) {
@@ -123,8 +106,6 @@
             }
             markers.push(subMarker);
         }
-
-        markers[1][2].bindPopup("Drag me.").openPopup();
 
     </script>
 </body>

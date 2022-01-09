@@ -1,503 +1,287 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>leaflet.geodesic</title>
-	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">leaflet.geodesic</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
-			<h1> leaflet.geodesic</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#leafletgeodesic" id="leafletgeodesic" style="color: inherit; text-decoration: none;">
-					<h1>Leaflet.Geodesic</h1>
-				</a>
-				<p><a href="https://travis-ci.org/henrythasler/Leaflet.Geodesic"><img src="https://travis-ci.org/henrythasler/Leaflet.Geodesic.svg?branch=master" alt="Build Status"></a> <a href="https://www.npmjs.com/package/leaflet.geodesic"><img src="https://img.shields.io/npm/v/leaflet.geodesic" alt="npm"></a> <a href="https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master"><img src="https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic"><img src="https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status" alt="Quality Gate Status"></a></p>
-				<p>Add-on for <a href="http://leafletjs.com/">Leaflet</a> to draw <a href="http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid">geodesic</a> lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It&#39;s based on <a href="https://en.wikipedia.org/wiki/Vincenty%27s_formulae">Vincenty&#39;s formulae</a> implemented by <a href="https://github.com/chrisveness/geodesy">Chris Veness</a> for highest precision.</p>
-				<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html"><img src="docs/img/demo.png" alt="demo"></a></p>
-				<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/">Live Demos and Tutorials</a></p>
-				<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/api">API-Documentation</a></p>
-				<a href="#add-the-plugin-to-your-project" id="add-the-plugin-to-your-project" style="color: inherit; text-decoration: none;">
-					<h2>Add the plugin to your project</h2>
-				</a>
-				<p>Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have <a href="https://leafletjs.com/examples/quick-start/">included leaflet.js</a>.</p>
-				<pre><code class="language-html"><span class="hljs-comment">&lt;!-- Make sure you put this AFTER leaflet.js --&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.jsdelivr.net/npm/leaflet.geodesic"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
-				<p>Leaflet.Geodesic is available from <a href="https://unpkg.com/browse/leaflet.geodesic/">unpkg</a>, <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic">jsDelivr</a> and <a href="https://www.npmjs.com/package/leaflet.geodesic">npmjs</a>.</p>
-				<p>Add it in your nodejs-project with <code>npm i leaflet.geodesic</code>.</p>
-				<p>If possible, pin the plug-in to a specific version and use <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity</a>. Check the <a href="https://github.com/henrythasler/Leaflet.Geodesic/releases">release page</a> for the latest version, links and checksum. A checksum can by verified with <code>npm run build</code>, is stored in <code>dist/leaflet.geodesic.umd.min.js.sha256</code> on <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist">jsDelivr</a> and <a href="https://unpkg.com/browse/leaflet.geodesic@2.5.1/dist/leaflet.geodesic.umd.min.js.sha256">unpkg</a> and is shown in the <a href="https://travis-ci.org/henrythasler/Leaflet.Geodesic/builds">build-log</a> for a tagged version.</p>
-				<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
-					<h2>Basic usage</h2>
-				</a>
-				<ul>
-					<li><code>L.Geodesic</code> draws geodesic lines between all points of a given line- or multiline-string. </li>
-					<li><code>L.GeodesicCircle</code> draws a circle with a specific radius around a given point.</li>
-				</ul>
-				<p>The Objects can be created as follows:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> geodesicLine = <span class="hljs-keyword">new</span> L.Geodesic().addTo(map);   <span class="hljs-comment">// creates a blank geodesic-line-object and adds it to the map</span>
-<span class="hljs-keyword">const</span> geodesicCircle = <span class="hljs-keyword">new</span> L.GeodesicCircle().addTo(map);   <span class="hljs-comment">// creates a blank geodesic-circle-object and adds it to the map</span></code></pre>
-				<p>Alternative method:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> geodesicLine = L.geodesic().addTo(map);   <span class="hljs-comment">// lower-case, w/o new-keyword</span>
-<span class="hljs-keyword">const</span> geodesicCircle = L.geodesiccircle().addTo(map);   <span class="hljs-comment">// lower-case, w/o new-keyword</span></code></pre>
-				<p>Make sure you add the geodesic-object to the map. It won&#39;t display otherwise.</p>
-				<p>Each constructor is defined as:</p>
-				<pre><code class="language-JavaScript">Geodesic(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions)
-GeodesicCircle(center?: L.LatLngExpression, options?: GeodesicOptions)</code></pre>
-				<p>Both classes are extended from <a href="http://leafletjs.com/reference.html#polyline">L.Polyline</a>, so all methods, events and options for <code>L.Polyline</code> can be used with <code>L.Geodesic</code> and <code>L.GeodesicCircle</code> here as well.</p>
-				<a href="#geodesic-lines" id="geodesic-lines" style="color: inherit; text-decoration: none;">
-					<h2>Geodesic Lines</h2>
-				</a>
-				<p>This draws a line. The geometry (points) to use can be given during creation as:</p>
-				<a href="#objects-literals" id="objects-literals" style="color: inherit; text-decoration: none;">
-					<h3>Objects (Literals)</h3>
-				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> Berlin = {<span class="hljs-attr">lat</span>: <span class="hljs-number">52.5</span>, <span class="hljs-attr">lng</span>: <span class="hljs-number">13.35</span>};
-<span class="hljs-keyword">const</span> LosAngeles = {<span class="hljs-attr">lat</span>: <span class="hljs-number">33.82</span>, <span class="hljs-attr">lng</span>: <span class="hljs-number">-118.38</span>};
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);</code></pre>
-				<a href="#latlng-class" id="latlng-class" style="color: inherit; text-decoration: none;">
-					<h3>LatLng-Class</h3>
-				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);</code></pre>
-				<a href="#tuples" id="tuples" style="color: inherit; text-decoration: none;">
-					<h3>Tuples</h3>
-				</a>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> Berlin = [<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>];
-<span class="hljs-keyword">const</span> LosAngeles = [<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>];
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);</code></pre>
-				<p><img src="docs/img/line.png" alt="line"></p>
-				<a href="#line-strings" id="line-strings" style="color: inherit; text-decoration: none;">
-					<h3>Line-strings</h3>
-				</a>
-				<p>Multiple consecutive points can be given as an array (linestring):</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> places = [
-    <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>), <span class="hljs-comment">// Berlin</span>
-    <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>), <span class="hljs-comment">// Los Angeles</span>
-    <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.44</span>, <span class="hljs-number">-70.71</span>), <span class="hljs-comment">// Santiago</span>
-    <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.94</span>, <span class="hljs-number">18.39</span>), <span class="hljs-comment">// Capetown</span>
-];
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic(places).addTo(map);</code></pre>
-				<p><img src="docs/img/linestring.png" alt="linestring"></p>
-				<a href="#multi-line-strings" id="multi-line-strings" style="color: inherit; text-decoration: none;">
-					<h3>Multi-line-strings</h3>
-				</a>
-				<p>Multiple independent linestrings can be defined as a 2-dimensional array of points:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> places = [
-    [   <span class="hljs-comment">// 1st line</span>
-        <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>), <span class="hljs-comment">// Berlin</span>
-        <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>), <span class="hljs-comment">// Los Angeles</span>
-    ],
-    [   <span class="hljs-comment">// 2nd line</span>
-        <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.44</span>, <span class="hljs-number">-70.71</span>), <span class="hljs-comment">// Santiago</span>
-        <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.94</span>, <span class="hljs-number">18.39</span>), <span class="hljs-comment">// Capetown</span>
-    ]
-];
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic(places).addTo(map);</code></pre>
-				<p><img src="docs/img/multilinestring.png" alt="multilinestring"></p>
-				<a href="#geojson-support" id="geojson-support" style="color: inherit; text-decoration: none;">
-					<h3>GeoJSON-Support</h3>
-				</a>
-				<p>GeoJSON-data can be used to create geodesic lines with the <code>fromGeoJson()</code> method:</p>
-				<pre><code class="language-JavaScript"><span class="hljs-keyword">const</span> geojson = {
-    <span class="hljs-string">"type"</span>: <span class="hljs-string">"LineString"</span>,
-    <span class="hljs-string">"coordinates"</span>: [
-        [<span class="hljs-number">13.35</span>, <span class="hljs-number">52.5</span>], [<span class="hljs-number">-122.33</span>, <span class="hljs-number">47.56</span>], [<span class="hljs-number">18.39</span>, <span class="hljs-number">-33.94</span>], [<span class="hljs-number">116.39</span>, <span class="hljs-number">39.92</span>], [<span class="hljs-number">13.35</span>, <span class="hljs-number">52.5</span>]
-    ]
-};
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic().addTo(map);
-geodesic.fromGeoJson(geojson);</code></pre>
-				<p><img src="docs/img/geojson.png" alt="geojson"></p>
-				<a href="#updating-the-geometry" id="updating-the-geometry" style="color: inherit; text-decoration: none;">
-					<h3>Updating the geometry</h3>
-				</a>
-				<a href="#set-new-geometry" id="set-new-geometry" style="color: inherit; text-decoration: none;">
-					<h4>Set new geometry</h4>
-				</a>
-				<p>The Geodesic-Class provides a <code>setLatLngs()</code>-Method, that can be used to update the geometry of an existing <code>L.Geodesic</code>-object:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic().addTo(map);   <span class="hljs-comment">// add empty object to the map</span>
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>leaflet.geodesic</title><meta name="description" content="Documentation for leaflet.geodesic"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">leaflet.geodesic</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1> leaflet.geodesic</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#leafletgeodesic" id="leafletgeodesic" style="color: inherit; text-decoration: none;">
+  <h1>Leaflet.Geodesic</h1>
+</a>
+<p><a href="https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic"><img src="https://app.travis-ci.com/henrythasler/Leaflet.Geodesic.svg?branch=master" alt="Build Status"></a> <a href="https://www.npmjs.com/package/leaflet.geodesic"><img src="https://img.shields.io/npm/v/leaflet.geodesic" alt="npm"></a> <a href="https://coveralls.io/github/henrythasler/Leaflet.Geodesic?branch=master"><img src="https://coveralls.io/repos/github/henrythasler/Leaflet.Geodesic/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://sonarcloud.io/dashboard?id=henrythasler_Leaflet.Geodesic"><img src="https://sonarcloud.io/api/project_badges/measure?project=henrythasler_Leaflet.Geodesic&metric=alert_status" alt="Quality Gate Status"></a></p>
+<p>Add-on for <a href="http://leafletjs.com/">Leaflet</a> to draw <a href="http://en.wikipedia.org/wiki/Geodesics_on_an_ellipsoid">geodesic</a> lines and circles. A geodesic line is the shortest path between two given positions on the earth surface. It&#39;s based on <a href="https://en.wikipedia.org/wiki/Vincenty%27s_formulae">Vincenty&#39;s formulae</a> implemented by <a href="https://github.com/chrisveness/geodesy">Chris Veness</a> for highest precision.</p>
+<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/basic-interactive.html"><img src="docs/img/demo.png" alt="demo"></a></p>
+<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/">Live Demos and Tutorials</a></p>
+<p><a href="https://observablehq.com/@henrythasler/leaflet-geodesic">Observable-Notebook</a></p>
+<p><a href="https://blog.cyclemap.link/Leaflet.Geodesic/api">API-Documentation</a></p>
 
-<span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
+<a href="#add-the-plugin-to-your-project" id="add-the-plugin-to-your-project" style="color: inherit; text-decoration: none;">
+  <h2>Add the plugin to your project</h2>
+</a>
+<p>Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have <a href="https://leafletjs.com/examples/quick-start/">included leaflet.js</a>.</p>
+<pre><code class="language-html"><span class="hl-0">&lt;!-- Make sure you put this AFTER leaflet.js --&gt;</span><br/><span class="hl-1">&lt;</span><span class="hl-2">script</span><span class="hl-3"> </span><span class="hl-4">src</span><span class="hl-3">=</span><span class="hl-5">&quot;https://cdn.jsdelivr.net/npm/leaflet.geodesic&quot;</span><span class="hl-1">&gt;&lt;/</span><span class="hl-2">script</span><span class="hl-1">&gt;</span>
+</code></pre>
+<p>Leaflet.Geodesic is available from <a href="https://unpkg.com/browse/leaflet.geodesic/">unpkg</a>, <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic">jsDelivr</a> and <a href="https://www.npmjs.com/package/leaflet.geodesic">npmjs</a>.</p>
+<p>Add it in your nodejs-project with <code>npm i leaflet.geodesic</code>.</p>
+<p>If possible, pin the plug-in to a specific version and use <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity</a>. Check the <a href="https://github.com/henrythasler/Leaflet.Geodesic/releases">release page</a> for the latest version, links and checksum. A checksum can by verified with <code>npm run build</code>, is stored in <code>dist/leaflet.geodesic.umd.min.js.sha512</code> on <a href="https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist">jsDelivr</a> and <a href="https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512">unpkg</a> and is shown in the <a href="https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds">build-log</a> for a tagged version.</p>
 
-geodesic.setLatLngs([Berlin, LosAngeles])   <span class="hljs-comment">// update in-place</span></code></pre>
-				<p>The <code>setLatLngs()</code>-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself. Please refer to the section about geodesic circles below, on how to update a circle geometry.</p>
-				<a href="#delete-geometry" id="delete-geometry" style="color: inherit; text-decoration: none;">
-					<h4>Delete geometry</h4>
-				</a>
-				<p>Delete the existing geometry by setting an empty array <code>geodesic.setLatLngs([])</code>.</p>
-				<a href="#adding-points" id="adding-points" style="color: inherit; text-decoration: none;">
-					<h4>adding points</h4>
-				</a>
-				<p>Points can be added to existing geodesic lines with <code>addLatLng()</code>:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
-<span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span>);
+<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
+  <h2>Basic usage</h2>
+</a>
+<ul>
+<li><code>L.Geodesic</code> draws geodesic lines between all points of a given line- or multiline-string. </li>
+<li><code>L.GeodesicCircle</code> draws a circle with a specific radius around a given point.</li>
+</ul>
+<p>The Objects can be created as follows:</p>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesicLine</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span><span class="hl-0">// creates a blank geodesic-line-object and adds it to the map</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesicCircle</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">GeodesicCircle</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span><span class="hl-0">// creates a blank geodesic-circle-object and adds it to the map</span>
+</code></pre>
+<p>Alternative method:</p>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesicLine</span><span class="hl-7"> = </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">geodesic</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span><span class="hl-0">// lower-case, w/o new-keyword</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesicCircle</span><span class="hl-7"> = </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">geodesiccircle</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span><span class="hl-0">// lower-case, w/o new-keyword</span>
+</code></pre>
+<p>Make sure you add the geodesic-object to the map. It won&#39;t display otherwise.</p>
+<p>Each constructor is defined as:</p>
+<pre><code class="language-JavaScript"><span class="hl-9">Geodesic</span><span class="hl-7">(</span><span class="hl-10">latlngs</span><span class="hl-7">?: </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-10">LatLngExpression</span><span class="hl-7">[] | </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-10">LatLngExpression</span><span class="hl-7">[][], </span><span class="hl-10">options</span><span class="hl-7">?: </span><span class="hl-10">GeodesicOptions</span><span class="hl-7">)</span><br/><span class="hl-9">GeodesicCircle</span><span class="hl-7">(</span><span class="hl-10">center</span><span class="hl-7">?: </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-10">LatLngExpression</span><span class="hl-7">, </span><span class="hl-10">options</span><span class="hl-7">?: </span><span class="hl-10">GeodesicOptions</span><span class="hl-7">)</span>
+</code></pre>
+<p>Both classes are extended from <a href="http://leafletjs.com/reference.html#polyline">L.Polyline</a>, so all methods, events and options for <code>L.Polyline</code> can be used with <code>L.Geodesic</code> and <code>L.GeodesicCircle</code> here as well.</p>
 
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles]).addTo(map);
-geodesic.addLatLng(Beijing);    <span class="hljs-comment">// results in [[Berlin, LosAngeles, Beijing]</span></code></pre>
-				<p>The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the <code>points</code> property before and hand over a specific linestring as second parameter:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
-<span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span> );
-<span class="hljs-keyword">const</span> Capetown =  <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.94</span>, <span class="hljs-number">18.39</span> );
-<span class="hljs-keyword">const</span> Santiago = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">-33.44</span>, <span class="hljs-number">-70.71</span>);
+<a href="#geodesic-lines" id="geodesic-lines" style="color: inherit; text-decoration: none;">
+  <h2>Geodesic Lines</h2>
+</a>
+<p>This draws a line. The geometry (points) to use can be given during creation as:</p>
 
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([[Berlin, LosAngeles], [Santiago, Capetown]]).addTo(map);
-geodesic.addLatLng(Beijing, geodesic.points[<span class="hljs-number">0</span>]);    <span class="hljs-comment">// results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]</span></code></pre>
-				<a href="#line-options" id="line-options" style="color: inherit; text-decoration: none;">
-					<h3>Line Options</h3>
-				</a>
-				<p>All options defined for <a href="http://leafletjs.com/reference.html#polyline">Polyline</a> and <a href="https://leafletjs.com/reference.html#path">Path</a> for can be used Leaflet.Geodesic.</p>
-				<p>The most important options are:</p>
-				<table>
-					<thead>
-						<tr>
-							<th>Option</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td><code>color</code></td>
-							<td><code>String</code></td>
-							<td>&quot;#3388ff&quot;</td>
-							<td>Stroke color</td>
-						</tr>
-						<tr>
-							<td><code>weight</code></td>
-							<td><code>Number</code></td>
-							<td>3</td>
-							<td>Stroke width in pixels</td>
-						</tr>
-						<tr>
-							<td><code>opacity</code></td>
-							<td><code>Number</code></td>
-							<td>1.0</td>
-							<td>Stroke opacity (0=transparent, 1=opaque)</td>
-						</tr>
-						<tr>
-							<td><code>steps</code></td>
-							<td><code>Number</code></td>
-							<td>3</td>
-							<td>Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8</td>
-						</tr>
-						<tr>
-							<td><code>wrap</code></td>
-							<td><code>Boolean</code></td>
-							<td>true</td>
-							<td>Wrap geodesic line at antimeridian. Set to <code>false</code>, to draw a line over the antimeridian. See <a href="https://blog.cyclemap.link/Leaflet.Geodesic/nowrap-interactive.html">no-wrap demo</a> for example.</td>
-						</tr>
-				</tbody></table>
-				<p>Example:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> LosAngeles = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">33.82</span>, <span class="hljs-number">-118.38</span>);
-<span class="hljs-keyword">const</span> options = {
-    <span class="hljs-attr">weight</span>: <span class="hljs-number">20</span>,
-    <span class="hljs-attr">opacity</span>: <span class="hljs-number">0.5</span>,
-    <span class="hljs-attr">color</span>: <span class="hljs-string">'red'</span>,
-};
-<span class="hljs-keyword">const</span> geodesic = <span class="hljs-keyword">new</span> L.Geodesic([Berlin, LosAngeles], options).addTo(map);</code></pre>
-				<p><img src="docs/img/lineoptions.png" alt="lineoptions"></p>
-				<a href="#geodesic-circles" id="geodesic-circles" style="color: inherit; text-decoration: none;">
-					<h2>Geodesic Circles</h2>
-				</a>
-				<p>Circles can be added with another class called <code>L.GeodesicCircle</code> as follows:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Seattle = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">47.56</span>, <span class="hljs-number">-122.33</span>);
-<span class="hljs-keyword">const</span> geodesiccircle = <span class="hljs-keyword">new</span> L.GeodesicCircle(Seattle, {
-    <span class="hljs-attr">radius</span>: <span class="hljs-number">3000</span>*<span class="hljs-number">1000</span>,  <span class="hljs-comment">// 3000km in meters</span>
-}).addTo(map);   </code></pre>
-				<p><img src="docs/img/circle.png" alt="circle"></p>
-				<p>The geometry of a circle can be updated with the following methods:</p>
-				<ul>
-					<li><code>setLatLng(latlng: L.LatLngExpression)</code> - set a new center</li>
-					<li><code>setRadius(radius: number)</code> - update the radius</li>
-				</ul>
-				<p>Handling of <strong>filled</strong> circles crossing the antimeridian (wrapping) is not yet supported. Set <code>fill: false</code> in these cases to avoid display artefacts.</p>
-				<a href="#circle-options" id="circle-options" style="color: inherit; text-decoration: none;">
-					<h3>Circle Options</h3>
-				</a>
-				<table>
-					<thead>
-						<tr>
-							<th>Option</th>
-							<th>Type</th>
-							<th>Default</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td><code>radius</code></td>
-							<td><code>Number</code></td>
-							<td>1000*1000</td>
-							<td>Radius in <strong>meters</strong></td>
-						</tr>
-						<tr>
-							<td><code>steps</code></td>
-							<td><code>Number</code></td>
-							<td>24</td>
-							<td>Number of segments that are used to approximate the circle.</td>
-						</tr>
-						<tr>
-							<td><code>fill</code></td>
-							<td><code>boolean</code></td>
-							<td>true</td>
-							<td>Draws a filled circle.</td>
-						</tr>
-						<tr>
-							<td><code>color</code></td>
-							<td><code>String</code></td>
-							<td>&quot;#3388ff&quot;</td>
-							<td>Stroke color</td>
-						</tr>
-						<tr>
-							<td><code>weight</code></td>
-							<td><code>Number</code></td>
-							<td>3</td>
-							<td>Stroke width in pixels</td>
-						</tr>
-						<tr>
-							<td><code>opacity</code></td>
-							<td><code>Number</code></td>
-							<td>1.0</td>
-							<td>Stroke opacity (0=transparent, 1=opaque)</td>
-						</tr>
-				</tbody></table>
-				<p>Please refer to the options for <a href="http://leafletjs.com/reference.html#polyline">Polyline</a> and <a href="https://leafletjs.com/reference.html#path">Path</a> for additional settings.</p>
-				<a href="#statistics" id="statistics" style="color: inherit; text-decoration: none;">
-					<h2>Statistics</h2>
-				</a>
-				<p>The <code>L.Geodesic</code> and <code>L.GeodesicCircle</code>-class provide a <code>statistics</code>-Object with the following properties:</p>
-				<table>
-					<thead>
-						<tr>
-							<th>Property</th>
-							<th>Type</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody><tr>
-							<td><code>totalDistance</code></td>
-							<td><code>Number</code></td>
-							<td>The total distance of all geodesic lines in meters. (Circumfence for <code>L.GeodesicCircle</code>)</td>
-						</tr>
-						<tr>
-							<td><code>distanceArray</code></td>
-							<td><code>Number[]</code></td>
-							<td>The distance for each separate linestring in meters</td>
-						</tr>
-						<tr>
-							<td><code>points</code></td>
-							<td><code>Number</code></td>
-							<td>Number of points that were given on creation or with <code>setLatLngs()</code></td>
-						</tr>
-						<tr>
-							<td><code>vertices</code></td>
-							<td><code>Number</code></td>
-							<td>Number of vertices of all geodesic lines that were calculated</td>
-						</tr>
-				</tbody></table>
-				<a href="#distance-calculation" id="distance-calculation" style="color: inherit; text-decoration: none;">
-					<h2>Distance Calculation</h2>
-				</a>
-				<p>The <code>L.Geodesic</code> provides a <code>distance</code>-function to calculate the precise distance between two points:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span>);
+<a href="#objects-literals" id="objects-literals" style="color: inherit; text-decoration: none;">
+  <h3>Objects (Literals)</h3>
+</a>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = {</span><span class="hl-10">lat:</span><span class="hl-7"> </span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-10">lng:</span><span class="hl-7"> </span><span class="hl-11">13.35</span><span class="hl-7">};</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = {</span><span class="hl-10">lat:</span><span class="hl-7"> </span><span class="hl-11">33.82</span><span class="hl-7">, </span><span class="hl-10">lng:</span><span class="hl-7"> -</span><span class="hl-11">118.38</span><span class="hl-7">};</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">]).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
 
-<span class="hljs-keyword">const</span> line = <span class="hljs-keyword">new</span> L.Geodesic();
-<span class="hljs-keyword">const</span> distance = line.distance(Berlin, Beijing);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-built_in">Math</span>.floor(distance<span class="hljs-regexp">/1000)} km`) /</span><span class="hljs-regexp">/ prints: 7379 km</span></span></span></code></pre>
-				<p>The <code>L.GeodesicCircle</code>-class provides a <code>distanceTo</code>-function to calculate the distance between the current center and any given point:</p>
-				<pre><code class="language-Javascript"><span class="hljs-keyword">const</span> Berlin = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">52.5</span>, <span class="hljs-number">13.35</span>);
-<span class="hljs-keyword">const</span> Beijing = <span class="hljs-keyword">new</span> L.LatLng(<span class="hljs-number">39.92</span>, <span class="hljs-number">116.39</span>);
+<a href="#latlng-class" id="latlng-class" style="color: inherit; text-decoration: none;">
+  <h3>LatLng-Class</h3>
+</a>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">]).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
 
-<span class="hljs-keyword">const</span> circle = <span class="hljs-keyword">new</span> L.GeodesicCircle(Berlin);
-<span class="hljs-keyword">const</span> distance = circle.distanceTo(Beijing);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-built_in">Math</span>.floor(distance<span class="hljs-regexp">/1000)} km`) /</span><span class="hljs-regexp">/ prints: 7379 km</span></span></span></code></pre>
-				<a href="#scientific-background" id="scientific-background" style="color: inherit; text-decoration: none;">
-					<h2>Scientific background</h2>
-				</a>
-				<p>All calculations are based on the <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84">WGS84-Ellipsoid</a> (EPSG:4326) using <a href="https://en.wikipedia.org/wiki/Vincenty%27s_formulae">Vincenty&#39;s formulae</a>. This method leads to very precise calculations but may fail for some corner-cases (e.g. <a href="https://en.wikipedia.org/wiki/Antipodes">Antipodes</a>). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn&#39;t plan a space mission based on this data. OMG, this section has just become a disclaimer...</p>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
-					</li>
-					<li class=" tsd-kind-module tsd-is-not-exported">
-						<a href="modules/_leaflet_.html">&quot;leaflet&quot;</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/geodesiccircleclass.html" class="tsd-kind-icon">Geodesic<wbr>Circle<wbr>Class</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/geodesiccore.html" class="tsd-kind-icon">Geodesic<wbr>Core</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/geodesicgeometry.html" class="tsd-kind-icon">Geodesic<wbr>Geometry</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/geodesicline.html" class="tsd-kind-icon">Geodesic<wbr>Line</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/geodistance.html" class="tsd-kind-icon">Geo<wbr>Distance</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/geodesicoptions.html" class="tsd-kind-icon">Geodesic<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/statistics.html" class="tsd-kind-icon">Statistics</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/wgs84vector.html" class="tsd-kind-icon">WGS84<wbr>Vector</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#instanceoflatlngexpression" class="tsd-kind-icon">instance<wbr>OfLat<wbr>Lng<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#instanceoflatlngliteral" class="tsd-kind-icon">instance<wbr>OfLat<wbr>Lng<wbr>Literal</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#instanceoflatlngtuple" class="tsd-kind-icon">instance<wbr>OfLat<wbr>Lng<wbr>Tuple</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#latlngexpressionarraytolatlngarray" class="tsd-kind-icon">latlng<wbr>Expression<wbr>Arrayto<wbr>Lat<wbr>Lng<wbr>Array</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#latlngexpressiontolatlng" class="tsd-kind-icon">latlng<wbr>Expressionto<wbr>Lat<wbr>Lng</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
-				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
-				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
-				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
-</body>
-</html>
+<a href="#tuples" id="tuples" style="color: inherit; text-decoration: none;">
+  <h3>Tuples</h3>
+</a>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = [</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">];</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = [</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">];</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">]).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/line.png" alt="line"></p>
+
+<a href="#line-strings" id="line-strings" style="color: inherit; text-decoration: none;">
+  <h3>Line-strings</h3>
+</a>
+<p>Multiple consecutive points can be given as an array (linestring):</p>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">places</span><span class="hl-7"> = [</span><br/><span class="hl-7">    </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">), </span><span class="hl-0">// Berlin</span><br/><span class="hl-7">    </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">), </span><span class="hl-0">// Los Angeles</span><br/><span class="hl-7">    </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.44</span><span class="hl-7">, -</span><span class="hl-11">70.71</span><span class="hl-7">), </span><span class="hl-0">// Santiago</span><br/><span class="hl-7">    </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.94</span><span class="hl-7">, </span><span class="hl-11">18.39</span><span class="hl-7">), </span><span class="hl-0">// Capetown</span><br/><span class="hl-7">];</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">(</span><span class="hl-10">places</span><span class="hl-7">).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/linestring.png" alt="linestring"></p>
+
+<a href="#multi-line-strings" id="multi-line-strings" style="color: inherit; text-decoration: none;">
+  <h3>Multi-line-strings</h3>
+</a>
+<p>Multiple independent linestrings can be defined as a 2-dimensional array of points:</p>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">places</span><span class="hl-7"> = [</span><br/><span class="hl-7">    [   </span><span class="hl-0">// 1st line</span><br/><span class="hl-7">        </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">), </span><span class="hl-0">// Berlin</span><br/><span class="hl-7">        </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">), </span><span class="hl-0">// Los Angeles</span><br/><span class="hl-7">    ],</span><br/><span class="hl-7">    [   </span><span class="hl-0">// 2nd line</span><br/><span class="hl-7">        </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.44</span><span class="hl-7">, -</span><span class="hl-11">70.71</span><span class="hl-7">), </span><span class="hl-0">// Santiago</span><br/><span class="hl-7">        </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.94</span><span class="hl-7">, </span><span class="hl-11">18.39</span><span class="hl-7">), </span><span class="hl-0">// Capetown</span><br/><span class="hl-7">    ]</span><br/><span class="hl-7">];</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">(</span><span class="hl-10">places</span><span class="hl-7">).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/multilinestring.png" alt="multilinestring"></p>
+
+<a href="#geojson-support" id="geojson-support" style="color: inherit; text-decoration: none;">
+  <h3>GeoJSON-Support</h3>
+</a>
+<p>GeoJSON-data can be used to create geodesic lines with the <code>fromGeoJson()</code> method:</p>
+<pre><code class="language-JavaScript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geojson</span><span class="hl-7"> = {</span><br/><span class="hl-7">    </span><span class="hl-12">&quot;type&quot;</span><span class="hl-10">:</span><span class="hl-7"> </span><span class="hl-12">&quot;LineString&quot;</span><span class="hl-7">,</span><br/><span class="hl-7">    </span><span class="hl-12">&quot;coordinates&quot;</span><span class="hl-10">:</span><span class="hl-7"> [</span><br/><span class="hl-7">        [</span><span class="hl-11">13.35</span><span class="hl-7">, </span><span class="hl-11">52.5</span><span class="hl-7">], [-</span><span class="hl-11">122.33</span><span class="hl-7">, </span><span class="hl-11">47.56</span><span class="hl-7">], [</span><span class="hl-11">18.39</span><span class="hl-7">, -</span><span class="hl-11">33.94</span><span class="hl-7">], [</span><span class="hl-11">116.39</span><span class="hl-7">, </span><span class="hl-11">39.92</span><span class="hl-7">], [</span><span class="hl-11">13.35</span><span class="hl-7">, </span><span class="hl-11">52.5</span><span class="hl-7">]</span><br/><span class="hl-7">    ]</span><br/><span class="hl-7">};</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span><br/><span class="hl-10">geodesic</span><span class="hl-7">.</span><span class="hl-9">fromGeoJson</span><span class="hl-7">(</span><span class="hl-10">geojson</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/geojson.png" alt="geojson"></p>
+
+<a href="#updating-the-geometry" id="updating-the-geometry" style="color: inherit; text-decoration: none;">
+  <h3>Updating the geometry</h3>
+</a>
+
+<a href="#set-new-geometry" id="set-new-geometry" style="color: inherit; text-decoration: none;">
+  <h4>Set new geometry</h4>
+</a>
+<p>The Geodesic-Class provides a <code>setLatLngs()</code>-Method, that can be used to update the geometry of an existing <code>L.Geodesic</code>-object:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">().</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span><span class="hl-0">// add empty object to the map</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><br/><span class="hl-10">geodesic</span><span class="hl-7">.</span><span class="hl-9">setLatLngs</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">])   </span><span class="hl-0">// update in-place</span>
+</code></pre>
+<p>The <code>setLatLngs()</code>-Method accepts the same types (Literal, Tuple, LatLang-Class, Linstring, Multilinestring) as the L.Geodesic-constructor itself. Please refer to the section about geodesic circles below, on how to update a circle geometry.</p>
+
+<a href="#delete-geometry" id="delete-geometry" style="color: inherit; text-decoration: none;">
+  <h4>Delete geometry</h4>
+</a>
+<p>Delete the existing geometry by setting an empty array <code>geodesic.setLatLngs([])</code>.</p>
+
+<a href="#adding-points" id="adding-points" style="color: inherit; text-decoration: none;">
+  <h4>adding points</h4>
+</a>
+<p>Points can be added to existing geodesic lines with <code>addLatLng()</code>:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Beijing</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">39.92</span><span class="hl-7">, </span><span class="hl-11">116.39</span><span class="hl-7">);</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">]).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span><br/><span class="hl-10">geodesic</span><span class="hl-7">.</span><span class="hl-9">addLatLng</span><span class="hl-7">(</span><span class="hl-10">Beijing</span><span class="hl-7">);    </span><span class="hl-0">// results in [[Berlin, LosAngeles, Beijing]</span>
+</code></pre>
+<p>The new point will always be added to the last linestring of a multiline. You can define a specific linestring to add to by reading the <code>points</code> property before and hand over a specific linestring as second parameter:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Beijing</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">39.92</span><span class="hl-7">, </span><span class="hl-11">116.39</span><span class="hl-7"> );</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Capetown</span><span class="hl-7"> =  </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.94</span><span class="hl-7">, </span><span class="hl-11">18.39</span><span class="hl-7"> );</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Santiago</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.44</span><span class="hl-7">, -</span><span class="hl-11">70.71</span><span class="hl-7">);</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([[</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">], [</span><span class="hl-10">Santiago</span><span class="hl-7">, </span><span class="hl-10">Capetown</span><span class="hl-7">]]).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span><br/><span class="hl-10">geodesic</span><span class="hl-7">.</span><span class="hl-9">addLatLng</span><span class="hl-7">(</span><span class="hl-10">Beijing</span><span class="hl-7">, </span><span class="hl-10">geodesic</span><span class="hl-7">.</span><span class="hl-10">points</span><span class="hl-7">[</span><span class="hl-11">0</span><span class="hl-7">]);    </span><span class="hl-0">// results in [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]</span>
+</code></pre>
+
+<a href="#drawing-over-the-antimeridian" id="drawing-over-the-antimeridian" style="color: inherit; text-decoration: none;">
+  <h3>Drawing over the antimeridian</h3>
+</a>
+<p>In some cases it is required to draw over the antimeridian (dateline) to show a continuous path. This is possible by setting the <code>wrap</code>-option to false. Leaflet.Geodesic will make sure to shift the individual points to draw a continuous line, even if the coordinates are not properly aligned to a map section. See <a href="multiline-nosplit.html">interactive example</a></p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Beijing</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">39.92</span><span class="hl-7">, </span><span class="hl-11">116.39</span><span class="hl-7"> );</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Capetown</span><span class="hl-7"> =  </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.94</span><span class="hl-7">, </span><span class="hl-11">18.39</span><span class="hl-7"> );</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Santiago</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.44</span><span class="hl-7">, -</span><span class="hl-11">70.71</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Tokyo</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">35.47</span><span class="hl-7">, </span><span class="hl-11">139.15</span><span class="hl-7"> + </span><span class="hl-11">360</span><span class="hl-7">);    </span><span class="hl-0">// these points are in another map section</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Sydney</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(-</span><span class="hl-11">33.91</span><span class="hl-7">, </span><span class="hl-11">151.08</span><span class="hl-7"> + </span><span class="hl-11">10</span><span class="hl-7"> * </span><span class="hl-11">360</span><span class="hl-7">); </span><span class="hl-0">// but will get shifted accordingly</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">geodesic</span><span class="hl-7">(</span><br/><span class="hl-7">    [ </span><span class="hl-10">Santiago</span><span class="hl-7">, </span><span class="hl-10">Tokyo</span><span class="hl-7">, </span><span class="hl-10">Capetown</span><span class="hl-7">, </span><span class="hl-10">Sydney</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">, </span><span class="hl-10">Berlin</span><span class="hl-7">], </span><br/><span class="hl-7">    { </span><span class="hl-10">wrap:</span><span class="hl-7"> </span><span class="hl-6">false</span><br/><span class="hl-7">}).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/nowrap.png" alt="nowrap"></p>
+
+<a href="#line-options" id="line-options" style="color: inherit; text-decoration: none;">
+  <h3>Line Options</h3>
+</a>
+<p>All options defined for <a href="http://leafletjs.com/reference.html#polyline">Polyline</a> and <a href="https://leafletjs.com/reference.html#path">Path</a> for can be used Leaflet.Geodesic.</p>
+<p>The most important options are:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>color</code></td>
+<td><code>String</code></td>
+<td>&quot;#3388ff&quot;</td>
+<td>Stroke color</td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td><code>Number</code></td>
+<td>3</td>
+<td>Stroke width in pixels</td>
+</tr>
+<tr>
+<td><code>opacity</code></td>
+<td><code>Number</code></td>
+<td>1.0</td>
+<td>Stroke opacity (0=transparent, 1=opaque)</td>
+</tr>
+<tr>
+<td><code>steps</code></td>
+<td><code>Number</code></td>
+<td>3</td>
+<td>Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8</td>
+</tr>
+<tr>
+<td><code>wrap</code></td>
+<td><code>Boolean</code></td>
+<td>true</td>
+<td>Wrap geodesic line at antimeridian. Set to <code>false</code>, to draw a line over the antimeridian. See <a href="https://blog.cyclemap.link/Leaflet.Geodesic/nowrap-interactive.html">no-wrap demo</a> for example.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">LosAngeles</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">33.82</span><span class="hl-7">, -</span><span class="hl-11">118.38</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">options</span><span class="hl-7"> = {</span><br/><span class="hl-7">    </span><span class="hl-10">weight:</span><span class="hl-7"> </span><span class="hl-11">20</span><span class="hl-7">,</span><br/><span class="hl-7">    </span><span class="hl-10">opacity:</span><span class="hl-7"> </span><span class="hl-11">0.5</span><span class="hl-7">,</span><br/><span class="hl-7">    </span><span class="hl-10">color:</span><span class="hl-7"> </span><span class="hl-12">&#39;red&#39;</span><span class="hl-7">,</span><br/><span class="hl-7">};</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesic</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">([</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">LosAngeles</span><span class="hl-7">], </span><span class="hl-10">options</span><span class="hl-7">).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);</span>
+</code></pre>
+<p><img src="docs/img/lineoptions.png" alt="lineoptions"></p>
+
+<a href="#geodesic-circles" id="geodesic-circles" style="color: inherit; text-decoration: none;">
+  <h2>Geodesic Circles</h2>
+</a>
+<p>Circles can be added with another class called <code>L.GeodesicCircle</code> as follows:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Seattle</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">47.56</span><span class="hl-7">, -</span><span class="hl-11">122.33</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">geodesiccircle</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">GeodesicCircle</span><span class="hl-7">(</span><span class="hl-10">Seattle</span><span class="hl-7">, {</span><br/><span class="hl-7">    </span><span class="hl-10">radius:</span><span class="hl-7"> </span><span class="hl-11">3000</span><span class="hl-7">*</span><span class="hl-11">1000</span><span class="hl-7">,  </span><span class="hl-0">// 3000km in meters</span><br/><span class="hl-7">}).</span><span class="hl-9">addTo</span><span class="hl-7">(</span><span class="hl-10">map</span><span class="hl-7">);   </span>
+</code></pre>
+<p><img src="docs/img/circle.png" alt="circle"></p>
+<p>The geometry of a circle can be updated with the following methods:</p>
+<ul>
+<li><code>setLatLng(latlng: L.LatLngExpression)</code> - set a new center</li>
+<li><code>setRadius(radius: number)</code> - update the radius</li>
+</ul>
+<p>Handling of <strong>filled</strong> circles crossing the antimeridian (wrapping) is not yet supported. Set <code>fill: false</code> in these cases to avoid display artefacts.</p>
+
+<a href="#circle-options" id="circle-options" style="color: inherit; text-decoration: none;">
+  <h3>Circle Options</h3>
+</a>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>radius</code></td>
+<td><code>Number</code></td>
+<td>1000*1000</td>
+<td>Radius in <strong>meters</strong></td>
+</tr>
+<tr>
+<td><code>steps</code></td>
+<td><code>Number</code></td>
+<td>24</td>
+<td>Number of segments that are used to approximate the circle.</td>
+</tr>
+<tr>
+<td><code>fill</code></td>
+<td><code>boolean</code></td>
+<td>true</td>
+<td>Draws a filled circle.</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>String</code></td>
+<td>&quot;#3388ff&quot;</td>
+<td>Stroke color</td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td><code>Number</code></td>
+<td>3</td>
+<td>Stroke width in pixels</td>
+</tr>
+<tr>
+<td><code>opacity</code></td>
+<td><code>Number</code></td>
+<td>1.0</td>
+<td>Stroke opacity (0=transparent, 1=opaque)</td>
+</tr>
+</tbody></table>
+<p>Please refer to the options for <a href="http://leafletjs.com/reference.html#polyline">Polyline</a> and <a href="https://leafletjs.com/reference.html#path">Path</a> for additional settings.</p>
+
+<a href="#statistics" id="statistics" style="color: inherit; text-decoration: none;">
+  <h2>Statistics</h2>
+</a>
+<p>The <code>L.Geodesic</code> and <code>L.GeodesicCircle</code>-class provide a <code>statistics</code>-Object with the following properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>totalDistance</code></td>
+<td><code>Number</code></td>
+<td>The total distance of all geodesic lines in meters. (Circumfence for <code>L.GeodesicCircle</code>)</td>
+</tr>
+<tr>
+<td><code>distanceArray</code></td>
+<td><code>Number[]</code></td>
+<td>The distance for each separate linestring in meters</td>
+</tr>
+<tr>
+<td><code>points</code></td>
+<td><code>Number</code></td>
+<td>Number of points that were given on creation or with <code>setLatLngs()</code></td>
+</tr>
+<tr>
+<td><code>vertices</code></td>
+<td><code>Number</code></td>
+<td>Number of vertices of all geodesic lines that were calculated</td>
+</tr>
+</tbody></table>
+
+<a href="#distance-calculation" id="distance-calculation" style="color: inherit; text-decoration: none;">
+  <h2>Distance Calculation</h2>
+</a>
+<p>The <code>L.Geodesic</code> provides a <code>distance</code>-function to calculate the precise distance between two points:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Beijing</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">39.92</span><span class="hl-7">, </span><span class="hl-11">116.39</span><span class="hl-7">);</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">line</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">Geodesic</span><span class="hl-7">();</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">distance</span><span class="hl-7"> = </span><span class="hl-10">line</span><span class="hl-7">.</span><span class="hl-9">distance</span><span class="hl-7">(</span><span class="hl-10">Berlin</span><span class="hl-7">, </span><span class="hl-10">Beijing</span><span class="hl-7">);</span><br/><span class="hl-10">console</span><span class="hl-7">.</span><span class="hl-9">log</span><span class="hl-7">(</span><span class="hl-12">`</span><span class="hl-6">${</span><span class="hl-13">Math</span><span class="hl-3">.</span><span class="hl-9">floor</span><span class="hl-3">(</span><span class="hl-10">distance</span><span class="hl-7">/</span><span class="hl-11">1000</span><span class="hl-3">)</span><span class="hl-6">}</span><span class="hl-12"> km`</span><span class="hl-7">) </span><span class="hl-0">// prints: 7379 km</span>
+</code></pre>
+<p>The <code>L.GeodesicCircle</code>-class provides a <code>distanceTo</code>-function to calculate the distance between the current center and any given point:</p>
+<pre><code class="language-Javascript"><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Berlin</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">52.5</span><span class="hl-7">, </span><span class="hl-11">13.35</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">Beijing</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">LatLng</span><span class="hl-7">(</span><span class="hl-11">39.92</span><span class="hl-7">, </span><span class="hl-11">116.39</span><span class="hl-7">);</span><br/><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">circle</span><span class="hl-7"> = </span><span class="hl-6">new</span><span class="hl-7"> </span><span class="hl-8">L</span><span class="hl-7">.</span><span class="hl-9">GeodesicCircle</span><span class="hl-7">(</span><span class="hl-10">Berlin</span><span class="hl-7">);</span><br/><span class="hl-6">const</span><span class="hl-7"> </span><span class="hl-8">distance</span><span class="hl-7"> = </span><span class="hl-10">circle</span><span class="hl-7">.</span><span class="hl-9">distanceTo</span><span class="hl-7">(</span><span class="hl-10">Beijing</span><span class="hl-7">);</span><br/><span class="hl-10">console</span><span class="hl-7">.</span><span class="hl-9">log</span><span class="hl-7">(</span><span class="hl-12">`</span><span class="hl-6">${</span><span class="hl-13">Math</span><span class="hl-3">.</span><span class="hl-9">floor</span><span class="hl-3">(</span><span class="hl-10">distance</span><span class="hl-7">/</span><span class="hl-11">1000</span><span class="hl-3">)</span><span class="hl-6">}</span><span class="hl-12"> km`</span><span class="hl-7">) </span><span class="hl-0">// prints: 7379 km</span>
+</code></pre>
+
+<a href="#scientific-background" id="scientific-background" style="color: inherit; text-decoration: none;">
+  <h2>Scientific background</h2>
+</a>
+<p>All calculations are based on the <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84">WGS84-Ellipsoid</a> (EPSG:4326) using <a href="https://en.wikipedia.org/wiki/Vincenty%27s_formulae">Vincenty&#39;s formulae</a>. This method leads to very precise calculations but may fail for some corner-cases (e.g. <a href="https://en.wikipedia.org/wiki/Antipodes">Antipodes</a>). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn&#39;t plan a space mission based on this data. OMG, this section has just become a disclaimer...</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Modules</a></li><li class=" tsd-kind-module"><a href="modules/geodesic_circle.html">geodesic-<wbr/>circle</a></li><li class=" tsd-kind-module"><a href="modules/geodesic_core.html">geodesic-<wbr/>core</a></li><li class=" tsd-kind-module"><a href="modules/geodesic_geom.html">geodesic-<wbr/>geom</a></li><li class=" tsd-kind-module"><a href="modules/geodesic_line.html">geodesic-<wbr/>line</a></li><li class=" tsd-kind-module"><a href="modules/index.html">index</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>

@@ -33,3 +33,7 @@ Click on an image to open the demo:
 ## No Wrap Interactive
 
 [![nowrap-interactive](img/nowrap-interactive.png)](nowrap-interactive.html)
+
+## Continuous Drawing
+
+[![multiline-nosplit](img/multiline-nosplit.png)](multiline-nosplit.html)

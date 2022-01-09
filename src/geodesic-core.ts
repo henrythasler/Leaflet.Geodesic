@@ -247,7 +247,7 @@ export class GeodesicCore {
      * @return Final point (destination point) and bearing (in degrees)
      */
     direct(start: L.LatLng, bearing: number, distance: number, maxInterations = 100): WGS84Vector {
-        const φ1 = this.toRadians(start.lat)
+        const φ1 = this.toRadians(start.lat);
         const λ1 = this.toRadians(start.lng);
         const α1 = this.toRadians(bearing);
         const s = distance;
@@ -297,7 +297,7 @@ export class GeodesicCore {
             lat: this.toDegrees(φ2),
             lng: this.toDegrees(λ2),
             bearing: this.wrap360(this.toDegrees(α2))
-        }
+        };
     }
 
     /**
