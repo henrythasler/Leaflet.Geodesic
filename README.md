@@ -195,7 +195,7 @@ Option  | Type | Default | Description
 `color` |	`String` | "#3388ff" | Stroke color
 `weight` | `Number` | 3 | Stroke width in pixels
 `opacity` | `Number` | 1.0 | Stroke opacity (0=transparent, 1=opaque)
-`steps` | `Number` | 3 | Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line. Range: 0..8
+`steps` | `Number` | 3 | Level of detail (vertices = 1+2**(steps+1)) for the geodesic line. More steps result in a smoother line.
 `wrap` | `Boolean` | true | Wrap geodesic line at antimeridian. Set to `false`, to draw a line over the antimeridian. See [no-wrap demo](https://blog.cyclemap.link/Leaflet.Geodesic/nowrap-interactive.html) for example.
 
 Example:
@@ -283,4 +283,4 @@ console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
 
 ## Scientific background
 
-All calculations are based on the [WGS84-Ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84) (EPSG:4326) using [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). This method leads to very precise calculations but may fail for some corner-cases (e.g. [Antipodes](https://en.wikipedia.org/wiki/Antipodes)). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn't plan a space mission based on this data. OMG, this section has just become a disclaimer...
+All calculations (except midpoint generation which is done on a sphere) are based on the [WGS84-Ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84) (EPSG:4326) using [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). This method leads to very precise calculations but may fail for some corner-cases (e.g. [Antipodes](https://en.wikipedia.org/wiki/Antipodes)). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn't plan a space mission based on this data. OMG, this section has just become a disclaimer...

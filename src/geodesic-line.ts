@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import { GeodesicOptions } from "./geodesic-core"
+import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
@@ -7,8 +7,6 @@ import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "..
  * Draw geodesic lines based on L.Polyline
  */
 export class GeodesicLine extends L.Polyline {
-    /** these should be good for most use-cases */
-    defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
     /** does the actual geometry calculations */
     readonly geom: GeodesicGeometry;
     /** use this if you need some detailled info about the current geometry */
@@ -16,11 +14,11 @@ export class GeodesicLine extends L.Polyline {
     /** stores all positions that are used to create the geodesic line */
     points: L.LatLng[][] = [];
 
-    constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
+    constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: Partial<GeodesicOptions>) {
         super([], options);
-        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
+        L.Util.setOptions(this, { ...DEFAULT_GEODESIC_OPTIONS, ...options });
 
-        this.geom = new GeodesicGeometry(this.options);
+        this.geom = new GeodesicGeometry(this.options as RawGeodesicOptions);
 
         if (latlngs !== undefined) {
             this.setLatLngs(latlngs);
@@ -28,19 +26,25 @@ export class GeodesicLine extends L.Polyline {
     }
 
     /** calculates the geodesics and update the polyline-object accordingly */
-    private updateGeometry(): void {
-        let geodesic: L.LatLng[][] = [];
+    private updateGeometry(updateStats = (this.options as RawGeodesicOptions).updateStatisticsAfterRedrawing): void {
+        let geodesic = this.geom.multiLineString(this.points), opts = this.options as RawGeodesicOptions, latLngs;
 
-        geodesic = this.geom.multiLineString(this.points);
-        this.statistics = this.geom.updateStatistics(this.points, geodesic);
-        
-        if ((this.options as GeodesicOptions).wrap) {
-            const split = this.geom.splitMultiLineString(geodesic);
-            super.setLatLngs(split);
+        if (updateStats) {
+            this.statistics = this.geom.updateStatistics(this.points, geodesic);
         }
-        else {
-            super.setLatLngs(this.geom.wrapMultiLineString(geodesic));
+
+        if (opts.useNaturalDrawing) {
+            latLngs = geodesic;
+        } else if (opts.wrap) {
+            latLngs = this.geom.splitMultiLineString(geodesic);
+        } else  {
+            latLngs = this.geom.wrapMultiLineString(geodesic);
         }
+        super.setLatLngs(latLngs);
+    }
+
+    updateStatistics() {
+        this.updateGeometry(true);
     }
 
     /**

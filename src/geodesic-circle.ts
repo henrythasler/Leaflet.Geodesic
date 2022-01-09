@@ -1,28 +1,28 @@
 import * as L from "leaflet";
 import { GeodesicGeometry, Statistics } from "./geodesic-geom"
-import { GeodesicOptions } from "./geodesic-core"
+import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
 import { latlngExpressiontoLatLng } from "./types-helper";
 
 /**
  * Can be used to create a geodesic circle based on L.Polyline
  */
 export class GeodesicCircleClass extends L.Polyline {
-    defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
     readonly geom: GeodesicGeometry;
     center: L.LatLng;
     radius: number;
     statistics: Statistics = {} as any;
 
-    constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
+    constructor(center?: L.LatLngExpression, options?: Partial<GeodesicOptions>) {
         super([], options);
-        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
+
+        L.Util.setOptions(this, {...DEFAULT_GEODESIC_OPTIONS, wrap: true, steps: 24, fill: true, noClip: true, ...options});
 
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;
         this.radius = (extendedOptions.radius === undefined) ? 1000 * 1000 : extendedOptions.radius;
         this.center = (center === undefined) ? new L.LatLng(0, 0) : latlngExpressiontoLatLng(center);
 
-        this.geom = new GeodesicGeometry(this.options);
+        this.geom = new GeodesicGeometry(this.options as RawGeodesicOptions);
 
         // update the geometry
         this.update();
@@ -30,11 +30,15 @@ export class GeodesicCircleClass extends L.Polyline {
 
     /**
      * Updates the geometry and re-calculates some statistics
+     * @param updateStats -
      */
-    private update(): void {
+    private update(updateStats = (this.options as RawGeodesicOptions).updateStatisticsAfterRedrawing): void {
         const circle = this.geom.circle(this.center, this.radius);
 
-        this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
+        if (updateStats) {
+            this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
+        }
+
         // circumfence must be re-calculated from geodesic 
         this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
@@ -45,6 +49,10 @@ export class GeodesicCircleClass extends L.Polyline {
         else {
             super.setLatLngs(circle);
         }
+    }
+
+    updateStatistics() {
+        this.update(true);
     }
 
     /**

@@ -34,13 +34,23 @@ export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
 
 export function latlngExpressionArraytoLatLngArray(input: L.LatLngExpression[] | L.LatLngExpression[][]): L.LatLng[][] {
     let latlng: L.LatLng[][] = [],
-            iterateOver = (instanceOfLatLngExpression(input[0]) ? [input] : input) as L.LatLngExpression[][];
+            iterateOver = (instanceOfLatLngExpression(input[0]) ? [input] : input),
+            error = new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
 
-    for (let group of iterateOver) {
+    if (!(iterateOver instanceof Array)) {
+        throw error;
+    }
+
+    for (let group of iterateOver as L.LatLngExpression[][]) {
+
+        if (!(group instanceof Array)) {
+            throw error;
+        }
+
         let sub = [];
         for (let point of group) {
             if (!instanceOfLatLngExpression(point)) {
-                throw new Error("L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found.");
+                throw error;
             }
             sub.push(latlngExpressiontoLatLng(point));
         }

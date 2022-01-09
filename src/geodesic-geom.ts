@@ -1,5 +1,10 @@
 import * as L from "leaflet";
-import { GeodesicCore, GeodesicOptions, WGS84Vector } from "./geodesic-core"
+import {
+    DEFAULT_GEODESIC_OPTIONS,
+    GeodesicCore,
+    RawGeodesicOptions,
+    WGS84Vector
+} from "./geodesic-core"
 
 /** detailled information of the current geometry */
 export interface Statistics {
@@ -15,26 +20,32 @@ export interface Statistics {
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
+    private options: RawGeodesicOptions;
     steps: number;
 
-    constructor(options?: GeodesicOptions) {
-        this.steps = (options && options.steps !== undefined) ? options.steps : 3;
+    constructor(options?: Partial<RawGeodesicOptions>) {
+       this.options = {...DEFAULT_GEODESIC_OPTIONS, ...options};
+       this.steps = this.options.steps;
     }
 
     /**
-     * A geodesic line between `start` and `dest` is created with this recursive function. 
+     * Deprecated in favor of algorithm used by {@link GeodesicGeometry.line}
+     *
+     * A geodesic line between `start` and `dest` is created with this recursive function.
      * It calculates the geodesic midpoint between `start` and `dest` and uses this midpoint to call itself again (twice!).
-     * The results are then merged into one continuous linestring. 
-     * 
-     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations` 
-     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1) 
-     * 
+     * The results are then merged into one continuous linestring.
+     *
+     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations`
+     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1)
+     *
      * As this is an exponential function, be extra careful to limit the initial value for `iterations` (8 results in 513 vertices).
-     * 
-     * @param start start position 
+     *
+     * @param start start position
      * @param dest destination
-     * @param iterations 
+     * @param iterations
      * @return resulting linestring
+     *
+     * @deprecated
      */
     recursiveMidpoint(start: L.LatLng, dest: L.LatLng, iterations: number): L.LatLng[] {
         const geom: L.LatLng[] = [start, dest];
@@ -50,27 +61,164 @@ export class GeodesicGeometry {
     }
 
     /**
-     * This is the wrapper-function to generate a geodesic line. It's just for future backwards-compatibility
-     * if there is another algorithm used to create the actual line.
-     * 
-     * The `steps`-property is used to define the number of resulting vertices of the linestring: vertices == 1 + 2 ** (steps + 1)
-     * The value for `steps` is currently limited to 8 (513 vertices) for performance reasons until another algorithm is found.
-     * 
-     * @param start start position
-     * @param dest destination
+     * Generates a geodesic line.
+     *
+     * @param start Start position
+     * @param dest Destination
+     * @param useBigPart If both this and {@link RawGeodesicOptions.useNaturalDrawing} are true,
+     * will use big part of a great circle.
      * @return resulting linestring
      */
-    line(start: L.LatLng, dest: L.LatLng): L.LatLng[] {
-        return this.recursiveMidpoint(start, dest, Math.min(8, this.steps));
+    line(start: L.LatLng, dest: L.LatLng, useBigPart = false): L.LatLng[] {
+        let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
+                lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat),
+
+                // Call trig functions here for optimization
+                cosLng1 = Math.cos(lng1), sinLng1 = Math.sin(lng1), cosLat1 = Math.cos(lat1), sinLat1 = Math.sin(lat1),
+                cosLng2 = Math.cos(lng2), sinLng2 = Math.sin(lng2), cosLat2 = Math.cos(lat2), sinLat2 = Math.sin(lat2),
+
+                // Calculate great circle distance between these points
+                w = lng2 - lng1,
+                h = lat2 - lat1,
+                z = Math.sin(h / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(w / 2) ** 2,
+                d = 2 * Math.asin(Math.sqrt(z)),
+                coords = [];
+
+        // Get steps from either options.segmentsNumber or deprecated options.steps
+        let steps = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
+                this.options.segmentsNumber;
+
+        // If undefined was passed to either of options. Needed for backwards compatibility.
+        if (isNaN(steps)) {
+            steps = 16;
+        }
+
+        // TODO: Check actual 0 length
+        if (this.geodesic.isLessThanOrEqualTo(d, 0)) {
+            d = useBigPart ? 0 : Math.PI * 2;
+        }
+
+        // 100% of line length. Increasing this number will lengthen the line from dest point.
+        // Negative length won't reverse the line. Negative start fraction won't lengthen the line from the start.
+        let len = 1;
+        if (this.options.useNaturalDrawing) {
+            // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
+            let diff = Math.abs(dest.lng - start.lng), revolutions = Math.round(diff / 360);
+
+            // This is passed by naturalDrawingLine() when regular line goes to wrong direction.
+            if (useBigPart) {
+                d = Math.PI * 2 - d; // Get length of a big part by subtracting current distance from 360 deg
+            }
+
+            // Correct line length and steps for required revolutions
+            if (revolutions > 0) {
+                // Recalculate steps regardless whether we follow big or small line to maintain predictability.
+                if (!this.options.naturalDrawingFixedNumberOfSegments) {
+                    steps *= revolutions;
+                }
+
+                // Using new length results in one redundant revolution
+                if (useBigPart) {
+                    revolutions--;
+                }
+
+                len = (Math.PI * 2 * revolutions) / d + 1;
+            }
+        }
+
+        let sinD = Math.sin(d), f = 0, i = 0, prevF = -1, moveBy = len / steps;
+
+        while (true) {
+            // Otherwise, TS will throw a tantrum
+            if (this.options.breakPoints !== undefined && !this.options.useNaturalDrawing) {
+                if (i === this.options.breakPoints.length) {
+                    break;
+                }
+
+                f = this.options.breakPoints[i];
+
+                if (f < 0 || f > 1) {
+                    throw new Error(`Fractions should be in range [0; 1]. Received fraction ${f} at index ${i}.`)
+                }
+
+                if (f <= prevF && i !== 0) {
+                    throw new Error(`Each fraction should be greater than previous. Received fractions ${prevF} and ${f} at indices ${i - 1} and ${i} respectively.`);
+                }
+
+                i++;
+            } else if (!(this.geodesic.isLessThanOrEqualTo(f, len))) {
+                break;
+            }
+
+            let A = Math.sin((len - f) * d) / sinD,
+                    B = Math.sin(f * d) / sinD,
+                    x = A * cosLat1 * cosLng1 + B * cosLat2 * cosLng2,
+                    y = A * cosLat1 * sinLng1 + B * cosLat2 * sinLng2,
+                    z = A * sinLat1 + B * sinLat2,
+                    lat = this.geodesic.toDegrees(Math.atan2(z, Math.sqrt(x ** 2 + y ** 2))),
+                    lng = this.geodesic.toDegrees(Math.atan2(y, x));
+
+            coords.push(new L.LatLng(lat, lng));
+
+            prevF = f;
+            if (this.options.breakPoints === undefined) {
+                f += moveBy;
+            }
+        }
+
+        // Move the first point to its map, so wrapping will work correctly
+        if (this.options.useNaturalDrawing || !this.options.wrap) {
+            let firstPoint = coords[0];
+
+            if (!this.options.useNaturalDrawing && typeof this.options.moveNoWrapTo === "number") {
+                firstPoint.lng += this.options.moveNoWrapTo * 360;
+            } else {
+                firstPoint.lng += start.lng - firstPoint.lng;
+            }
+        }
+
+        return coords;
+    }
+
+    /**
+     * Generates a continuous geodesic line from exact start to exact dest with all required revolutions
+     * @param start start position
+     * @param dest destination
+     */
+    naturalDrawingLine (start: L.LatLng, dest: L.LatLng) {
+        // Generate a small (regular) line
+        let smallLine = this.wrapMultiLineString([this.line(start, dest)])[0], lngFrom, lngTo;
+
+        // If line won't be split, just return wrapped line to improve performance
+        if (Math.abs(start.lng - dest.lng) <= 180) {
+            return smallLine;
+        }
+
+        // Determine whether small line follows the direction from start to dest, i.e. if its last point is between
+        // start lng and dest lng. Otherwise, we'll use big part of a great circle to get line in desired direction.
+        if (start.lng < dest.lng) {
+            lngFrom = start.lng;
+            lngTo = dest.lng;
+        } else {
+            lngFrom = dest.lng;
+            lngTo = start.lng;
+        }
+
+        let lastLng = smallLine[smallLine.length - 1].lng,
+            useBigPart = !(this.geodesic.isGreaterThanOrEqualTo(lastLng, lngFrom) &&
+                    this.geodesic.isLessThanOrEqualTo(lastLng, lngTo)
+            );
+
+        return this.wrapMultiLineString([this.line(start, dest, useBigPart)])[0];
     }
 
     multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
-        const multiLineString: L.LatLng[][] = [];
+        const multiLineString: L.LatLng[][] = [], fn = this.options.useNaturalDrawing ? "naturalDrawingLine" : "line";
 
         for (let linestring of latlngs) {
             const segment: L.LatLng[] = [];
             for (let j = 1; j < linestring.length; j++) {
-                segment.splice(segment.length - 1, 1, ...this.line(linestring[j - 1], linestring[j]));
+                segment.splice(segment.length - 1, 1, ...this[fn](linestring[j - 1], linestring[j]));
             }
             multiLineString.push(segment);
         }
@@ -82,16 +230,16 @@ export class GeodesicGeometry {
     }
 
     /**
-     * 
+     *
      * Is much (10x) faster than the previous implementation:
-     * 
+     *
      * ```
      * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
      * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
      * ```
-     * 
-     * @param startPosition 
-     * @param destPosition 
+     *
+     * @param startPosition
+     * @param destPosition
      */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
@@ -161,12 +309,12 @@ export class GeodesicGeometry {
     }
 
     /**
-     * Linestrings of a given multilinestring that cross the antimeridian will be split in two separate linestrings. 
+     * Linestrings of a given multilinestring that cross the antimeridian will be split in two separate linestrings.
      * This function is used to wrap lines around when they cross the antimeridian
-     * It iterates over all linestrings and reconstructs the step-by-step if no split is needed. 
-     * In case the line was split, the linestring ends at the antimeridian and a new linestring is created for the 
+     * It iterates over all linestrings and reconstructs the step-by-step if no split is needed.
+     * In case the line was split, the linestring ends at the antimeridian and a new linestring is created for the
      * remaining points of the original linestring.
-     * 
+     *
      * @param multilinestring
      * @return another multilinestring where segments crossing the antimeridian are split
      */
@@ -208,21 +356,14 @@ export class GeodesicGeometry {
 
             // iterate over every point and check if it needs to be wrapped
             for (const point of linestring) {
-                if (previous === null) {
-                    // the first point is the anchor of the linestring from which the line will always start (w/o any wrapping applied)
-                    resultLine.push(new L.LatLng(point.lat, point.lng));
-                    previous = new L.LatLng(point.lat, point.lng);
-                }
-                else {  // I prefer clearly defined branches over a continue-operation.
+                // The first point is the anchor of the linestring from which the line will always start.
+                // If the difference between the current and *previous* point is greater than 360°,
+                // the current point needs to be shifted to be on the same 'sphere' as the previous one.
 
-                    // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted
-                    // to be on the same 'sphere' as the previous one.
-                    const offset = Math.round((point.lng - previous.lng) / 360);
-                    // shift the point accordingly and add to the result
-                    resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
-                    // use the wrapped point as the anchor for the next one
-                    previous = new L.LatLng(point.lat, point.lng - offset * 360);   // Need a new object here, to avoid changing the input data
-                }
+                const shift: number = previous === null ? 0 : Math.round((point.lng - previous.lng) / 360) * 360,
+                        newPoint = new L.LatLng(point.lat, point.lng - shift);
+                resultLine.push(newPoint);
+                previous = newPoint; // Use the wrapped point as the anchor for the next one
             }
             result.push(resultLine);
         }
@@ -232,7 +373,7 @@ export class GeodesicGeometry {
     /**
      * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
      * The number of vertices is calculated with: `vertices == steps + 1` (where 1st == last)
-     * 
+     *
      * @param center
      * @param radius
      * @return resulting linestring
@@ -256,7 +397,7 @@ export class GeodesicGeometry {
     splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
         let result: L.LatLng[][] = this.splitMultiLineString([linestring]);
 
-        // If the circle was split, it results in exactly three linestrings where first and last  
+        // If the circle was split, it results in exactly three linestrings where first and last
         // must be re-assembled because they belong to the same "side" of the split circle.
         if (result.length === 3) {
             result[2] = [...result[2], ...result[0]];
@@ -294,7 +435,12 @@ export class GeodesicGeometry {
         const stats: Statistics = {} as any;
 
         stats.distanceArray = this.multilineDistance(points);
-        stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);
+        stats.totalDistance = 0;
+
+        for (let distance of stats.distanceArray) {
+            stats.totalDistance += distance;
+        }
+
         stats.points = 0;
         for (let item of points) {
             stats.points += item.reduce((x) => x + 1, 0);

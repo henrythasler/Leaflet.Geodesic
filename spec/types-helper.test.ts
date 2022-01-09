@@ -46,12 +46,7 @@ describe("latlngExpressiontoLatLng", function () {
     });
 
     it("unknown Object (string instead of number)", function () {
-        try {
-            latlngExpressiontoLatLng({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any);
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/Unknown object found/);
-        }
+        expect(() => latlngExpressiontoLatLng({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any)).to.throw(/Unknown object found/);
     });
 });
 
@@ -130,23 +125,13 @@ describe("latlngExpressionArraytoLatLngArray", function () {
     });
 
     it("1D-Array - unknown Object (string instead of number)", function () {
-        try {
-            latlngExpressionArraytoLatLngArray([{ lat: Berlin.lat, lng: `${Berlin.lng}` } as any]);
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/Unknown object found/);
-        }
+        expect(() => latlngExpressionArraytoLatLngArray([{ lat: Berlin.lat, lng: "matafokka" } as any])).to.throw(/Unknown object found/);
     });
 
     it("2D-Array - unknown Object (string instead of number)", function () {
         const n = 2, m = 2;
         const input = new Array(n).fill((new Array(m) as L.LatLngExpression[]).fill({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any));
-        try {
-            latlngExpressionArraytoLatLngArray(input);
-        } catch (e) {
-            expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/Unknown object found/);
-        }
+        expect(() => latlngExpressionArraytoLatLngArray(input)).to.throw(/Unknown object found/);
     });
 
 });

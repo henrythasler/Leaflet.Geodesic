@@ -1,10 +1,155 @@
 import * as L from "leaflet";
 
-export interface GeodesicOptions extends L.PolylineOptions {
-    wrap?: boolean,
-    steps?: number,
-    radius?: number
+export interface RawGeodesicOptions {
+    /**
+     * Wrap geodesic line at antimeridian. Set to false, to draw a line over the antimeridian. Defaults to true.
+     */
+    wrap: boolean,
+
+    /**
+     * Controls behavior when {@link GeodesicOptions.wrap} is false.
+     *
+     * If set to anything other than number, line will be drawn from the starting point.
+     *
+     * If you want to move the first point to a specific map (longitudes range), set it to the map number you want,
+     * so the first point's longitude will be in range `[180 * n - 360; 180 * n]` where `n` is the specified number.
+     *
+     * **Warning**: this option ensures that only first point will stay on the specified map,
+     * other points might be beyond it!
+     */
+    moveNoWrapTo: "first-point" | number,
+
+    /**
+     * This option is for backwards compatibility. Use {@link GeodesicOptions.segmentsNumber} or
+     * {@link GeodesicOptions.breakPoints} instead.
+     *
+     * Level of detail (`vertices = 1+2**(steps+1)`) for the geodesic line.
+     *
+     * More steps result in a smoother line.
+     *
+     * Defaults to 3.
+     *
+     * @deprecated
+     */
+    steps: number,
+
+    /**
+     * Only for circle: radius in meters.
+     */
+    radius: number,
+
+    /**
+     * Number of segments to generate.
+     * All segments will have equal length. The length of each segment will be `totalLineLength / segmentsNumber`.
+     *
+     * See {@link GeodesicOptions.breakPoints} for precise control over segments.
+     *
+     * Values between 500 and 700 should be good enough. Values from 1000 and above will result in a jagged line
+     * because of Leaflet's generalization.
+     *
+     * If set, takes precedence over {@link GeodesicOptions.steps}
+     */
+    segmentsNumber: number | undefined,
+
+    /**
+     * An array of positions from 0 to 1 (fraction of total line length), where line should have points.
+     *
+     * For example, `[0, 0.1, 0.3, 0.7, 1]` will produce following segments in this exact order from start point to
+     * end point:
+     *
+     * 1. From 0% to 10% of total length.
+     * 2. From 10% to 30% of total length.
+     * 3. From 30% to 70% of total length.
+     * 4. From 70% to 100% of total length.
+     *
+     * Array should meet following conditions (otherwise, an error will be thrown):
+     *
+     * 1. Fractions should be in range [0; 1].
+     * 2. Each fraction should be greater than previous.
+     *
+     * If set, takes precedence over {@link GeodesicOptions.segmentsNumber}.
+     * Doesn't take effect when {@link GeodesicOptions.useNaturalDrawing} is true.
+     *
+     * **Warning:** setting an array where not all differences between adjacent positions are same will result in
+     * segments with different lengths!
+     */
+    breakPoints: number[] | undefined,
+
+    /**
+     * If true, lines will be drawn exactly through given points.
+     *
+     * When points' longitudes require more than one revolution around the Earth
+     * (for example, 50 and 580 will do 2 whole revolutions), line will do all that revolutions and will go exactly
+     * from start to end longitudes.
+     *
+     * To summarize, setting this option to true will enable you to draw geodesic lines the same way you would draw
+     * regular polylines.
+     *
+     * Takes precedence over {@link GeodesicOptions.wrap} and {@link GeodesicOptions.moveNoWrapTo}.
+     *
+     * {@link GeodesicOptions.breakPoints} doesn't take effect when this option is true.
+     *
+     * Number of segments can be dynamic (and predictable) or fixed.
+     * See {@link GeodesicOptions.naturalDrawingFixedNumberOfSegments} for customization and more info.
+     *
+     * Natural drawing greatly decreases performance, don't put many points or limit line length while using it.
+     *
+     * Defaults to false.
+     */
+    useNaturalDrawing: boolean,
+
+    /**
+     * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.useNaturalDrawing} is true.
+     * Defaults to false, i.e. number of segments is dynamic but predictable.
+     *
+     * # Available values
+     *
+     * ## True - fixed number of segments
+     *
+     * Number of segments won't be changed.
+     *
+     * ## False - dynamic number of segments.
+     *
+     * If difference between start and end longitudes is not greater than 360 degrees, number of segments will be
+     * whatever you've specified. Otherwise, it'll be multiplied by number of revolutions that your points make.
+     *
+     * Number of segments is calculated like so:
+     *
+     * ```
+     * let numberOfSegments = 500, // Say, taken from the options
+     *      revolutions = Math.round(Math.abs(dest.lng - start.lng) / 360); // Number of revolutions
+     * if (revolutions > 0)
+     *      numberOfSegments *= revolutions;
+     * ```
+     *
+     */
+    naturalDrawingFixedNumberOfSegments: boolean,
+
+    /**
+     * If true, will update statistics after redrawing. Set it to false to improve performance.
+     *
+     * You can manually update statistics by calling {@link GeodesicLine#updateStatistics} or
+     * {@link GeodesicCircle#updateStatistics}.
+     *
+     * Defaults to true.
+     */
+    updateStatisticsAfterRedrawing: boolean,
 }
+
+export interface GeodesicOptions extends L.PolylineOptions, RawGeodesicOptions {
+}
+
+export const DEFAULT_GEODESIC_OPTIONS = {
+    radius: 1000000,
+    steps: 3,
+    wrap: true,
+    moveNoWrapTo: "first-point" as "first-point",
+    segmentsNumber: undefined,
+    breakPoints: undefined,
+    useNaturalDrawing: false,
+    naturalDrawingFixedNumberOfSegments: false,
+    updateStatisticsAfterRedrawing: true,
+};
 
 export interface WGS84Vector extends L.LatLngLiteral {
     bearing: number;
@@ -18,15 +163,17 @@ export interface GeoDistance {
 
 export class GeodesicCore {
 
-    readonly options: GeodesicOptions = { wrap: true, steps: 3 };
+    readonly options: GeodesicOptions;
     readonly ellipsoid = {
         a: 6378137,
         b: 6356752.3142,
         f: 1 / 298.257223563
     }; // WGS-84
 
-    constructor(options?: GeodesicOptions) {
-        this.options = { ...this.options, ...options };
+    precision = 0.00001;
+
+    constructor(options?: Partial<GeodesicOptions>) {
+        this.options = { ...DEFAULT_GEODESIC_OPTIONS, ...options };
     }
 
     toRadians(degree: number): number {
@@ -35,6 +182,18 @@ export class GeodesicCore {
 
     toDegrees(radians: number): number {
         return radians * 180 / Math.PI;
+    }
+
+    isEqual(n1: number, n2: number) {
+        return Math.abs(n1 - n2) <= this.precision;
+    }
+
+    isLessThanOrEqualTo(n1: number, n2: number) {
+        return n1 - n2 <= this.precision;
+    }
+
+    isGreaterThanOrEqualTo(n1: number, n2: number) {
+        return n1 - n2 >= -this.precision;
     }
 
     /**

@@ -92,9 +92,17 @@
             opacity: 0.5,
             color: 'blue',
             wrap: false,
-            steps: 5
+            steps: 0
         }).addTo(map);
 
+
+        // const testLineCorrected = L.geodesic([[33.9416, -118.4085], [53, -170], [53, 180 - 360], [53.001222, 169.89275 - 360], [51.430194, 165.55575 - 360], [35.7720, 140.3929 - 360]], {
+        //     weight: 7,
+        //     opacity: 0.5,
+        //     color: 'green',
+        //     wrap: false,
+        //     steps: 0
+        // }).addTo(map);        
 
         const testLine = L.geodesic([[33.9416, -118.4085], [53, -170], [53, 180], [53.001222, 169.89275], [51.430194, 165.55575], [35.7720, 140.3929]], {
             weight: 7,
@@ -112,7 +120,7 @@
             A.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
             geodesic.setLatLngs([e.latlng, B.getLatLng()])
             info.update(geodesic.statistics);
-            console.log(geodesic.getLatLngs()[0]);
+            // console.log(geodesic.getLatLngs()[0]);
         });
         B.on('drag', (e) => {
             B.setTooltipContent(`${Math.round(100 * e.latlng.lat) / 100} ${Math.round(100 * e.latlng.lng) / 100}`);
