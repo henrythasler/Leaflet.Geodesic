@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import * as L from "leaflet";
-import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicCircleClass } from "../src/geodesic-circle";
 import { expect } from "chai";
 
@@ -27,7 +26,7 @@ const Sydney = new L.LatLng(-33.91, 151.08);
 const Beijing = new L.LatLng(39.92, 116.39);
 
 
-const defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
+const defaultOptions = { wrap: true, steps: 24, fill: true, noClip: true };
 
 describe("Main functionality", function () {
     let container: HTMLElement;

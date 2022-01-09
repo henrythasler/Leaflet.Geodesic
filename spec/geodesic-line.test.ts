@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import * as L from "leaflet";
-import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";
 import { expect } from "chai";
@@ -30,7 +29,7 @@ const Beijing = new L.LatLng(39.92, 116.39);
 
 const fixturesPath = "spec/fixtures/";
 
-const defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
+const defaultOptions = { wrap: true, steps: 3 };
 
 describe("Main functionality", function () {
     let container: HTMLElement;

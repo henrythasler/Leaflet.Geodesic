@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import * as L from "leaflet";
-import { GeodesicCore, WGS84Vector, GeodesicOptions } from "../src/geodesic-core";
+import { GeodesicCore } from "../src/geodesic-core";
 import { expect } from "chai";
 
 import "jest";
@@ -134,7 +134,7 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/vincenty formula failed to converge/);
+            expect((e as Error).message).to.have.match(/vincenty formula failed to converge/);
         }
     });
 });
@@ -188,7 +188,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/vincenty formula failed to converge/);
+            expect((e as Error).message).to.have.match(/vincenty formula failed to converge/);
         }
     });
 
@@ -207,7 +207,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
             expect.fail();
         } catch (e) {
             expect(e).to.be.an("Error");
-            expect(e.message).to.have.match(/λ > π/);
+            expect((e as Error).message).to.have.match(/λ > π/);
         }
     });
 });
