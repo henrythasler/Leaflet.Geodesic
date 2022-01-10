@@ -66,10 +66,11 @@ export class GeodesicGeometry {
      * @param start Start position
      * @param dest Destination
      * @param useBigPart If both this and {@link RawGeodesicOptions.useNaturalDrawing} are true,
-     * will use big part of a great circle.
+     * will use big part of a great circle
+     * @param ignoreNaturalDrawing Internal use only. If true, will draw regular line but wrapped to the first point.
      * @return resulting linestring
      */
-    line(start: L.LatLng, dest: L.LatLng, useBigPart = false): L.LatLng[] {
+    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false): L.LatLng[] {
         let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
                 lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat),
 
@@ -101,7 +102,7 @@ export class GeodesicGeometry {
         // 100% of line length. Increasing this number will lengthen the line from dest point.
         // Negative length won't reverse the line. Negative start fraction won't lengthen the line from the start.
         let len = 1;
-        if (this.options.useNaturalDrawing) {
+        if (this.options.useNaturalDrawing && !ignoreNaturalDrawing) {
             // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
             let diff = Math.abs(dest.lng - start.lng), revolutions = Math.round(diff / 360);
 
@@ -186,8 +187,9 @@ export class GeodesicGeometry {
      * @param dest destination
      */
     naturalDrawingLine (start: L.LatLng, dest: L.LatLng) {
-        // Generate a small (regular) line
-        let smallLine = this.wrapMultiLineString([this.line(start, dest)])[0], lngFrom, lngTo;
+        // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
+        // an issue when difference between lngs is 180 degrees.
+        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0], lngFrom, lngTo;
 
         // If line won't be split, just return wrapped line to improve performance
         if (Math.abs(start.lng - dest.lng) <= 180) {
@@ -204,11 +206,9 @@ export class GeodesicGeometry {
             lngTo = start.lng;
         }
 
-        let lastLng = smallLine[smallLine.length - 1].lng,
-            useBigPart = !(this.geodesic.isGreaterThanOrEqualTo(lastLng, lngFrom) &&
-                    this.geodesic.isLessThanOrEqualTo(lastLng, lngTo)
-            );
-
+        // Last lng should lie between start and dest, but don't touch any of it. If it touches any of these lngs,
+        // difference between lngs is multiple of 180 or 360. In this case, use big part which solves certain glitches.
+        let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = lastLng <= lngFrom || lastLng >= lngTo;
         return this.wrapMultiLineString([this.line(start, dest, useBigPart)])[0];
     }
 
