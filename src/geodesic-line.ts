@@ -33,6 +33,9 @@ export class GeodesicLine extends L.Polyline {
             this.statistics = this.geom.updateStatistics(this.points, geodesic);
         }
 
+        this.statistics.sphericalLengthRadians = geodesic.sphericalLengthRadians;
+        this.statistics.sphericalLengthMeters = geodesic.sphericalLengthMeters;
+
         if (opts.useNaturalDrawing) {
             latLngs = geodesic;
         } else if (opts.wrap) {

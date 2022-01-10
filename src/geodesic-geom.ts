@@ -6,17 +6,48 @@ import {
     WGS84Vector
 } from "./geodesic-core"
 
-/** detailled information of the current geometry */
-export interface Statistics {
+/**
+ * Earth radius used by WebMercator
+ */
+export const SPHERICAL_RADIUS = 6378137;
+
+/**
+ * Line length in radians and meters calculated on a sphere
+ */
+export interface SphericalStatistics {
+    /**
+     * Line length in radians. For one line, sum of segments' lengths. For multiline, sum of lines' lengths.
+     */
+    sphericalLengthRadians: number,
+
+    /**
+     * Line length in meters. Calculated using 6378137 m radius. To use custom radius,
+     * multiply {@link SphericalStatistics.sphericalLengthRadians} by your radius.
+     */
+    sphericalLengthMeters: number,
+}
+
+/** Detailed information of the current geometry */
+export interface Statistics extends SphericalStatistics {
     /** Stores the distance for each individual geodesic line */
     distanceArray: number[],
-    /** overall distance of all lines */
+    /** Overall distance of all lines */
     totalDistance: number,
     /** number of positions that the geodesic lines are created from */
     points: number,
     /** number vertices that were created during geometry calculation */
     vertices: number
 }
+
+/**
+ * `L.LatLng[]` with {@link SphericalStatistics}
+ */
+export interface Linestring extends Array<L.LatLng>, SphericalStatistics {}
+
+/**
+ * `Linestring[]` with total {@link SphericalStatistics}
+ */
+export interface Multilinestring extends Array<Linestring>, SphericalStatistics {}
 
 export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
@@ -70,7 +101,7 @@ export class GeodesicGeometry {
      * @param ignoreNaturalDrawing Internal use only. If true, will draw regular line but wrapped to the first point.
      * @return resulting linestring
      */
-    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false): L.LatLng[] {
+    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false): Linestring {
         // Get steps from either options.segmentsNumber or deprecated options.steps
         let steps = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
                 this.options.segmentsNumber;
@@ -92,7 +123,8 @@ export class GeodesicGeometry {
                 h = lat2 - lat1,
                 z = Math.sin(h / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(w / 2) ** 2,
                 d = 2 * Math.asin(Math.sqrt(z)),
-                coords = [];
+                // @ts-ignore
+                coords: Linestring = [];
 
         if (d === 0) {
             d = useBigPart ? 0 : Math.PI * 2;
@@ -179,6 +211,10 @@ export class GeodesicGeometry {
             }
         }
 
+        // Calculate statistics
+        coords.sphericalLengthRadians = d * len;
+        coords.sphericalLengthMeters = coords.sphericalLengthRadians * SPHERICAL_RADIUS;
+
         return coords;
     }
 
@@ -187,7 +223,7 @@ export class GeodesicGeometry {
      * @param start start position
      * @param dest destination
      */
-    naturalDrawingLine (start: L.LatLng, dest: L.LatLng) {
+    naturalDrawingLine (start: L.LatLng, dest: L.LatLng): Linestring {
         // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
         // an issue when difference between lngs is 180 degrees.
         let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0], lngFrom, lngTo;
@@ -213,21 +249,49 @@ export class GeodesicGeometry {
         return this.wrapMultiLineString([this.line(start, dest, useBigPart)])[0];
     }
 
-    multiLineString(latlngs: L.LatLng[][]): L.LatLng[][] {
-        const multiLineString: L.LatLng[][] = [], fn = this.options.useNaturalDrawing ? "naturalDrawingLine" : "line";
+    multiLineString(latlngs: L.LatLng[][]): Multilinestring {
+        // @ts-ignore
+        const multiLineString: Multilinestring = [], fn = this.options.useNaturalDrawing ? "naturalDrawingLine" : "line";
+
+        multiLineString.sphericalLengthRadians = 0;
+        multiLineString.sphericalLengthMeters = 0;
 
         for (const linestring of latlngs) {
-            const segment: L.LatLng[] = [];
+            // @ts-ignore
+            const segment: Linestring = [];
+
+            segment.sphericalLengthRadians = 0;
+            segment.sphericalLengthMeters = 0;
+
             for (let j = 1; j < linestring.length; j++) {
-                segment.splice(segment.length - 1, 1, ...this[fn](linestring[j - 1], linestring[j]));
+                const line = this[fn](linestring[j - 1], linestring[j]);
+                segment.splice(segment.length - 1, 1, ...line);
+                segment.sphericalLengthRadians += line.sphericalLengthRadians;
+                segment.sphericalLengthMeters += line.sphericalLengthMeters;
             }
             multiLineString.push(segment);
+            multiLineString.sphericalLengthRadians += segment.sphericalLengthRadians;
+            multiLineString.sphericalLengthMeters += segment.sphericalLengthMeters;
         }
         return multiLineString;
     }
 
-    lineString(latlngs: L.LatLng[]): L.LatLng[] {
+    lineString(latlngs: L.LatLng[]): Linestring {
         return this.multiLineString([latlngs])[0];
+    }
+
+    /**
+     * Copies fields of {@link SphericalStatistics} from src to dest
+     * @param src Source object
+     * @param dest Destination object
+     */
+    private static copySphericalStatistics (src: any, dest: any) {
+        const params = ["sphericalLengthRadians", "sphericalLengthMeters"];
+        for (const param of params) {
+            if (src[param] !== undefined) {
+                dest[param] = src[param];
+            }
+        }
     }
 
     /**
@@ -319,7 +383,7 @@ export class GeodesicGeometry {
      * @param multilinestring
      * @return another multilinestring where segments crossing the antimeridian are split
      */
-    splitMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
+    splitMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T): T {
         const result: L.LatLng[][] = [];
         for (const linestring of multilinestring) {
             if (linestring.length === 1) {
@@ -337,8 +401,13 @@ export class GeodesicGeometry {
                     segment = split[1];     // begin the new linestring with the second part of the split line
                 }
             }
+
+            GeodesicGeometry.copySphericalStatistics(linestring, segment);
             result.push(segment);
         }
+
+        GeodesicGeometry.copySphericalStatistics(multilinestring, result);
+        // @ts-ignore
         return result;
     }
 
@@ -348,8 +417,9 @@ export class GeodesicGeometry {
      * @param multilinestring
      * @returns another multilinestring where the points of each linestring are wrapped accordingly
      */
-    wrapMultiLineString(multilinestring: L.LatLng[][]): L.LatLng[][] {
-        const result: L.LatLng[][] = [];
+    wrapMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T): T {
+        // @ts-ignore
+        const result: T = [];
 
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
@@ -367,7 +437,9 @@ export class GeodesicGeometry {
                 previous = newPoint; // Use the wrapped point as the anchor for the next one
             }
             result.push(resultLine);
+            GeodesicGeometry.copySphericalStatistics(linestring, resultLine);
         }
+        GeodesicGeometry.copySphericalStatistics(multilinestring, result);
         return result;
     }
 
@@ -385,7 +457,7 @@ export class GeodesicGeometry {
             const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
             vertices.push(new L.LatLng(point.lat, point.lng));
         }
-        // append first vertice to the end to close the linestring
+        // Append first vertex to the end to close the linestring
         vertices.push(new L.LatLng(vertices[0].lat, vertices[0].lng));
         return vertices;
     }

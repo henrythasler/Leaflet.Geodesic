@@ -39,7 +39,7 @@ export class GeodesicCircleClass extends L.Polyline {
             this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
         }
 
-        // circumfence must be re-calculated from geodesic 
+        // circumference must be re-calculated from geodesic
         this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
         if ((this.options as GeodesicOptions).wrap) {
