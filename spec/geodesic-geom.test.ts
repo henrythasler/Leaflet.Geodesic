@@ -9,6 +9,7 @@ import L from "leaflet";
 import "jest";
 
 import { checkFixture, compareObject, eps } from "./test-toolbox";
+import {GeodesicLine} from "../src";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -724,4 +725,61 @@ describe("wrapMultiLineString function", function () {
         const wrapped = geom.wrapMultiLineString([before]);
         checkFixture(wrapped, [fixture]);
     });
+});
+
+describe("Natural drawing", function () {
+    const geodesic = new GeodesicLine([], {
+                useNaturalDrawing: true,
+                segmentsNumber: 10,
+            }),
+
+            tryCoords = (coords: L.LatLng[]) => {
+                geodesic.setLatLngs(coords);
+                const newCoords = geodesic.getLatLngs()[0] as L.LatLng[];
+                checkFixture([coords], [[newCoords[0], newCoords[newCoords.length - 1]]]);
+            },
+
+            start = new L.LatLng(43, -468);
+
+    it("Regular line 1", function () {
+        tryCoords([start, new L.LatLng(-46, -68)]);
+    });
+
+    it("Regular line 2", function () {
+        tryCoords([start, Berlin]);
+    });
+
+    it("Regular line 3", function () {
+        tryCoords([Seattle, Tokyo]);
+    });
+
+    it("Same point", function () {
+        tryCoords([start, start]);
+    });
+
+    it("Almost same point", function () {
+        tryCoords([start, new L.LatLng(42.99962549506941, -467.99972534179693)]);
+    });
+
+    for (const sign of [1, -1]) {
+        const shifts = [sign * 180, sign * 360];
+        for (const shift of shifts) {
+            it(shift.toString(), function () {
+                tryCoords([start, new L.LatLng(54, -468 + shift * 3)]);
+            });
+
+            it(`${shift} with almost 0.5 after revolution decimal`, function () {
+                tryCoords([start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3)]);
+            });
+
+            it(`${shift} with 0.5 after revolution decimal`, function () {
+                tryCoords([start, new L.LatLng(54, -468 + shift * 3)]);
+            });
+
+            it(`${shift} with almost 0.5 after revolution decimal`, function () {
+                tryCoords([start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3)]);
+            });
+        }
+    }
+
 });

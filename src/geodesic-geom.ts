@@ -71,6 +71,15 @@ export class GeodesicGeometry {
      * @return resulting linestring
      */
     line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false): L.LatLng[] {
+        // Get steps from either options.segmentsNumber or deprecated options.steps
+        let steps = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
+                this.options.segmentsNumber;
+
+        // If undefined was passed to either of options. Needed for backwards compatibility.
+        if (isNaN(steps)) {
+            steps = 16;
+        }
+
         let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
                 lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat),
 
@@ -85,17 +94,7 @@ export class GeodesicGeometry {
                 d = 2 * Math.asin(Math.sqrt(z)),
                 coords = [];
 
-        // Get steps from either options.segmentsNumber or deprecated options.steps
-        let steps = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
-                this.options.segmentsNumber;
-
-        // If undefined was passed to either of options. Needed for backwards compatibility.
-        if (isNaN(steps)) {
-            steps = 16;
-        }
-
-        // TODO: Check actual 0 length
-        if (this.geodesic.isLessThanOrEqualTo(d, 0)) {
+        if (d === 0) {
             d = useBigPart ? 0 : Math.PI * 2;
         }
 
@@ -104,7 +103,9 @@ export class GeodesicGeometry {
         let len = 1;
         if (this.options.useNaturalDrawing && !ignoreNaturalDrawing) {
             // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
-            let diff = Math.abs(dest.lng - start.lng), revolutions = Math.round(diff / 360);
+            // We also have to round 0.5 to 0. Otherwise, it'll produce redundant revolution.
+            let diff = Math.abs(dest.lng - start.lng), fractionRev = diff / 360,
+                    revolutions = fractionRev % 1 === 0.5 ? Math.floor(fractionRev) : Math.round(fractionRev);
 
             // This is passed by naturalDrawingLine() when regular line goes to wrong direction.
             if (useBigPart) {
