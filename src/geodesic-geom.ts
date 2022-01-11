@@ -111,6 +111,20 @@ export class GeodesicGeometry {
             steps = 16;
         }
 
+        // When points are the same. We could make d small enough to introduce only slight floating point errors, but
+        // I don't like that solution. I feel like it might fail since difference is in range of an error.
+        // I have a bad feeling about points that are close but not exactly same too.
+        if (this.geodesic.isEqual(start.lng, dest.lng) && this.geodesic.isEqual(start.lat, dest.lat)) {
+            // @ts-ignore
+            let toReturn: Linestring = [];
+            toReturn.sphericalLengthRadians = 0;
+            toReturn.sphericalLengthMeters = 0;
+            for (let i = 0; i <= steps; i++) {
+                toReturn.push(new L.LatLng(start.lat, start.lng));
+            }
+            return toReturn;
+        }
+
         let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
                 lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat),
 
@@ -423,6 +437,13 @@ export class GeodesicGeometry {
 
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
+
+
+            // In this case, sometimes algorithm will produce such points that can't be wrapped correctly.
+            // We'll manually shift points to fix it.
+            const fixNaturalDrawing180 = this.options.useNaturalDrawing &&
+                    Math.abs(linestring[0].lng - linestring[linestring.length - 1].lng) % 180 === 0;
+
             let previous: L.LatLng | null = null;
 
             // iterate over every point and check if it needs to be wrapped
@@ -433,9 +454,15 @@ export class GeodesicGeometry {
 
                 const shift: number = previous === null ? 0 : Math.round((point.lng - previous.lng) / 360) * 360,
                         newPoint = new L.LatLng(point.lat, point.lng - shift);
+
+                if (previous !== null && fixNaturalDrawing180 && Math.abs(newPoint.lng - previous.lng) / 180 === 1) {
+                    newPoint.lng += Math.sign(shift) * 360;
+                }
+
                 resultLine.push(newPoint);
                 previous = newPoint; // Use the wrapped point as the anchor for the next one
             }
+
             result.push(resultLine);
             GeodesicGeometry.copySphericalStatistics(linestring, resultLine);
         }

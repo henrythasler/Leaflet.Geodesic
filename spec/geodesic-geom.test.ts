@@ -728,58 +728,54 @@ describe("wrapMultiLineString function", function () {
 });
 
 describe("Natural drawing", function () {
-    const geodesic = new GeodesicLine([], {
-                useNaturalDrawing: true,
-                segmentsNumber: 10,
-            }),
+    const geom = new GeodesicGeometry({useNaturalDrawing: true}),
 
-            tryCoords = (coords: L.LatLng[]) => {
-                geodesic.setLatLngs(coords);
-                const newCoords = geodesic.getLatLngs()[0] as L.LatLng[];
-                checkFixture([coords], [[newCoords[0], newCoords[newCoords.length - 1]]]);
+            tryCoords = (start: L.LatLng, dest: L.LatLng) => {
+                const newCoords = geom.naturalDrawingLine(start, dest);
+                checkFixture([[start, dest]], [[newCoords[0], newCoords[newCoords.length - 1]]]);
             },
 
             start = new L.LatLng(43, -468);
 
     it("Regular line 1", function () {
-        tryCoords([start, new L.LatLng(-46, -68)]);
+        tryCoords(start, new L.LatLng(-46, -68));
     });
 
     it("Regular line 2", function () {
-        tryCoords([start, Berlin]);
+        tryCoords(start, Berlin);
     });
 
     it("Regular line 3", function () {
-        tryCoords([Seattle, Tokyo]);
+        tryCoords(Seattle, Tokyo);
     });
 
     it("Same point", function () {
-        tryCoords([start, start]);
+        const coords = geom.naturalDrawingLine(start, start);
+        for (const coord of coords) {
+            checkFixture([[coord]], [[start]]);
+        }
     });
 
     it("Almost same point", function () {
-        tryCoords([start, new L.LatLng(42.99962549506941, -467.99972534179693)]);
+        tryCoords(start, new L.LatLng(start.lat - eps, start.lng - eps));
     });
 
-    for (const sign of [1, -1]) {
-        const shifts = [sign * 180, sign * 360];
-        for (const shift of shifts) {
-            it(shift.toString(), function () {
-                tryCoords([start, new L.LatLng(54, -468 + shift * 3)]);
-            });
+    for (const shift of [180, -180, 360, -360]) {
+        it(shift.toString(), function () {
+            tryCoords(start, new L.LatLng(54, -468 + shift * 3));
+        });
 
-            it(`${shift} with almost 0.5 after revolution decimal`, function () {
-                tryCoords([start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3)]);
-            });
+        it(`${shift} with almost 0.5 after revolution decimal`, function () {
+            tryCoords(start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3));
+        });
 
-            it(`${shift} with 0.5 after revolution decimal`, function () {
-                tryCoords([start, new L.LatLng(54, -468 + shift * 3)]);
-            });
+        it(`${shift} with 0.5 after revolution decimal`, function () {
+            tryCoords(start, new L.LatLng(54, -468 + shift * 3));
+        });
 
-            it(`${shift} with almost 0.5 after revolution decimal`, function () {
-                tryCoords([start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3)]);
-            });
-        }
+        it(`${shift} with almost 0.5 after revolution decimal`, function () {
+            tryCoords(start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3));
+        });
     }
 
 });

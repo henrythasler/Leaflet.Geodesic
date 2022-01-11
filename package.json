@@ -65,7 +65,7 @@
     "build:tools": "tsc tools/prebuild.ts && tsc tools/postbuild.ts",
     "prebuild": "node tools/prebuild.js",
     "build": "rollup -c rollup.config.prod.js",
-    "build:dev": "npm run prebuild && rollup -c rollup.config.dev.js && npm run postbuild",
+    "build:dev": "npm run prebuild && rollup -c rollup.config.dev.js",
     "postbuild": "node tools/postbuild.js"
   },
   "np": {
