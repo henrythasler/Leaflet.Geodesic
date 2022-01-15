@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import L from "leaflet";
+import L, {LatLngExpression} from "leaflet";
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";
 import { expect } from "chai";
@@ -388,4 +388,140 @@ describe("Usage of base-class functions", function () {
         checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing], [Tokyo, Sydney]])
     });
 
+});
+
+describe("changeLength()", function () {
+
+    const modes = ["end", "start", "both"], coords: LatLngExpression[] = [[10, 10], [15, 15]];
+
+    // Test modes
+    for (const mode of modes) {
+
+        // Test regular and natural drawing lines
+        for (let useNaturalDrawing of [false, true]) {
+            let start = -0.9, end = 1, lenDiffMultiplier = 1, lngShifts = [5],
+                    lineTypeText = "Regular line";
+
+            if (mode === "both") {
+                start = -0.45;
+                lenDiffMultiplier = 2;
+            }
+
+            if (useNaturalDrawing) {
+                end = 2; // There's no upper limit
+                lineTypeText = "Natural drawing line";
+
+                // We should test different lngs and antimeridians for it
+                lngShifts = [];
+                for (let j = -10; j <= 10; j++) {
+                    lngShifts.push(j * 180);
+                    lngShifts.push(5 + j * 180);
+                }
+            }
+
+            // Test different length modifications
+            for (let i = start; i <= end; i += 0.4) {
+
+                // Test shifts for natural line
+                for (let shift of lngShifts) {
+                    let testName = `${lineTypeText} from ${mode} by ${i}`;
+                    if (useNaturalDrawing) {
+                        testName += ` with ${shift} lng shift`;
+                    }
+
+                    // Test the line
+                    it(testName, function () {
+                        const geodesic = new GeodesicLine([[10, 10], [15, 10 + shift]], {useNaturalDrawing}),
+                                srcLenRad = geodesic.statistics.sphericalLengthRadians,
+                                srcLenM = geodesic.statistics.sphericalLengthMeters;
+
+                        // @ts-ignore
+                        geodesic.changeLength(mode, i);
+                        const expectedDiff = 1 + i * lenDiffMultiplier,
+                                newLenRad = geodesic.statistics.sphericalLengthRadians,
+                                newLenM = geodesic.statistics.sphericalLengthMeters;
+
+                        expect(newLenRad / srcLenRad).to.be.closeTo(expectedDiff, eps);
+                        expect(newLenM / srcLenM).to.be.closeTo(expectedDiff, eps);
+                    });
+                }
+            }
+        }
+
+        // Test errors
+
+        it(`Length more than 180 degrees from ${mode} throws`, function () {
+            expect(() => {
+                // @ts-ignore
+                new GeodesicLine(coords).changeLength(mode, 100);
+            }).to.throw(/New spherical line length/);
+        });
+
+        it(`Shorten by more than 1 (whole length) from ${mode} throws`, function () {
+            expect(() => {
+                // @ts-ignore
+                new GeodesicLine(coords).changeLength(mode, -1);
+            }).to.throw(/Can't change length/);
+        });
+    }
+});
+
+describe("Options", function () {
+    it("moveNoWrapTo = 3", function () {
+        const geodesic = new GeodesicLine([[-50, -700], [-40, -635]], {
+            wrap: false,
+            moveNoWrapTo: 3
+        });
+        // @ts-ignore
+        expect(geodesic.getLatLngs()[0][0].lng).to.be.equal(1100);
+    });
+
+    it("moveNoWrapTo doesn't affect wrap = true", function () {
+        const geodesic = new GeodesicLine([[-50, -700], [-40, -635]], {
+            moveNoWrapTo: 3
+        });
+        // @ts-ignore
+        expect(geodesic.getLatLngs()[0][0].lng).to.be.closeTo(20, eps);
+    });
+
+    it("moveNoWrapTo doesn't affect useNaturalDrawing = true", function () {
+        const geodesic = new GeodesicLine([[-50, -700], [-40, -635]], {
+            useNaturalDrawing: true,
+            moveNoWrapTo: 3
+        });
+        // @ts-ignore
+        expect(geodesic.getLatLngs()[0][0].lng).not.to.be.equal(1100);
+    });
+
+    const breakPoints = [0, 0.3, 0.5, 0.9, 1];
+
+    it("breakPoints", function () {
+        const geodesic = new GeodesicLine([[-50, -700], [-40, -635]], {breakPoints}),
+            latLngs = geodesic.getLatLngs()[0] as L.LatLng[];
+
+        expect(latLngs).to.have.lengthOf(breakPoints.length);
+
+        for (let i = 1; i < breakPoints.length; i++) {
+            const testLength = new GeodesicLine([latLngs[i - 1], latLngs[i]]).statistics.sphericalLengthRadians,
+                segmentLength = geodesic.statistics.sphericalLengthRadians * (breakPoints[i] - breakPoints[i - 1]);
+            expect(testLength).to.be.closeTo(segmentLength, eps);
+        }
+    });
+
+    it("breakPoints doesn't affect natural drawing", function () {
+        const geodesic = new GeodesicLine([[-50, -700], [-40, -635]], {
+            breakPoints,
+            useNaturalDrawing: true,
+            segmentsNumber: 10
+        });
+        expect(geodesic.getLatLngs()[0]).not.to.have.lengthOf(breakPoints.length);
+    });
+
+    it("updateStatisticsAfterRedrawing = false doesn't hang anything", function () {
+        expect(() => {
+            return new GeodesicLine([[-50, -700], [-40, -635]], {
+                updateStatisticsAfterRedrawing: false
+            })
+        }).not.to.throw();
+    });
 });

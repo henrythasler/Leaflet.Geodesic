@@ -1,6 +1,6 @@
 import * as L from "leaflet";
 import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
-import { GeodesicGeometry, Statistics } from "./geodesic-geom";
+import {GeodesicGeometry, Linestring, Multilinestring, Statistics} from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
 /**
@@ -27,7 +27,7 @@ export class GeodesicLine extends L.Polyline {
 
     /** calculates the geodesics and update the polyline-object accordingly */
     private updateGeometry(updateStats = (this.options as RawGeodesicOptions).updateStatisticsAfterRedrawing): void {
-        let geodesic = this.geom.multiLineString(this.points), opts = this.options as RawGeodesicOptions, latLngs;
+        let geodesic = this.geom.multiLineString(this.points);
 
         if (updateStats) {
             this.statistics = this.geom.updateStatistics(this.points, geodesic);
@@ -35,15 +35,7 @@ export class GeodesicLine extends L.Polyline {
 
         this.statistics.sphericalLengthRadians = geodesic.sphericalLengthRadians;
         this.statistics.sphericalLengthMeters = geodesic.sphericalLengthMeters;
-
-        if (opts.useNaturalDrawing) {
-            latLngs = geodesic;
-        } else if (opts.wrap) {
-            latLngs = this.geom.splitMultiLineString(geodesic);
-        } else  {
-            latLngs = this.geom.wrapMultiLineString(geodesic);
-        }
-        super.setLatLngs(latLngs);
+        super.setLatLngs(this.wrapOrSplitLine(geodesic));
     }
 
     updateStatistics() {
@@ -80,6 +72,88 @@ export class GeodesicLine extends L.Polyline {
         }
         this.updateGeometry();
         return this;
+    }
+
+    /**
+     * Changes length of this line (if it's multiline, will change length of all its lines) from given anchor by
+     * a given fraction.
+     *
+     * This function won't shorten or lengthen segments, it'll use only start and end points.
+     *
+     * **Usage notes:**
+     *
+     * 1. This function will move original points to split or wrapped line, but won't modify original objects.
+     * 2. If new spherical length in radians of a segment with affected point (start and/or end)
+     * will exceed Pi (180 degrees), and {@link GeodesicOptions.useNaturalDrawing} is `false`, an error will be thrown,
+     * because in this case it's mandatory to follow big part of a great circle.
+     * Consider setting {@link GeodesicOptions.useNaturalDrawing} to `true` to fix it.
+     * 3. If `byFraction` is less than 1 for `start` and `end` or it's less than 0.5 for `both`, an error will be thrown.
+     *
+     * @param from Start point, end point or both. If set to "both", will change length from both anchors by the
+     * same given fraction. I.e., if you pass 1.5 as a fraction, new length will be oldLength + oldLength * 1.5 * 2.
+     * @param byFraction A fraction to change length by. It it's positive, line will be lengthened.
+     * If negative - shortened. If 0, nothing will be done.
+     */
+    changeLength(from: "start" | "end" | "both", byFraction: number) {
+        if (byFraction === 0) {
+            return;
+        }
+
+        let isBoth = from === "both", doStart = isBoth || from === "start", doEnd = isBoth || from === "end",
+                fn = "naturalDrawingLine", args = [];
+
+        if (isBoth && byFraction <= -0.5) {
+            throw new Error("Can't change length by value less than or equal to -0.5 (whole line length while using " +
+                    "from = \"both\"). Provided value: " + byFraction
+            );
+        }
+
+        if (byFraction <= -1) {
+            throw new Error("Can't change length by value less than or equal to -1 (whole line length). " +
+                    "Provided value: " + byFraction
+            );
+        }
+
+        if (!(this.options as GeodesicOptions).useNaturalDrawing) {
+            fn = "line";
+            args.push(false, false);
+        }
+
+        args.push(byFraction);
+
+        for (let line of this.points) {
+            let start = line[0], end = line[line.length - 1];
+            /*super.setLatLngs(this.geom.naturalDrawingLine(start, end, byFraction));
+            return;*/
+
+            if (doEnd) {
+                line[line.length - 1] = this.changeLengthAndGetLastElement(fn, start, end, args);
+            }
+
+            if (doStart) {
+                line[0] = this.changeLengthAndGetLastElement(fn, end, start, args);
+            }
+        }
+
+        this.updateGeometry(true);
+    }
+
+    private changeLengthAndGetLastElement(fn: string, start: L.LatLng, end: L.LatLng, args: any[]) {
+        // @ts-ignore
+        let line = this.wrapOrSplitLine([this.geom[fn](start, end, ...args)])[0];
+        return line[line.length - 1];
+    }
+
+    private wrapOrSplitLine (line: Multilinestring) {
+        const opts = this.options as GeodesicOptions;
+
+        if (opts.useNaturalDrawing) {
+            return line;
+        } else if (opts.wrap) {
+            return this.geom.splitMultiLineString(line);
+        } else  {
+            return this.geom.wrapMultiLineString(line);
+        }
     }
 
     /**

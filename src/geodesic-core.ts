@@ -47,6 +47,8 @@ export interface RawGeodesicOptions {
      * Values between 500 and 700 should be good enough. Values from 1000 and above will result in a jagged line
      * because of Leaflet's generalization.
      *
+     * **Warning:** If {@link GeodesicOptions.useNaturalDrawing} is true, this value should be at least 4.
+     *
      * If set, takes precedence over {@link GeodesicOptions.steps}
      */
     segmentsNumber: number | undefined,

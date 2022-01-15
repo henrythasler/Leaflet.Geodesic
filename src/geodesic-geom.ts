@@ -53,10 +53,27 @@ export class GeodesicGeometry {
     readonly geodesic = new GeodesicCore();
     private options: RawGeodesicOptions;
     steps: number;
+    private readonly segmentsNumber: number;
 
     constructor(options?: Partial<RawGeodesicOptions>) {
-       this.options = {...DEFAULT_GEODESIC_OPTIONS, ...options};
-       this.steps = this.options.steps;
+        this.options = {...DEFAULT_GEODESIC_OPTIONS, ...options};
+
+        // Get steps from either options.segmentsNumber or deprecated options.steps
+        this.segmentsNumber = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
+                this.options.segmentsNumber;
+
+        // If undefined was passed to either of options. Needed for backwards compatibility.
+        if (isNaN(this.segmentsNumber)) {
+            this.segmentsNumber = 16;
+        }
+
+        if (this.options.useNaturalDrawing && this.segmentsNumber < 4) {
+            throw new Error("At least 4 segments are required for natural drawing. " +
+                    "Set segmentsNumber option to at least 4 to fix this error."
+            );
+        }
+
+        this.steps = this.options.steps;
     }
 
     /**
@@ -99,16 +116,16 @@ export class GeodesicGeometry {
      * @param useBigPart If both this and {@link RawGeodesicOptions.useNaturalDrawing} are true,
      * will use big part of a great circle
      * @param ignoreNaturalDrawing Internal use only. If true, will draw regular line but wrapped to the first point.
+     * @param changeLengthBy Internal use only. If different from 0, will draw a draft line with the new length changed
+     * from the dest point.
      * @return resulting linestring
      */
-    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false): Linestring {
-        // Get steps from either options.segmentsNumber or deprecated options.steps
-        let steps = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
-                this.options.segmentsNumber;
+    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false, changeLengthBy = 0): Linestring {
+        let steps = this.segmentsNumber;
 
-        // If undefined was passed to either of options. Needed for backwards compatibility.
-        if (isNaN(steps)) {
-            steps = 16;
+        // Do only last point for regular line and 20 for natural drawing for changing length to improve performance.
+        if (changeLengthBy !== 0) {
+            steps = this.options.useNaturalDrawing ? 20 : 1;
         }
 
         // When points are the same. We could make d small enough to introduce only slight floating point errors, but
@@ -145,13 +162,19 @@ export class GeodesicGeometry {
         }
 
         // 100% of line length. Increasing this number will lengthen the line from dest point.
-        // Negative length won't reverse the line. Negative start fraction won't lengthen the line from the start.
+        // Note: using negative fraction seem to lengthen only line by small part. It glitches with the big part.
         let len = 1;
         if (this.options.useNaturalDrawing && !ignoreNaturalDrawing) {
             // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
-            // We also have to round 0.5 to 0. Otherwise, it'll produce redundant revolution.
-            let diff = Math.abs(dest.lng - start.lng), fractionRev = diff / 360,
-                    revolutions = fractionRev % 1 === 0.5 ? Math.floor(fractionRev) : Math.round(fractionRev);
+            // We also have to round using conditions below. Otherwise, we'll have a redundant revolution.
+
+            let fractionRev = Math.abs(dest.lng - start.lng) / 360, revolutions;
+
+            if (fractionRev % 1 === 0.5) {
+                revolutions = useBigPart ? Math.ceil(fractionRev) : Math.floor(fractionRev);
+            } else {
+                revolutions = Math.round(fractionRev);
+            }
 
             // This is passed by naturalDrawingLine() when regular line goes to wrong direction.
             if (useBigPart) {
@@ -174,11 +197,24 @@ export class GeodesicGeometry {
             }
         }
 
-        let sinD = Math.sin(d), f = 0, i = 0, prevF = -1, moveBy = len / steps;
+        let doUntil = len;
+        if (changeLengthBy !== 0) {
+            doUntil = len + len * changeLengthBy;
+        }
+
+        if (!this.options.useNaturalDrawing && d * doUntil > Math.PI) {
+            throw new Error("New spherical line length exceeds 180 degrees. Consider settings \"useNaturalDrawing\" " +
+                    "option to true to resolve this problem. Otherwise, check new line length before calling " +
+                    "changeLength()."
+            )
+        }
+
+        let sinD = Math.sin(d), f = 0, i = 0, prevF = -1, moveBy = doUntil / steps,
+                useBreakPoints = !this.options.useNaturalDrawing && changeLengthBy === 0;
 
         while (true) {
-            // Otherwise, TS will throw a tantrum
-            if (this.options.breakPoints !== undefined && !this.options.useNaturalDrawing) {
+            // Without this exact if condition, TS will throw a tantrum
+            if (this.options.breakPoints !== undefined && useBreakPoints) {
                 if (i === this.options.breakPoints.length) {
                     break;
                 }
@@ -186,7 +222,7 @@ export class GeodesicGeometry {
                 f = this.options.breakPoints[i];
 
                 if (f < 0 || f > 1) {
-                    throw new Error(`Fractions should be in range [0; 1]. Received fraction ${f} at index ${i}.`)
+                    throw new Error(`Fractions should be in range [0; 1]. Received fraction ${f} at index ${i}.`);
                 }
 
                 if (f <= prevF && i !== 0) {
@@ -194,7 +230,7 @@ export class GeodesicGeometry {
                 }
 
                 i++;
-            } else if (!(this.geodesic.isLessThanOrEqualTo(f, len))) {
+            } else if (!(this.geodesic.isLessThanOrEqualTo(f, doUntil))) {
                 break;
             }
 
@@ -205,11 +241,10 @@ export class GeodesicGeometry {
                     z = A * sinLat1 + B * sinLat2,
                     lat = this.geodesic.toDegrees(Math.atan2(z, Math.sqrt(x ** 2 + y ** 2))),
                     lng = this.geodesic.toDegrees(Math.atan2(y, x));
-
             coords.push(new L.LatLng(lat, lng));
 
             prevF = f;
-            if (this.options.breakPoints === undefined) {
+            if (this.options.breakPoints === undefined || !useBreakPoints) {
                 f += moveBy;
             }
         }
@@ -236,13 +271,16 @@ export class GeodesicGeometry {
      * Generates a continuous geodesic line from exact start to exact dest with all required revolutions
      * @param start start position
      * @param dest destination
+     * @param changeLengthBy Internal use only. If different from 0, will draw a draft line with the new length changed
+     * from the dest point.
      */
-    naturalDrawingLine (start: L.LatLng, dest: L.LatLng): Linestring {
+    naturalDrawingLine (start: L.LatLng, dest: L.LatLng, changeLengthBy = 0): Linestring {
         // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
         // an issue when difference between lngs is 180 degrees.
-        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0], lngFrom, lngTo;
+        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true, changeLengthBy)], start, dest)[0],
+                lngFrom, lngTo;
 
-        // If line won't be split, just return wrapped line to improve performance
+        // If line won't be split, just return wrapped line to improve performance and solve some weird glitches
         if (Math.abs(start.lng - dest.lng) <= 180) {
             return smallLine;
         }
@@ -260,7 +298,7 @@ export class GeodesicGeometry {
         // Last lng should lie between start and dest, but don't touch any of it. If it touches any of these lngs,
         // difference between lngs is multiple of 180 or 360. In this case, use big part which solves certain glitches.
         let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = lastLng <= lngFrom || lastLng >= lngTo;
-        return this.wrapMultiLineString([this.line(start, dest, useBigPart)])[0];
+        return this.wrapMultiLineString([this.line(start, dest, useBigPart, false, changeLengthBy)], start, dest)[0];
     }
 
     multiLineString(latlngs: L.LatLng[][]): Multilinestring {
@@ -429,21 +467,16 @@ export class GeodesicGeometry {
      * Linestrings of a given multilinestring will be wrapped (+- 360°) to show a continuous line w/o any weird discontinuities
      * when `wrap` is set to `false` in the geodesic class
      * @param multilinestring
+     * @param start Internal use only. Start point used to correct natural drawing line direction.
+     * @param dest Internal use only. Destination point used to correct natural drawing line direction.
      * @returns another multilinestring where the points of each linestring are wrapped accordingly
      */
-    wrapMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T): T {
+    wrapMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T, start: L.LatLng | null = null, dest: L.LatLng | null = null): T {
         // @ts-ignore
-        const result: T = [];
+        const result: T = [], direction = Math.sign(dest?.lng - start?.lng);
 
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
-
-
-            // In this case, sometimes algorithm will produce such points that can't be wrapped correctly.
-            // We'll manually shift points to fix it.
-            const fixNaturalDrawing180 = this.options.useNaturalDrawing &&
-                    Math.abs(linestring[0].lng - linestring[linestring.length - 1].lng) % 180 === 0;
-
             let previous: L.LatLng | null = null;
 
             // iterate over every point and check if it needs to be wrapped
@@ -451,12 +484,21 @@ export class GeodesicGeometry {
                 // The first point is the anchor of the linestring from which the line will always start.
                 // If the difference between the current and *previous* point is greater than 360°,
                 // the current point needs to be shifted to be on the same 'sphere' as the previous one.
+                // We're doing toFixed() for when lng difference is close to 0.5. Otherwise, it won't wrap
+                // natural drawing line correctly.
 
-                const shift: number = previous === null ? 0 : Math.round((point.lng - previous.lng) / 360) * 360,
-                        newPoint = new L.LatLng(point.lat, point.lng - shift);
+                const shift: number = previous === null ? 0 : Math.round(
+                        parseFloat(((point.lng - previous.lng) / 360).toFixed(6))
+                ) * 360;
+                const newPoint = new L.LatLng(point.lat, point.lng - shift);
 
-                if (previous !== null && fixNaturalDrawing180 && Math.abs(newPoint.lng - previous.lng) / 180 === 1) {
-                    newPoint.lng += Math.sign(shift) * 360;
+                // If using natural drawing, and new direction is not the same as required,
+                // shift the point by 360 to fix it
+                if (previous && start && dest) {
+                    const newDirection = Math.sign(parseFloat((newPoint.lng - previous.lng).toFixed(6)));
+                    if (direction && newDirection !== direction && newDirection !== 0) {
+                        newPoint.lng += direction * 360;
+                    }
                 }
 
                 resultLine.push(newPoint);

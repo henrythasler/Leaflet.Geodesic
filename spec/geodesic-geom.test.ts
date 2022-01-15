@@ -10,6 +10,7 @@ import "jest";
 
 import { checkFixture, compareObject, eps } from "./test-toolbox";
 import {GeodesicLine} from "../src";
+import {GeodesicOptions, RawGeodesicOptions} from "../src/geodesic-core";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -760,22 +761,38 @@ describe("Natural drawing", function () {
         tryCoords(start, new L.LatLng(start.lat - eps, start.lng - eps));
     });
 
-    for (const shift of [180, -180, 360, -360]) {
-        it(shift.toString(), function () {
-            tryCoords(start, new L.LatLng(54, -468 + shift * 3));
-        });
-
-        it(`${shift} with almost 0.5 after revolution decimal`, function () {
-            tryCoords(start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3));
-        });
-
-        it(`${shift} with 0.5 after revolution decimal`, function () {
-            tryCoords(start, new L.LatLng(54, -468 + shift * 3));
-        });
-
-        it(`${shift} with almost 0.5 after revolution decimal`, function () {
-            tryCoords(start, new L.LatLng(54, 468.0000545456 + shift * 3 * 3));
+    // Test antimeridians. All of these tests were failing before fixes, so it's better to keep them.
+    for (let i = -30; i <= 30; i++) {
+        const shift = i * 180;
+        it(`Antimeridian: ${shift} lng shift`, function () {
+            tryCoords(start, new L.LatLng(54, -468 + shift));
         });
     }
+
+    const opts = [{steps: 0}, {segmentsNumber: 2}];
+
+    for (let opt of opts) {
+        let newOpts = {useNaturalDrawing: true}, testName = "";
+        for (let name in opt) {
+            // @ts-ignore
+            newOpts[name] = opt[name];
+            // @ts-ignore
+            testName = `${name} = ${opt[name]}`;
+        }
+
+        it("Throws when segments number < 4: " + testName, function () {
+            expect(() => new GeodesicGeometry(newOpts)).to.throw(/At least 4 segments/);
+        });
+    }
+
+    it("Fixed number of segments", function () {
+        const geom = new GeodesicGeometry({
+                    useNaturalDrawing: true,
+                    segmentsNumber: 20,
+                    naturalDrawingFixedNumberOfSegments: true
+                }),
+                line = geom.naturalDrawingLine(new L.LatLng(10, -458), new L.LatLng(45, 354));
+        expect(line).to.have.lengthOf(21);
+    })
 
 });
