@@ -75,6 +75,8 @@ export class GeodesicLine extends L.Polyline {
     }
 
     /**
+     * **Highly experimental!*
+     *
      * Changes length of this line (if it's multiline, will change length of all its lines) from given anchor by
      * a given fraction.
      *
@@ -88,6 +90,8 @@ export class GeodesicLine extends L.Polyline {
      * because in this case it's mandatory to follow big part of a great circle.
      * Consider setting {@link GeodesicOptions.useNaturalDrawing} to `true` to fix it.
      * 3. If `byFraction` is less than 1 for `start` and `end` or it's less than 0.5 for `both`, an error will be thrown.
+     * 4. Modification precision lies withing 0.0001 range in some edge cases.
+     * 5. For natural drawing, doesn't work when when points are on opposite or same meridians.
      *
      * @param from Start point, end point or both. If set to "both", will change length from both anchors by the
      * same given fraction. I.e., if you pass 1.5 as a fraction, new length will be oldLength + oldLength * 1.5 * 2.
@@ -123,7 +127,7 @@ export class GeodesicLine extends L.Polyline {
 
         for (let line of this.points) {
             let start = line[0], end = line[line.length - 1];
-            /*super.setLatLngs(this.geom.naturalDrawingLine(start, end, byFraction));
+            /*super.setLatLngs([this.geom.naturalDrawingLine(start, end, byFraction)]);
             return;*/
 
             if (doEnd) {
@@ -134,6 +138,7 @@ export class GeodesicLine extends L.Polyline {
                 line[0] = this.changeLengthAndGetLastElement(fn, end, start, args);
             }
         }
+        //console.log(this.points);
 
         this.updateGeometry(true);
     }

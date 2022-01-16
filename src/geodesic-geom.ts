@@ -143,9 +143,15 @@ export class GeodesicGeometry {
         }
 
         let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
-                lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat),
+                lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat);
 
-                // Call trig functions here for optimization
+        // An edge case when lng diff is 180 deg and absolute values of lats are equal. Can be fixed by shifting any lat.
+        // Even the slightest shift helps, but I like to be more careful in case floats might mess up
+        if (this.geodesic.isEqual(Math.abs(lng1 - lng2), Math.PI) && this.geodesic.isEqual(Math.abs(lat1), Math.abs(lat2))) {
+            lat2 -= 0.00001;
+        }
+
+        let // Call trig functions here for optimization
                 cosLng1 = Math.cos(lng1), sinLng1 = Math.sin(lng1), cosLat1 = Math.cos(lat1), sinLat1 = Math.sin(lat1),
                 cosLng2 = Math.cos(lng2), sinLng2 = Math.sin(lng2), cosLat2 = Math.cos(lat2), sinLat2 = Math.sin(lat2),
 
@@ -156,6 +162,10 @@ export class GeodesicGeometry {
                 d = 2 * Math.asin(Math.sqrt(z)),
                 // @ts-ignore
                 coords: Linestring = [];
+
+        /*if (this.geodesic.isEqual(d, 0) || this.geodesic.isEqual(d, Math.PI)) {
+            console.log(d, lng1, lng2);
+        }*/
 
         if (d === 0) {
             d = useBigPart ? 0 : Math.PI * 2;
@@ -478,6 +488,7 @@ export class GeodesicGeometry {
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
             let previous: L.LatLng | null = null;
+            //console.log("___")
 
             // iterate over every point and check if it needs to be wrapped
             for (const point of linestring) {
@@ -496,6 +507,7 @@ export class GeodesicGeometry {
                 // shift the point by 360 to fix it
                 if (previous && start && dest) {
                     const newDirection = Math.sign(parseFloat((newPoint.lng - previous.lng).toFixed(6)));
+                    //console.log(newPoint.lng, previous.lng, shift, direction, newDirection)
                     if (direction && newDirection !== direction && newDirection !== 0) {
                         newPoint.lng += direction * 360;
                     }
