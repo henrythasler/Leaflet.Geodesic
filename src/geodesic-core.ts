@@ -47,7 +47,7 @@ export interface RawGeodesicOptions {
      * Values between 500 and 700 should be good enough. Values from 1000 and above will result in a jagged line
      * because of Leaflet's generalization.
      *
-     * **Warning:** If {@link GeodesicOptions.useNaturalDrawing} is true, this value should be at least 4.
+     * **Warning:** If {@link GeodesicOptions.naturalDrawing} is true, this value should be at least 4.
      *
      * If set, takes precedence over {@link GeodesicOptions.steps}
      */
@@ -70,7 +70,7 @@ export interface RawGeodesicOptions {
      * 2. Each fraction should be greater than previous.
      *
      * If set, takes precedence over {@link GeodesicOptions.segmentsNumber}.
-     * Doesn't take effect when {@link GeodesicOptions.useNaturalDrawing} is true.
+     * Doesn't take effect when {@link GeodesicOptions.naturalDrawing} is true.
      *
      * **Warning:** setting an array where not all differences between adjacent positions are same will result in
      * segments with different lengths!
@@ -98,10 +98,10 @@ export interface RawGeodesicOptions {
      *
      * Defaults to false.
      */
-    useNaturalDrawing: boolean,
+    naturalDrawing: boolean,
 
     /**
-     * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.useNaturalDrawing} is true.
+     * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.naturalDrawing} is true.
      * Defaults to false, i.e. number of segments is dynamic but predictable.
      *
      * # Available values
@@ -151,7 +151,7 @@ export const DEFAULT_GEODESIC_OPTIONS = {
     moveNoWrapTo: "first-point" as "first-point",
     segmentsNumber: undefined,
     breakPoints: undefined,
-    useNaturalDrawing: false,
+    naturalDrawing: false,
     naturalDrawingFixedNumberOfSegments: false,
     updateStatisticsAfterRedrawing: true,
 };

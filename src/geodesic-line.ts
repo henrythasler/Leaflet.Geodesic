@@ -36,7 +36,7 @@ export class GeodesicLine extends L.Polyline {
         this.statistics.sphericalLengthRadians = geodesic.sphericalLengthRadians;
         this.statistics.sphericalLengthMeters = geodesic.sphericalLengthMeters;
 
-        if (opts.useNaturalDrawing) {
+        if (opts.naturalDrawing) {
             latLngs = geodesic;
         } else if (opts.wrap) {
             latLngs = this.geom.splitMultiLineString(geodesic);
@@ -61,7 +61,7 @@ export class GeodesicLine extends L.Polyline {
 
         // Fix split not working correctly when one point has -180 lng and the other -- +180.
         // TODO: Try to fix the formula instead of this
-        if (opts.wrap && !opts.useNaturalDrawing) {
+        if (opts.wrap && !opts.naturalDrawing) {
             for (const linestring of this.points) {
                 for (let i = 1; i < linestring.length; i++) {
                     const prevPoint = linestring[i - 1], point = linestring[i];
@@ -110,12 +110,13 @@ export class GeodesicLine extends L.Polyline {
      *
      * 1. This function will move original points to split or wrapped line, but won't modify original objects.
      * 2. If new spherical length in radians of a segment with affected point (start and/or end)
-     * will exceed Pi (180 degrees), and {@link GeodesicOptions.useNaturalDrawing} is `false`, an error will be thrown,
+     * will exceed Pi (180 degrees), and {@link GeodesicOptions.naturalDrawing} is `false`, an error will be thrown,
      * because in this case it's mandatory to follow big part of a great circle.
-     * Consider setting {@link GeodesicOptions.useNaturalDrawing} to `true` to fix it.
+     * Consider setting {@link GeodesicOptions.naturalDrawing} to `true` to fix it.
      * 3. If `byFraction` is less than 1 for `start` and `end` or it's less than 0.5 for `both`, an error will be thrown.
      * 4. Modification precision lies withing 0.0001 range in some edge cases.
-     * 5. For natural drawing, doesn't work when when points are on opposite or same meridians.
+     * 5. For natural drawing, doesn't work when when points are on opposite or same meridians. Also fails on some
+     * cases such as `[[19, -200], [45, 10 - 720]]` coordinates.
      *
      * @param from Start point, end point or both. If set to "both", will change length from both anchors by the
      * same given fraction. I.e., if you pass 1.5 as a fraction, new length will be oldLength + oldLength * 1.5 * 2.
@@ -143,7 +144,7 @@ export class GeodesicLine extends L.Polyline {
             );
         }
 
-        if (!(this.options as GeodesicOptions).useNaturalDrawing) {
+        if (!(this.options as GeodesicOptions).naturalDrawing) {
             fn = "line";
             args.push(false, false);
         }
@@ -152,6 +153,7 @@ export class GeodesicLine extends L.Polyline {
 
         for (let line of this.points) {
             let start = line[0], end = line[line.length - 1];
+            // For testing natural drawing lines
             /*super.setLatLngs([this.geom.naturalDrawingLine(start, end, byFraction)]);
             return;*/
 
@@ -163,7 +165,6 @@ export class GeodesicLine extends L.Polyline {
                 line[0] = this.changeLengthAndGetLastElement(fn, end, start, args);
             }
         }
-        //console.log(this.points);
 
         this.updateGeometry(true);
     }
@@ -173,7 +174,7 @@ export class GeodesicLine extends L.Polyline {
         let line = this.geom[fn](start, end, ...args);
 
         // Splitting doesn't work on two points, we'll use wrapping instead
-        if (!(this.options as GeodesicOptions).useNaturalDrawing) {
+        if (!(this.options as GeodesicOptions).naturalDrawing) {
             line = this.geom.wrapMultiLineString([line])[0];
         }
         return line[line.length - 1];

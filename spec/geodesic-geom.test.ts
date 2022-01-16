@@ -729,7 +729,7 @@ describe("wrapMultiLineString function", function () {
 });
 
 describe("Natural drawing", function () {
-    const geom = new GeodesicGeometry({useNaturalDrawing: true}),
+    const geom = new GeodesicGeometry({naturalDrawing: true}),
 
             tryCoords = (start: L.LatLng, dest: L.LatLng) => {
                 const newCoords = geom.naturalDrawingLine(start, dest);
@@ -772,7 +772,7 @@ describe("Natural drawing", function () {
     const opts = [{steps: 0}, {segmentsNumber: 2}];
 
     for (let opt of opts) {
-        let newOpts = {useNaturalDrawing: true}, testName = "";
+        let newOpts = {naturalDrawing: true}, testName = "";
         for (let name in opt) {
             // @ts-ignore
             newOpts[name] = opt[name];
@@ -787,7 +787,7 @@ describe("Natural drawing", function () {
 
     it("Fixed number of segments", function () {
         const geom = new GeodesicGeometry({
-                    useNaturalDrawing: true,
+                    naturalDrawing: true,
                     segmentsNumber: 20,
                     naturalDrawingFixedNumberOfSegments: true
                 }),

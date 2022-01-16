@@ -67,7 +67,7 @@ export class GeodesicGeometry {
             this.segmentsNumber = 16;
         }
 
-        if (this.options.useNaturalDrawing && this.segmentsNumber < 4) {
+        if (this.options.naturalDrawing && this.segmentsNumber < 4) {
             throw new Error("At least 4 segments are required for natural drawing. " +
                     "Set segmentsNumber option to at least 4 to fix this error."
             );
@@ -113,7 +113,7 @@ export class GeodesicGeometry {
      *
      * @param start Start position
      * @param dest Destination
-     * @param useBigPart If both this and {@link RawGeodesicOptions.useNaturalDrawing} are true,
+     * @param useBigPart If both this and {@link RawGeodesicOptions.naturalDrawing} are true,
      * will use big part of a great circle
      * @param ignoreNaturalDrawing Internal use only. If true, will draw regular line but wrapped to the first point.
      * @param changeLengthBy Internal use only. If different from 0, will draw a draft line with the new length changed
@@ -125,7 +125,7 @@ export class GeodesicGeometry {
 
         // Do only last point for regular line and 20 for natural drawing for changing length to improve performance.
         if (changeLengthBy !== 0) {
-            steps = this.options.useNaturalDrawing ? 20 : 1;
+            steps = this.options.naturalDrawing ? 20 : 1;
         }
 
         // When points are the same. We could make d small enough to introduce only slight floating point errors, but
@@ -163,10 +163,7 @@ export class GeodesicGeometry {
                 // @ts-ignore
                 coords: Linestring = [];
 
-        /*if (this.geodesic.isEqual(d, 0) || this.geodesic.isEqual(d, Math.PI)) {
-            console.log(d, lng1, lng2);
-        }*/
-
+        // I'm not sure if it's ever the case, but I'm too afraid to remove it.
         if (d === 0) {
             d = useBigPart ? 0 : Math.PI * 2;
         }
@@ -174,7 +171,7 @@ export class GeodesicGeometry {
         // 100% of line length. Increasing this number will lengthen the line from dest point.
         // Note: using negative fraction seem to lengthen only line by small part. It glitches with the big part.
         let len = 1;
-        if (this.options.useNaturalDrawing && !ignoreNaturalDrawing) {
+        if (this.options.naturalDrawing && !ignoreNaturalDrawing) {
             // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
             // We also have to round using conditions below. Otherwise, we'll have a redundant revolution.
 
@@ -212,15 +209,15 @@ export class GeodesicGeometry {
             doUntil = len + len * changeLengthBy;
         }
 
-        if (!this.options.useNaturalDrawing && d * doUntil > Math.PI) {
-            throw new Error("New spherical line length exceeds 180 degrees. Consider settings \"useNaturalDrawing\" " +
+        if (!this.options.naturalDrawing && d * doUntil > Math.PI) {
+            throw new Error("New spherical line length exceeds 180 degrees. Consider settings \"naturalDrawing\" " +
                     "option to true to resolve this problem. Otherwise, check new line length before calling " +
                     "changeLength()."
             )
         }
 
         let sinD = Math.sin(d), f = 0, i = 0, prevF = -1, moveBy = doUntil / steps,
-                useBreakPoints = !this.options.useNaturalDrawing && changeLengthBy === 0;
+                useBreakPoints = !this.options.naturalDrawing && changeLengthBy === 0;
 
         while (true) {
             // Without this exact if condition, TS will throw a tantrum
@@ -260,10 +257,10 @@ export class GeodesicGeometry {
         }
 
         // Move the first point to its map, so wrapping will work correctly
-        if (this.options.useNaturalDrawing || !this.options.wrap) {
+        if (this.options.naturalDrawing || !this.options.wrap) {
             let firstPoint = coords[0];
 
-            if (!this.options.useNaturalDrawing && typeof this.options.moveNoWrapTo === "number") {
+            if (!this.options.naturalDrawing && typeof this.options.moveNoWrapTo === "number") {
                 firstPoint.lng += this.options.moveNoWrapTo * 360;
             } else {
                 firstPoint.lng += start.lng - firstPoint.lng;
@@ -313,7 +310,7 @@ export class GeodesicGeometry {
 
     multiLineString(latlngs: L.LatLng[][]): Multilinestring {
         // @ts-ignore
-        const multiLineString: Multilinestring = [], fn = this.options.useNaturalDrawing ? "naturalDrawingLine" : "line";
+        const multiLineString: Multilinestring = [], fn = this.options.naturalDrawing ? "naturalDrawingLine" : "line";
 
         multiLineString.sphericalLengthRadians = 0;
         multiLineString.sphericalLengthMeters = 0;
@@ -488,7 +485,6 @@ export class GeodesicGeometry {
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
             let previous: L.LatLng | null = null;
-            //console.log("___")
 
             // iterate over every point and check if it needs to be wrapped
             for (const point of linestring) {
@@ -507,6 +503,7 @@ export class GeodesicGeometry {
                 // shift the point by 360 to fix it
                 if (previous && start && dest) {
                     const newDirection = Math.sign(parseFloat((newPoint.lng - previous.lng).toFixed(6)));
+                    // When coordinates are [[19, -200], [45, 10 - 720]], new direction is different
                     //console.log(newPoint.lng, previous.lng, shift, direction, newDirection)
                     if (direction && newDirection !== direction && newDirection !== 0) {
                         newPoint.lng += direction * 360;
