@@ -27,7 +27,7 @@ export class GeodesicLine extends L.Polyline {
 
     /** calculates the geodesics and update the polyline-object accordingly */
     private updateGeometry(updateStats = (this.options as RawGeodesicOptions).updateStatisticsAfterRedrawing): void {
-        let geodesic = this.geom.multiLineString(this.points);
+        let geodesic = this.geom.multiLineString(this.points), opts = this.options as GeodesicOptions, latLngs;
 
         if (updateStats) {
             this.statistics = this.geom.updateStatistics(this.points, geodesic);
@@ -35,7 +35,16 @@ export class GeodesicLine extends L.Polyline {
 
         this.statistics.sphericalLengthRadians = geodesic.sphericalLengthRadians;
         this.statistics.sphericalLengthMeters = geodesic.sphericalLengthMeters;
-        super.setLatLngs(this.wrapOrSplitLine(geodesic));
+
+        if (opts.useNaturalDrawing) {
+            latLngs = geodesic;
+        } else if (opts.wrap) {
+            latLngs = this.geom.splitMultiLineString(geodesic);
+        } else {
+            latLngs = this.geom.wrapMultiLineString(geodesic);
+        }
+
+        super.setLatLngs(latLngs);
     }
 
     updateStatistics() {
@@ -48,6 +57,21 @@ export class GeodesicLine extends L.Polyline {
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         this.points = latlngExpressionArraytoLatLngArray(latlngs);
+        const opts = this.options as GeodesicOptions;
+
+        // Fix split not working correctly when one point has -180 lng and the other -- +180.
+        // TODO: Try to fix the formula instead of this
+        if (opts.wrap && !opts.useNaturalDrawing) {
+            for (const linestring of this.points) {
+                for (let i = 1; i < linestring.length; i++) {
+                    const prevPoint = linestring[i - 1], point = linestring[i];
+                    if (Math.abs(point.lng - prevPoint.lng) === 360) {
+                        prevPoint.lng -= 0.0001;
+                    }
+                }
+            }
+        }
+
         this.updateGeometry();
         return this;
     }
@@ -99,7 +123,8 @@ export class GeodesicLine extends L.Polyline {
      * If negative - shortened. If 0, nothing will be done.
      */
     changeLength(from: "start" | "end" | "both", byFraction: number) {
-        if (byFraction === 0) {
+        // Split sometimes fail with distance really close to 0
+        if (byFraction === 0 || this.geom.geodesic.isEqual(this.statistics.sphericalLengthRadians, 0)) {
             return;
         }
 
@@ -145,20 +170,13 @@ export class GeodesicLine extends L.Polyline {
 
     private changeLengthAndGetLastElement(fn: string, start: L.LatLng, end: L.LatLng, args: any[]) {
         // @ts-ignore
-        let line = this.wrapOrSplitLine([this.geom[fn](start, end, ...args)])[0];
-        return line[line.length - 1];
-    }
+        let line = this.geom[fn](start, end, ...args);
 
-    private wrapOrSplitLine (line: Multilinestring) {
-        const opts = this.options as GeodesicOptions;
-
-        if (opts.useNaturalDrawing) {
-            return line;
-        } else if (opts.wrap) {
-            return this.geom.splitMultiLineString(line);
-        } else  {
-            return this.geom.wrapMultiLineString(line);
+        // Splitting doesn't work on two points, we'll use wrapping instead
+        if (!(this.options as GeodesicOptions).useNaturalDrawing) {
+            line = this.geom.wrapMultiLineString([line])[0];
         }
+        return line[line.length - 1];
     }
 
     /**

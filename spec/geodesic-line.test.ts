@@ -393,7 +393,7 @@ describe("Usage of base-class functions", function () {
 /*describe("changeLength() regular line", function () {
     // "Thanks" to the trig functions and shift when when lng diff is 180 deg and absolute values of lats are equal,
     // precision suffers by much
-    const lngShift = 30, latShift = 40, eps = 0.0001;
+    const lngShift = 90, latShift = 40, eps = 0.0001;
 
     for (let lng1 = -180; lng1 <= 180; lng1 += lngShift) {
         for (let lat1 = -80; lat1 <= 80; lat1 += latShift) {
@@ -403,7 +403,7 @@ describe("Usage of base-class functions", function () {
 
                     for (let i = -0.9; i <= 2; i += 0.4) {
 
-                        const geodesic = new GeodesicLine([[lat1, lng1], [lat2, lng2]], {wrap: false}),
+                        const geodesic = new GeodesicLine([[lat1, lng1], [lat2, lng2]]),
                             expectedLength = geodesic.statistics.sphericalLengthRadians + geodesic.statistics.sphericalLengthRadians * i;
 
                         if (expectedLength > Math.PI) {
@@ -428,13 +428,13 @@ describe("Usage of base-class functions", function () {
 
 describe("changeLength()", function () {
 
-    const modes = ["end", /*"start", "both"*/], coords: LatLngExpression[] = [[10, 10], [15, 15]];
+    const modes = ["end", "start", "both"], coords: LatLngExpression[] = [[10, 10], [15, 15]];
 
     // Test modes
     for (const mode of modes) {
 
         // Test regular and natural drawing lines
-        for (let useNaturalDrawing of [/*false,*/ true]) {
+        for (let useNaturalDrawing of [false, /*true*/]) {
             let start = -0.9, end = 1, lenDiffMultiplier = 1, lngShifts = [5],
                     lineTypeText = "Regular line";
 
@@ -450,7 +450,7 @@ describe("changeLength()", function () {
                 // We should test different lngs and antimeridians for it
                 lngShifts = [];
                 for (let j = -10; j <= 10; j++) {
-                    //lngShifts.push(j * 180);
+                    lngShifts.push(j * 180);
                     lngShifts.push(5 + j * 180);
                 }
             }

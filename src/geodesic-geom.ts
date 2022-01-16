@@ -151,8 +151,8 @@ export class GeodesicGeometry {
             lat2 -= 0.00001;
         }
 
-        let // Call trig functions here for optimization
-                cosLng1 = Math.cos(lng1), sinLng1 = Math.sin(lng1), cosLat1 = Math.cos(lat1), sinLat1 = Math.sin(lat1),
+        // Call trig functions here for optimization
+        let cosLng1 = Math.cos(lng1), sinLng1 = Math.sin(lng1), cosLat1 = Math.cos(lat1), sinLat1 = Math.sin(lat1),
                 cosLng2 = Math.cos(lng2), sinLng2 = Math.sin(lng2), cosLat2 = Math.cos(lat2), sinLat2 = Math.sin(lat2),
 
                 // Calculate great circle distance between these points
