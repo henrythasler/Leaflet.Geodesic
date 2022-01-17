@@ -76,7 +76,8 @@ const geom = new GeodesicGeometry();
 
 describe("constructor and properties", function () {
     it("no additional settings given", function () {
-        expect(geom.steps).to.be.equal(3);
+        // @ts-ignore
+        expect(geom.segmentsNumber).to.be.equal(16);
     });
 });
 

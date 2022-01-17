@@ -55,16 +55,21 @@ export class GeodesicGeometry {
     steps: number;
     private readonly segmentsNumber: number;
 
-    constructor(options?: Partial<RawGeodesicOptions>) {
+    constructor(options?: Partial<RawGeodesicOptions>, calledFromCircle = false) {
         this.options = {...DEFAULT_GEODESIC_OPTIONS, ...options};
 
-        // Get steps from either options.segmentsNumber or deprecated options.steps
-        this.segmentsNumber = this.options.segmentsNumber === undefined ? 2 ** (this.options.steps + 1) :
-                this.options.segmentsNumber;
+        // Convert deprecated steps to segments number. If called from circle, just copy the steps.
+        let optionsSteps = NaN;
+        if (options && options.steps !== undefined) {
+            optionsSteps = calledFromCircle ? this.options.steps : 2 ** (this.options.steps + 1);
+        }
+
+        // Get steps from either options.segmentsNumber or deprecated options.steps.
+        this.segmentsNumber = this.options.segmentsNumber === undefined ? optionsSteps : this.options.segmentsNumber;
 
         // If undefined was passed to either of options. Needed for backwards compatibility.
         if (isNaN(this.segmentsNumber)) {
-            this.segmentsNumber = 16;
+            this.segmentsNumber = calledFromCircle ? 24 : 16;
         }
 
         if (this.options.naturalDrawing && this.segmentsNumber < 4) {
@@ -73,7 +78,7 @@ export class GeodesicGeometry {
             );
         }
 
-        this.steps = this.options.steps;
+        this.steps = this.segmentsNumber; // This is here to preserve backwards compatibility
     }
 
     /**

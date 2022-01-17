@@ -7,6 +7,8 @@ export interface RawGeodesicOptions {
     wrap: boolean,
 
     /**
+     * **Only for geodesic line.**
+     *
      * Controls behavior when {@link GeodesicOptions.wrap} is false.
      *
      * If set to anything other than number, line will be drawn from the starting point.
@@ -23,18 +25,20 @@ export interface RawGeodesicOptions {
      * This option is for backwards compatibility. Use {@link GeodesicOptions.segmentsNumber} or
      * {@link GeodesicOptions.breakPoints} instead.
      *
-     * Level of detail (`vertices = 1+2**(steps+1)`) for the geodesic line.
+     * Level of detail (`vertices = 1+2**(steps+1)`) for the geodesic line. Number of segments for geodesic circle.
      *
      * More steps result in a smoother line.
      *
-     * Defaults to 3.
+     * Defaults to 3 for line and to 24 for circle.
      *
      * @deprecated
      */
     steps: number,
 
     /**
-     * Only for circle: radius in meters.
+     * **Only for geodesic circle.**
+     *
+     * Radius in meters.
      */
     radius: number,
 
@@ -45,7 +49,8 @@ export interface RawGeodesicOptions {
      * See {@link GeodesicOptions.breakPoints} for precise control over segments.
      *
      * Values between 500 and 700 should be good enough. Values from 1000 and above will result in a jagged line
-     * because of Leaflet's generalization.
+     * because of Leaflet's generalization. However, for geodesic circle, values higher than 1000 will result in a
+     * better quality.
      *
      * **Warning:** If {@link GeodesicOptions.naturalDrawing} is true, this value should be at least 4.
      *
@@ -54,6 +59,8 @@ export interface RawGeodesicOptions {
     segmentsNumber: number | undefined,
 
     /**
+     * **Only for geodesic line.**
+     *
      * An array of fractions of **spherical** line length from 0 to 1 where line should have points.
      *
      * For example, `[0, 0.1, 0.3, 0.7, 1]` will produce following segments in this exact order from start point to
@@ -78,6 +85,8 @@ export interface RawGeodesicOptions {
     breakPoints: number[] | undefined,
 
     /**
+     * **Only for geodesic line.**
+     *
      * If true, lines will be drawn exactly through given points.
      *
      * When points' longitudes require more than one revolution around the Earth
@@ -101,6 +110,8 @@ export interface RawGeodesicOptions {
     naturalDrawing: boolean,
 
     /**
+     * **Only for geodesic line.**
+     *
      * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.naturalDrawing} is true.
      * Defaults to false, i.e. number of segments is dynamic but predictable.
      *

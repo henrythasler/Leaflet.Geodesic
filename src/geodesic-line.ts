@@ -1,6 +1,6 @@
 import * as L from "leaflet";
 import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
-import {GeodesicGeometry, Linestring, Multilinestring, Statistics} from "./geodesic-geom";
+import {GeodesicGeometry, Statistics} from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
 /**

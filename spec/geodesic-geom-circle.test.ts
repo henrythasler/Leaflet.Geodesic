@@ -26,7 +26,7 @@ const Sydney = new L.LatLng(-33.91, 151.08);
 const Beijing = new L.LatLng(39.92, 116.39);
 
 
-const geom = new GeodesicGeometry({ steps: 6 });
+const geom = new GeodesicGeometry({ steps: 6 }, true);
 
 describe("circle function", function () {
     it("1000km around Berlin", function () {

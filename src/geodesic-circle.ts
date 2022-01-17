@@ -22,7 +22,7 @@ export class GeodesicCircleClass extends L.Polyline {
         this.radius = (extendedOptions.radius === undefined) ? 1000 * 1000 : extendedOptions.radius;
         this.center = (center === undefined) ? new L.LatLng(0, 0) : latlngExpressiontoLatLng(center);
 
-        this.geom = new GeodesicGeometry(this.options as RawGeodesicOptions);
+        this.geom = new GeodesicGeometry(this.options as RawGeodesicOptions, true);
 
         // update the geometry
         this.update();
