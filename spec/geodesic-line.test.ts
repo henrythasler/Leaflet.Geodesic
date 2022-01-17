@@ -9,6 +9,8 @@ import { expect } from "chai";
 import "jest";
 
 import { checkFixture, compareObject, eps } from "./test-toolbox";
+import {GeodesicOptions} from "../src/geodesic-core";
+import {GeodesicGeometry} from "../src/geodesic-geom";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -390,8 +392,77 @@ describe("Usage of base-class functions", function () {
 
 });
 
+
+describe("Natural drawing", function () {
+
+        const tryCoords = (start: L.LatLng, dest: L.LatLng, customEps = eps) => {
+                const line = new GeodesicLine([start, dest], {naturalDrawing: true});
+                const newCoords = line.getLatLngs()[0] as L.LatLng[];
+                checkFixture([[start, dest]], [[newCoords[0], newCoords[newCoords.length - 1]]], customEps);
+            },
+
+            start = new L.LatLng(43, -468);
+
+    it("Regular line 1", function () {
+        tryCoords(start, new L.LatLng(-46, -68));
+    });
+
+    it("Regular line 2", function () {
+        tryCoords(start, Berlin);
+    });
+
+    it("Regular line 3", function () {
+        tryCoords(Seattle, Tokyo);
+    });
+
+    it("Same point", function () {
+        const coords = new GeodesicLine([start, start], {naturalDrawing: true}).getLatLngs()[0] as L.LatLng[];
+        for (const coord of coords) {
+            checkFixture([[coord]], [[start]]);
+        }
+    });
+
+    it("Almost same point", function () {
+        tryCoords(start, new L.LatLng(start.lat - eps, start.lng - eps));
+    });
+
+    // Test antimeridians. All of these tests were failing before fixes, so it's better to keep them.
+    for (let i = -30; i <= 30; i++) {
+        const shift = i * 180;
+        it(`Antimeridian: ${shift} lng shift`, function () {
+            tryCoords(start, new L.LatLng(54, -468 + shift), 0.0001);
+        });
+    }
+
+    const opts = [{steps: 0}, {segmentsNumber: 2}];
+
+    for (let opt of opts) {
+        let newOpts = {naturalDrawing: true}, testName = "";
+        for (let name in opt) {
+            // @ts-ignore
+            newOpts[name] = opt[name];
+            // @ts-ignore
+            testName = `${name} = ${opt[name]}`;
+        }
+
+        it("Throws when segments number < 4: " + testName, function () {
+            expect(() => new GeodesicLine([], newOpts)).to.throw(/At least 4 segments/);
+        });
+    }
+
+    it("Fixed number of segments", function () {
+        const line = new GeodesicLine([new L.LatLng(10, -458), new L.LatLng(45, 354)], {
+                    naturalDrawing: true,
+                    segmentsNumber: 20,
+                    naturalDrawingFixedNumberOfSegments: true
+                });
+        expect(line.getLatLngs()[0]).to.have.lengthOf(21);
+    })
+
+});
+
 // Ultimate changeLength() test for regular lines. If it fails, something wrong might be with the line itself.
-/*describe("changeLength() regular line", function () {
+describe("changeLength() regular line", function () {
     // "Thanks" to the trig functions and shift when when lng diff is 180 deg and absolute values of lats are equal,
     // precision suffers by much. Also, change lngShift to 60 for more accurate tests. 30 will throw a heap out of
     // memory error.
@@ -426,10 +497,10 @@ describe("Usage of base-class functions", function () {
 
         }
     }
-});*/
+});
 
 // Another changeLength() test. Aimed mainly for natural drawing which doesn't work for now.
-/*describe("changeLength()", function () {
+describe("changeLength()", function () {
 
     const modes = ["end", "start", "both"], coords: LatLngExpression[] = [[10, 10], [15, 15]];
 
@@ -470,7 +541,13 @@ describe("Usage of base-class functions", function () {
 
                     // Test the line
                     it(testName, function () {
-                        const geodesic = new GeodesicLine([[10, 10], [15, 10 + shift]], {naturalDrawing}),
+                        let options: Partial<GeodesicOptions> = {naturalDrawing};
+
+                        if (naturalDrawing) {
+                            options.segmentsNumber = 30;
+                        }
+
+                        const geodesic = new GeodesicLine([[10, 10], [15, 10 + shift]], options),
                                 srcLenRad = geodesic.statistics.sphericalLengthRadians,
                                 srcLenM = geodesic.statistics.sphericalLengthMeters;
 
@@ -503,7 +580,7 @@ describe("Usage of base-class functions", function () {
             }).to.throw(/Can't change length/);
         });
     }
-});*/
+});
 
 describe("Options", function () {
     it("moveNoWrapTo = 3", function () {

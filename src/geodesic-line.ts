@@ -57,17 +57,19 @@ export class GeodesicLine extends L.Polyline {
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         this.points = latlngExpressionArraytoLatLngArray(latlngs);
-        const opts = this.options as GeodesicOptions;
+        const opts = this.options as GeodesicOptions, fixSplit = opts.wrap && !opts.naturalDrawing;
 
-        // Fix split not working correctly when one point has -180 lng and the other -- +180.
-        // TODO: Try to fix the formula instead of this
-        if (opts.wrap && !opts.naturalDrawing) {
+        // Fix split not working correctly when one point has -180 lng and the other -- +180. Also fix almost all
+        // cases when natural drawing is used, points lie on antimeridians, and changeLength() called.
+        if (fixSplit || opts.naturalDrawing) {
             for (const linestring of this.points) {
                 for (let i = 1; i < linestring.length; i++) {
-                    const prevPoint = linestring[i - 1], point = linestring[i];
-                    if (Math.abs(point.lng - prevPoint.lng) === 360) {
+
+                    const prevPoint = linestring[i - 1], point = linestring[i], absDiff = Math.abs(point.lng - prevPoint.lng);
+                    if ((fixSplit && absDiff === 360) || (opts.naturalDrawing && this.geom.geodesic.isEqual(absDiff % 180, 0))) {
                         prevPoint.lng -= 0.0001;
                     }
+
                 }
             }
         }
@@ -99,8 +101,6 @@ export class GeodesicLine extends L.Polyline {
     }
 
     /**
-     * **Highly experimental!*
-     *
      * Changes length of this line (if it's multiline, will change length of all its lines) from given anchor by
      * a given fraction.
      *
@@ -115,8 +115,6 @@ export class GeodesicLine extends L.Polyline {
      * Consider setting {@link GeodesicOptions.naturalDrawing} to `true` to fix it.
      * 3. If `byFraction` is less than 1 for `start` and `end` or it's less than 0.5 for `both`, an error will be thrown.
      * 4. Modification precision lies withing 0.0001 range in some edge cases.
-     * 5. For natural drawing, doesn't work when when points are on opposite or same meridians. Also fails on some
-     * cases such as `[[19, -200], [45, 10 - 720]]` coordinates.
      *
      * @param from Start point, end point or both. If set to "both", will change length from both anchors by the
      * same given fraction. I.e., if you pass 1.5 as a fraction, new length will be oldLength + oldLength * 1.5 * 2.
@@ -153,9 +151,6 @@ export class GeodesicLine extends L.Polyline {
 
         for (let line of this.points) {
             let start = line[0], end = line[line.length - 1];
-            // For testing natural drawing lines
-            /*super.setLatLngs([this.geom.naturalDrawingLine(start, end, byFraction)]);
-            return;*/
 
             if (doEnd) {
                 line[line.length - 1] = this.changeLengthAndGetLastElement(fn, start, end, args);

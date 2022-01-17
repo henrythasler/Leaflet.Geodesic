@@ -133,9 +133,9 @@ export class GeodesicGeometry {
             steps = this.options.naturalDrawing ? 20 : 1;
         }
 
-        // When points are the same. We could make d small enough to introduce only slight floating point errors, but
-        // I don't like that solution. I feel like it might fail since difference is in range of an error.
-        // I have a bad feeling about points that are close but not exactly same too.
+        // When points are the same, just copy the start point. We could make d small enough to introduce only slight
+        // floating point errors, but I don't like that solution. I feel like it might fail since difference is
+        // in range of an error. I have a bad feeling about points that are close but not exactly same too.
         if (this.geodesic.isEqual(start.lng, dest.lng) && this.geodesic.isEqual(start.lat, dest.lat)) {
             // @ts-ignore
             let toReturn: Linestring = [];
@@ -151,7 +151,7 @@ export class GeodesicGeometry {
                 lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat);
 
         // An edge case when lng diff is 180 deg and absolute values of lats are equal. Can be fixed by shifting any lat.
-        // Even the slightest shift helps, but I like to be more careful in case floats might mess up
+        // Even the slightest shift helps, but I like to be more careful in case floats might mess up.
         if (this.geodesic.isEqual(Math.abs(lng1 - lng2), Math.PI) && this.geodesic.isEqual(Math.abs(lat1), Math.abs(lat2))) {
             lat2 -= 0.00001;
         }
@@ -273,7 +273,7 @@ export class GeodesicGeometry {
         }
 
         // Calculate statistics
-        coords.sphericalLengthRadians = d * len;
+        coords.sphericalLengthRadians = d * doUntil;
         coords.sphericalLengthMeters = coords.sphericalLengthRadians * SPHERICAL_RADIUS;
 
         return coords;
@@ -289,12 +289,17 @@ export class GeodesicGeometry {
     naturalDrawingLine (start: L.LatLng, dest: L.LatLng, changeLengthBy = 0): Linestring {
         // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
         // an issue when difference between lngs is 180 degrees.
-        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true, changeLengthBy)], start, dest)[0],
-                lngFrom, lngTo;
+        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)], start, dest)[0],
+                lngFrom, lngTo, forceSmallPart = false, absDiff = Math.abs(start.lng - dest.lng);
 
-        // If line won't be split, just return wrapped line to improve performance and solve some weird glitches
-        if (Math.abs(start.lng - dest.lng) <= 180) {
-            return smallLine;
+        // If line won't be split, just return wrapped line to improve performance
+        if (absDiff <= 180) {
+            if (changeLengthBy === 0) {
+                return smallLine;
+            }
+            // If we're lengthening the line, we have to redraw it. ignoreNaturalDrawing = true makes small part work.
+            // I have absolutely no idea on how it works, but at least, it fixes the issue.
+            forceSmallPart = true;
         }
 
         // Determine whether small line follows the direction from start to dest, i.e. if its last point is between
@@ -309,7 +314,7 @@ export class GeodesicGeometry {
 
         // Last lng should lie between start and dest, but don't touch any of it. If it touches any of these lngs,
         // difference between lngs is multiple of 180 or 360. In this case, use big part which solves certain glitches.
-        let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = lastLng <= lngFrom || lastLng >= lngTo;
+        let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = !forceSmallPart && (lastLng <= lngFrom || lastLng >= lngTo);
         return this.wrapMultiLineString([this.line(start, dest, useBigPart, false, changeLengthBy)], start, dest)[0];
     }
 
@@ -503,17 +508,6 @@ export class GeodesicGeometry {
                         parseFloat(((point.lng - previous.lng) / 360).toFixed(6))
                 ) * 360;
                 const newPoint = new L.LatLng(point.lat, point.lng - shift);
-
-                // If using natural drawing, and new direction is not the same as required,
-                // shift the point by 360 to fix it
-                if (previous && start && dest) {
-                    const newDirection = Math.sign(parseFloat((newPoint.lng - previous.lng).toFixed(6)));
-                    // When coordinates are [[19, -200], [45, 10 - 720]], new direction is different
-                    //console.log(newPoint.lng, previous.lng, shift, direction, newDirection)
-                    if (direction && newDirection !== direction && newDirection !== 0) {
-                        newPoint.lng += direction * 360;
-                    }
-                }
 
                 resultLine.push(newPoint);
                 previous = newPoint; // Use the wrapped point as the anchor for the next one

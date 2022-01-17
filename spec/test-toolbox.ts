@@ -5,15 +5,15 @@ import "jest";
 
 export const eps = 0.000001;
 
-export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
+export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][], customEps = eps): void {
     expect(specimen).to.be.an("array");
     expect(specimen).to.be.length(fixture.length);
     specimen.forEach((line, k) => {
         expect(line).to.be.length(fixture[k].length);
         line.forEach((point, l) => {
             expect(point).to.be.instanceOf(L.LatLng);
-            expect(point.lat, "lat").to.be.closeTo(fixture[k][l].lat, eps);
-            expect(point.lng, "lng").to.be.closeTo(fixture[k][l].lng, eps);
+            expect(point.lat, "lat").to.be.closeTo(fixture[k][l].lat, customEps);
+            expect(point.lng, "lng").to.be.closeTo(fixture[k][l].lng, customEps);
         });
     });
 }
