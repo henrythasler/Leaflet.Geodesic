@@ -8,18 +8,7 @@ import { expect } from "chai";
 import "jest";
 import L from "leaflet";
 
-import { eps } from "./test-toolbox";
-
-// test case with distance 54972.271 m
-const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
-const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
-
-const Berlin = new L.LatLng(52.5, 13.35);
-const LosAngeles = new L.LatLng(33.82, -118.38);
-
-const Seattle = new L.LatLng(47.56, -122.33);
-const Santiago = new L.LatLng(-33.44, -70.71);
-const Capetown = new L.LatLng(-33.94, 18.39);
+import {Berlin, Buninyong, Capetown, eps, FlindersPeak, LosAngeles, Santiago, Seattle} from "./test-toolbox";
 
 const geodesic = new GeodesicCore();
 
@@ -203,8 +192,7 @@ describe("Intersection - regular test cases", function () {
             expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(0, eps);
             expect(res.lng).to.be.closeTo(0, eps);
-        }
-        else {
+        } else {
             expect.fail();
         }
     });
@@ -220,8 +208,7 @@ describe("Intersection - regular test cases", function () {
             expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(17.099091, eps);  // checked with QGIS
             expect(res.lng).to.be.closeTo(-33.681335, eps);
-        }
-        else {
+        } else {
             expect.fail();
         }
     });
@@ -235,8 +222,7 @@ describe("Intersection - regular test cases", function () {
             expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(50.9078, 0.0001);
             expect(res.lng).to.be.closeTo(4.5084, 0.0001);
-        }
-        else {
+        } else {
             expect.fail();
         }
     });
@@ -251,8 +237,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(Berlin.lat, eps);
             expect(res.lng).to.be.closeTo(Berlin.lng, eps);
-        }
-        else {
+        } else {
             expect.fail();
         }
     });
@@ -273,8 +258,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             expect(res).to.be.instanceOf(L.LatLng);
             expect(res.lat).to.be.closeTo(-90, eps);
             expect(res.lng).to.be.closeTo(196.00983852008366, eps);
-        }
-        else {
+        } else {
             expect.fail();
         }
     });

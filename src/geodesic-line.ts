@@ -1,5 +1,5 @@
 import * as L from "leaflet";
-import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
+import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core";
 import {GeodesicGeometry, Statistics} from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
@@ -10,7 +10,7 @@ export class GeodesicLine extends L.Polyline {
     /** Does the actual geometry calculations */
     readonly geom: GeodesicGeometry;
     /** Use this if you need some details about the current geometry */
-    statistics: Statistics = {} as any;
+    statistics: Statistics = {} as Statistics;
     /** Stores all positions that are used to create the geodesic line */
     points: L.LatLng[][] = [];
 
@@ -62,7 +62,6 @@ export class GeodesicLine extends L.Polyline {
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         this.points = latlngExpressionArraytoLatLngArray(latlngs);
-        const opts = this.options as GeodesicOptions, fixSplit = opts.wrap && !opts.naturalDrawing;
         this.fixLatLngs();
         this.updateGeometry();
         return this;
@@ -77,12 +76,10 @@ export class GeodesicLine extends L.Polyline {
         const point = latlngExpressiontoLatLng(latlng);
         if (this.points.length === 0) {
             this.points.push([point]);
-        }
-        else {
+        } else {
             if (latlngs === undefined) {
                 this.points[this.points.length - 1].push(point);
-            }
-            else {
+            } else {
                 latlngs.push(point);
             }
         }
@@ -145,7 +142,7 @@ export class GeodesicLine extends L.Polyline {
         }
 
         let isBoth = from === "both", doStart = isBoth || from === "start", doEnd = isBoth || from === "end",
-                fn = "naturalDrawingLine", args = [];
+            fn = "naturalDrawingLine", args = [];
 
         if (isBoth && byFraction <= -0.5) {
             throw new Error("Can't change length by value less than or equal to -0.5 (whole line length while using " +
@@ -193,6 +190,7 @@ export class GeodesicLine extends L.Polyline {
      *
      * @return Last point of the produced line
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private changeLengthAndGetLastElement(fn: string, start: L.LatLng, end: L.LatLng, args: any[]) {
         // @ts-ignore
         let line = this.geom[fn](start, end, ...args);
@@ -214,38 +212,35 @@ export class GeodesicLine extends L.Polyline {
 
         if (input.type === "FeatureCollection") {
             features = input.features;
-        }
-        else if (input.type === "Feature") {
+        } else if (input.type === "Feature") {
             features = [input];
-        }
-        else if (["MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(input.type)) {
+        } else if (["MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon"].includes(input.type)) {
             features = [{
                 type: "Feature",
                 geometry: input,
                 properties: {}
-            }]
-        }
-        else {
+            }];
+        } else {
             console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${input.type}" not supported.`);
         }
 
         features.forEach((feature: GeoJSON.Feature) => {
             switch (feature.geometry.type) {
-                case "MultiPoint":
-                case "LineString":
-                    latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
-                    break;
-                case "MultiLineString":
-                case "Polygon":
-                    latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
-                    break;
-                case "MultiPolygon":
-                    feature.geometry.coordinates.forEach((item) => {
-                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1)]
-                    })
-                    break;
-                default:
-                    console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${feature.geometry.type}" not supported.`);
+            case "MultiPoint":
+            case "LineString":
+                latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
+                break;
+            case "MultiLineString":
+            case "Polygon":
+                latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
+                break;
+            case "MultiPolygon":
+                feature.geometry.coordinates.forEach((item) => {
+                    latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1)];
+                });
+                break;
+            default:
+                console.log(`[Leaflet.Geodesic] fromGeoJson() - Type "${feature.geometry.type}" not supported.`);
             }
         });
 

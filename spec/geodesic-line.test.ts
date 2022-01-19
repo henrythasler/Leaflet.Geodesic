@@ -8,25 +8,19 @@ import { expect } from "chai";
 
 import "jest";
 
-import { checkFixture, compareObject, eps } from "./test-toolbox";
+import {
+    Beijing,
+    Berlin,
+    Buninyong, Capetown,
+    checkFixture,
+    compareObject,
+    eps, FlindersPeak, LosAngeles,
+    Santiago,
+    Seattle, Sydney,
+    Tokyo
+} from "./test-toolbox";
 import {GeodesicOptions} from "../src/geodesic-core";
-import {GeodesicGeometry} from "../src/geodesic-geom";
-
-// test case with distance 54972.271 m
-const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
-const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
-
-const Berlin = new L.LatLng(52.5, 13.35);
-const LosAngeles = new L.LatLng(33.82, -118.38);
-
-const Seattle = new L.LatLng(47.56, -122.33);
-const Santiago = new L.LatLng(-33.44, -70.71);
-const Capetown = new L.LatLng(-33.94, 18.39);
-
-const Tokyo = new L.LatLng(35.47, 139.15);
-const Sydney = new L.LatLng(-33.91, 151.08);
-
-const Beijing = new L.LatLng(39.92, 116.39);
+import {mockMap} from "./mock-map";
 
 
 const fixturesPath = "spec/fixtures/";
@@ -34,15 +28,7 @@ const fixturesPath = "spec/fixtures/";
 const defaultOptions = { wrap: true, steps: 3 };
 
 describe("Main functionality", function () {
-    let container: HTMLElement;
-    let map: L.Map;
-
-    beforeEach(function () {
-        container = document.createElement('div');
-        container.style.width = '400px';
-        container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
-    });
+    const map = mockMap();
 
     it("Create class w/o any parameters", function () {
         const line = new GeodesicLine();
@@ -79,7 +65,7 @@ describe("Main functionality", function () {
         compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
         line.setLatLngs([Berlin, Capetown]);
-        checkFixture(line.points, [[Berlin, Capetown]])
+        checkFixture(line.points, [[Berlin, Capetown]]);
     });
 
     it("Modify Line w/o wrapping", function () {
@@ -88,7 +74,7 @@ describe("Main functionality", function () {
         compareObject(line.options, { ...defaultOptions, ...{ wrap: false } });
         expect(map.hasLayer(line)).to.be.true;
         line.setLatLngs([Berlin, Capetown]);
-        checkFixture(line.points, [[Berlin, Capetown]])
+        checkFixture(line.points, [[Berlin, Capetown]]);
     });
 
     it("Read LatLngs from empty line", function () {
@@ -106,7 +92,7 @@ describe("Main functionality", function () {
         expect(line).to.be.instanceOf(GeodesicLine);
         compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        checkFixture(line.points, [[Berlin, Capetown]])
+        checkFixture(line.points, [[Berlin, Capetown]]);
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
         expect(latlngs.length).to.be.equal(1);
@@ -117,9 +103,9 @@ describe("Main functionality", function () {
         expect(line).to.be.instanceOf(GeodesicLine);
         compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        checkFixture(line.points, [[Berlin, Capetown]])
+        checkFixture(line.points, [[Berlin, Capetown]]);
         line.setLatLngs([]);
-        checkFixture(line.points, [])
+        checkFixture(line.points, []);
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
         expect(latlngs.length).to.be.equal(0);
@@ -130,9 +116,9 @@ describe("Main functionality", function () {
         expect(line).to.be.instanceOf(GeodesicLine);
         compareObject(line.options, defaultOptions);
         expect(map.hasLayer(line)).to.be.true;
-        checkFixture(line.points, [[Berlin, Capetown]])
+        checkFixture(line.points, [[Berlin, Capetown]]);
         line.setLatLngs([[Berlin, LosAngeles], [Santiago, Capetown]]);
-        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown]])
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown]]);
         const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
         expect(latlngs.length).to.be.equal(2);
@@ -140,7 +126,7 @@ describe("Main functionality", function () {
 
     it("Statistics calculation (simple)", async function () {
         const line = new GeodesicLine([[Berlin, Seattle, Capetown]], { steps: 0 }).addTo(map);
-        checkFixture(line.points, [[Berlin, Seattle, Capetown]])
+        checkFixture(line.points, [[Berlin, Seattle, Capetown]]);
         expect(line.statistics.totalDistance).to.be.closeTo(24569051.081048, eps);
         expect(line.statistics.distanceArray).to.be.an("array");
         expect(line.statistics.distanceArray).to.be.length(1);
@@ -150,7 +136,7 @@ describe("Main functionality", function () {
 
     it("Statistics calculation (complex)", async function () {
         const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]], { steps: 1 }).addTo(map);
-        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown]])
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown]]);
         expect(line.statistics.totalDistance).to.be.closeTo(17319123.023856, eps);
         expect(line.statistics.distanceArray).to.be.an("array");
         expect(line.statistics.distanceArray).to.be.length(2);
@@ -172,9 +158,9 @@ describe("GeoJSON-Support", function () {
     const originalLog = console.log;
 
     beforeEach(function () {
-        container = document.createElement('div');
-        container.style.width = '400px';
-        container.style.height = '400px';
+        container = document.createElement("div");
+        container.style.width = "400px";
+        container.style.height = "400px";
         map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
 
         mockLog.mockClear();
@@ -182,7 +168,7 @@ describe("GeoJSON-Support", function () {
 
     afterEach(function () {
         console.log = originalLog;
-    })
+    });
 
     it("Just a Linestring", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
@@ -296,15 +282,7 @@ describe("GeoJSON-Support", function () {
 });
 
 describe("Usage of base-class functions", function () {
-    let container: HTMLElement;
-    let map: L.Map;
-
-    beforeEach(function () {
-        container = document.createElement('div');
-        container.style.width = '400px';
-        container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
-    });
+    const map = mockMap();
 
     it("getBounds()", async function () {
         const line = new GeodesicLine([FlindersPeak, Buninyong]).addTo(map);
@@ -337,7 +315,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(LosAngeles);
-        checkFixture(line.points, [[LosAngeles]])
+        checkFixture(line.points, [[LosAngeles]]);
     });
 
     it("addLatLng() to existing point", async function () {
@@ -347,7 +325,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Berlin);
-        checkFixture(line.points, [[LosAngeles, Berlin]])
+        checkFixture(line.points, [[LosAngeles, Berlin]]);
     });
 
     it("addLatLng() to existing line", async function () {
@@ -357,7 +335,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Beijing);
-        checkFixture(line.points, [[LosAngeles, Berlin, Beijing]])
+        checkFixture(line.points, [[LosAngeles, Berlin, Beijing]]);
     });
 
     it("addLatLng() to multiline", async function () {
@@ -367,7 +345,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Beijing);
-        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing]])
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing]]);
     });
 
     it("addLatLng() to multiline with given segment #0", async function () {
@@ -377,7 +355,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Beijing, line.points[0]);
-        checkFixture(line.points, [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]])
+        checkFixture(line.points, [[Berlin, LosAngeles, Beijing], [Santiago, Capetown]]);
     });
 
     it("addLatLng() to multiline with given segment #1", async function () {
@@ -387,7 +365,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         line.addLatLng(Beijing, line.points[1]);
-        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing], [Tokyo, Sydney]])
+        checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing], [Tokyo, Sydney]]);
     });
 
 });
@@ -395,13 +373,13 @@ describe("Usage of base-class functions", function () {
 
 describe("Natural drawing", function () {
 
-        const tryCoords = (start: L.LatLng, dest: L.LatLng, customEps = eps) => {
-                const line = new GeodesicLine([start, dest], {naturalDrawing: true});
-                const newCoords = line.getLatLngs()[0] as L.LatLng[];
-                checkFixture([[start, dest]], [[newCoords[0], newCoords[newCoords.length - 1]]], customEps);
-            },
+    const tryCoords = (start: L.LatLng, dest: L.LatLng, customEps = eps) => {
+            const line = new GeodesicLine([start, dest], {naturalDrawing: true});
+            const newCoords = line.getLatLngs()[0] as L.LatLng[];
+            checkFixture([[start, dest]], [[newCoords[0], newCoords[newCoords.length - 1]]], customEps);
+        },
 
-            start = new L.LatLng(43, -468);
+        start = new L.LatLng(43, -468);
 
     it("Regular line 1", function () {
         tryCoords(start, new L.LatLng(-46, -68));
@@ -452,12 +430,12 @@ describe("Natural drawing", function () {
 
     it("Fixed number of segments", function () {
         const line = new GeodesicLine([new L.LatLng(10, -458), new L.LatLng(45, 354)], {
-                    naturalDrawing: true,
-                    segmentsNumber: 20,
-                    naturalDrawingFixedNumberOfSegments: true
-                });
+            naturalDrawing: true,
+            segmentsNumber: 20,
+            naturalDrawingFixedNumberOfSegments: true
+        });
         expect(line.getLatLngs()[0]).to.have.lengthOf(21);
-    })
+    });
 
 });
 
@@ -510,7 +488,7 @@ describe("changeLength()", function () {
         // Test regular and natural drawing lines
         for (let naturalDrawing of [false, true]) {
             let start = -0.9, end = 1, lenDiffMultiplier = 1, lngShifts = [5],
-                    lineTypeText = "Regular line";
+                lineTypeText = "Regular line";
 
             if (mode === "both") {
                 start = -0.45;
@@ -548,14 +526,14 @@ describe("changeLength()", function () {
                         }
 
                         const geodesic = new GeodesicLine([[10, 10], [15, 10 + shift]], options),
-                                srcLenRad = geodesic.statistics.sphericalLengthRadians,
-                                srcLenM = geodesic.statistics.sphericalLengthMeters;
+                            srcLenRad = geodesic.statistics.sphericalLengthRadians,
+                            srcLenM = geodesic.statistics.sphericalLengthMeters;
 
                         // @ts-ignore
                         geodesic.changeLength(mode, i);
                         const expectedDiff = 1 + i * lenDiffMultiplier,
-                                newLenRad = geodesic.statistics.sphericalLengthRadians,
-                                newLenM = geodesic.statistics.sphericalLengthMeters;
+                            newLenRad = geodesic.statistics.sphericalLengthRadians,
+                            newLenM = geodesic.statistics.sphericalLengthMeters;
 
                         expect(newLenRad / srcLenRad).to.be.closeTo(expectedDiff, eps);
                         expect(newLenM / srcLenM).to.be.closeTo(expectedDiff, eps);
@@ -637,7 +615,7 @@ describe("Options", function () {
         expect(() => {
             return new GeodesicLine([[-50, -700], [-40, -635]], {
                 updateStatisticsAfterRedrawing: false
-            })
+            });
         }).not.to.throw();
     });
 });

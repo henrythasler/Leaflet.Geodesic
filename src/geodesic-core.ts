@@ -166,7 +166,7 @@ export const DEFAULT_GEODESIC_OPTIONS = {
     radius: 1000000,
     steps: 3,
     wrap: true,
-    moveNoWrapTo: "first-point" as "first-point",
+    moveNoWrapTo: "first-point" as const,
     segmentsNumber: undefined,
     breakPoints: undefined,
     naturalDrawing: false,
@@ -267,7 +267,7 @@ export class GeodesicCore {
         if (0 <= degrees && degrees < 360) {
             return degrees; // avoid rounding due to arithmetic ops if within range
         } else {
-            return this.mod(degrees, 360)
+            return this.mod(degrees, 360);
         }
     }
 
@@ -400,7 +400,7 @@ export class GeodesicCore {
             λ = dL + (1 - C) * f * sinα * (σ + C * sinσ * (cos2σₘ + C * cosσ * (-1 + 2 * cos2σₘ * cos2σₘ)));
             const iterationCheck = antipodal ? Math.abs(λ) - π : Math.abs(λ);
             if (iterationCheck > π) {
-                throw new EvalError('λ > π');
+                throw new EvalError("λ > π");
             }
         } while (Math.abs(λ - λʹ) > 1e-12 && ++iterations < maxInterations);
 

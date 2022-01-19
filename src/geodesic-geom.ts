@@ -4,7 +4,7 @@ import {
     GeodesicCore,
     RawGeodesicOptions,
     WGS84Vector
-} from "./geodesic-core"
+} from "./geodesic-core";
 
 /**
  * Earth radius used by WebMercator
@@ -102,7 +102,7 @@ export class GeodesicGeometry {
      */
     recursiveMidpoint(start: L.LatLng, dest: L.LatLng, iterations: number): L.LatLng[] {
         const geom: L.LatLng[] = [start, dest];
-        const midpoint = this.geodesic.midpoint(start, dest)
+        const midpoint = this.geodesic.midpoint(start, dest);
 
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
@@ -148,7 +148,7 @@ export class GeodesicGeometry {
         }
 
         let lng1 = this.geodesic.toRadians(start.lng), lat1 = this.geodesic.toRadians(start.lat),
-                lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat);
+            lng2 = this.geodesic.toRadians(dest.lng), lat2 = this.geodesic.toRadians(dest.lat);
 
         // An edge case when lng diff is 180 deg and absolute values of lats are equal. Can be fixed by shifting any lat.
         // Even the slightest shift helps, but I like to be more careful in case floats might mess up.
@@ -158,15 +158,15 @@ export class GeodesicGeometry {
 
         // Call trig functions here for optimization
         let cosLng1 = Math.cos(lng1), sinLng1 = Math.sin(lng1), cosLat1 = Math.cos(lat1), sinLat1 = Math.sin(lat1),
-                cosLng2 = Math.cos(lng2), sinLng2 = Math.sin(lng2), cosLat2 = Math.cos(lat2), sinLat2 = Math.sin(lat2),
+            cosLng2 = Math.cos(lng2), sinLng2 = Math.sin(lng2), cosLat2 = Math.cos(lat2), sinLat2 = Math.sin(lat2),
 
-                // Calculate great circle distance between these points
-                w = lng2 - lng1,
-                h = lat2 - lat1,
-                z = Math.sin(h / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(w / 2) ** 2,
-                d = 2 * Math.asin(Math.sqrt(z)),
-                // @ts-ignore
-                coords: Linestring = [];
+            // Calculate great circle distance between these points
+            w = lng2 - lng1,
+            h = lat2 - lat1,
+            z = Math.sin(h / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(w / 2) ** 2,
+            d = 2 * Math.asin(Math.sqrt(z)),
+            // @ts-ignore
+            coords: Linestring = [];
 
         // I'm not sure if it's ever the case, but I'm too afraid to remove it.
         if (d === 0) {
@@ -218,11 +218,11 @@ export class GeodesicGeometry {
             throw new Error("New spherical line length exceeds 180 degrees. Consider settings \"naturalDrawing\" " +
                     "option to true to resolve this problem. Otherwise, check new line length before calling " +
                     "changeLength()."
-            )
+            );
         }
 
         let sinD = Math.sin(d), f = 0, i = 0, prevF = -1, moveBy = doUntil / steps,
-                useBreakPoints = !this.options.naturalDrawing && changeLengthBy === 0;
+            useBreakPoints = !this.options.naturalDrawing && changeLengthBy === 0;
 
         while (true) {
             // Without this exact if condition, TS will throw a tantrum
@@ -247,12 +247,12 @@ export class GeodesicGeometry {
             }
 
             let A = Math.sin((len - f) * d) / sinD,
-                    B = Math.sin(f * d) / sinD,
-                    x = A * cosLat1 * cosLng1 + B * cosLat2 * cosLng2,
-                    y = A * cosLat1 * sinLng1 + B * cosLat2 * sinLng2,
-                    z = A * sinLat1 + B * sinLat2,
-                    lat = this.geodesic.toDegrees(Math.atan2(z, Math.sqrt(x ** 2 + y ** 2))),
-                    lng = this.geodesic.toDegrees(Math.atan2(y, x));
+                B = Math.sin(f * d) / sinD,
+                x = A * cosLat1 * cosLng1 + B * cosLat2 * cosLng2,
+                y = A * cosLat1 * sinLng1 + B * cosLat2 * sinLng2,
+                z = A * sinLat1 + B * sinLat2,
+                lat = this.geodesic.toDegrees(Math.atan2(z, Math.sqrt(x ** 2 + y ** 2))),
+                lng = this.geodesic.toDegrees(Math.atan2(y, x));
             coords.push(new L.LatLng(lat, lng));
 
             prevF = f;
@@ -289,8 +289,8 @@ export class GeodesicGeometry {
     naturalDrawingLine (start: L.LatLng, dest: L.LatLng, changeLengthBy = 0): Linestring {
         // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
         // an issue when difference between lngs is 180 degrees.
-        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)], start, dest)[0],
-                lngFrom, lngTo, forceSmallPart = false, absDiff = Math.abs(start.lng - dest.lng);
+        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0],
+            lngFrom, lngTo, forceSmallPart = false, absDiff = Math.abs(start.lng - dest.lng);
 
         // If line won't be split, just return wrapped line to improve performance
         if (absDiff <= 180) {
@@ -315,7 +315,7 @@ export class GeodesicGeometry {
         // Last lng should lie between start and dest, but don't touch any of it. If it touches any of these lngs,
         // difference between lngs is multiple of 180 or 360. In this case, use big part which solves certain glitches.
         let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = !forceSmallPart && (lastLng <= lngFrom || lastLng >= lngTo);
-        return this.wrapMultiLineString([this.line(start, dest, useBigPart, false, changeLengthBy)], start, dest)[0];
+        return this.wrapMultiLineString([this.line(start, dest, useBigPart, false, changeLengthBy)])[0];
     }
 
     multiLineString(latlngs: L.LatLng[][]): Multilinestring {
@@ -354,6 +354,7 @@ export class GeodesicGeometry {
      * @param src Source object
      * @param dest Destination object
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private static copySphericalStatistics (src: any, dest: any) {
         const params = ["sphericalLengthRadians", "sphericalLengthMeters"];
         for (const param of params) {
@@ -409,18 +410,14 @@ export class GeodesicGeometry {
                 if (intersection) {
                     result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]];
                 }
-            }
-            // crossing the "eastern" antimeridian
-            else if (dest.lng > 180) {
+            } else if (dest.lng > 180) { // crossing the "eastern" antimeridian
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianEast.point, antimeridianEast.bearing);
                 if (intersection) {
                     result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]];
                 }
             }
-        }
-        // coming back over the antimeridian from the "other" side?
-        else if ((dest.lng >= -180) && (dest.lng <= 180)) {
+        } else if ((dest.lng >= -180) && (dest.lng <= 180)) { // coming back over the antimeridian from the "other" side?
             // crossing the "western" antimeridian
             if (start.lng < -180) {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
@@ -428,10 +425,7 @@ export class GeodesicGeometry {
                 if (intersection) {
                     result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(intersection.lat, intersection.lng + 360)], [intersection, dest]];
                 }
-            }
-
-            // crossing the "eastern" antimeridian
-            else if (start.lng > 180) {
+            } else if (start.lng > 180) { // crossing the "eastern" antimeridian
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
                 if (intersection) {
@@ -483,14 +477,12 @@ export class GeodesicGeometry {
     /**
      * Linestrings of a given multilinestring will be wrapped (+- 360°) to show a continuous line w/o any weird discontinuities
      * when `wrap` is set to `false` in the geodesic class
-     * @param multilinestring
-     * @param start Internal use only. Start point used to correct natural drawing line direction.
-     * @param dest Internal use only. Destination point used to correct natural drawing line direction.
-     * @returns another multilinestring where the points of each linestring are wrapped accordingly
+     * @param multilinestring Multilinestring to wrap
+     * @returns Multilinestring where the points of each linestring are wrapped accordingly
      */
-    wrapMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T, start: L.LatLng | null = null, dest: L.LatLng | null = null): T {
+    wrapMultiLineString <T extends L.LatLng[][] | Multilinestring> (multilinestring: T): T {
         // @ts-ignore
-        const result: T = [], direction = Math.sign(dest?.lng - start?.lng);
+        const result: T = [];
 
         for (const linestring of multilinestring) {
             const resultLine: L.LatLng[] = [];
@@ -505,7 +497,7 @@ export class GeodesicGeometry {
                 // natural drawing line correctly.
 
                 const shift: number = previous === null ? 0 : Math.round(
-                        parseFloat(((point.lng - previous.lng) / 360).toFixed(6))
+                    parseFloat(((point.lng - previous.lng) / 360).toFixed(6))
                 ) * 360;
                 const newPoint = new L.LatLng(point.lat, point.lng - shift);
 
@@ -589,7 +581,7 @@ export class GeodesicGeometry {
      * @return Calculated statistics
      */
     updateStatistics(points: L.LatLng[][], vertices: L.LatLng[][]): Statistics {
-        const stats: Statistics = {} as any;
+        const stats = {} as Statistics;
 
         stats.distanceArray = this.multilineDistance(points);
         stats.totalDistance = 0;

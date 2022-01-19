@@ -1,6 +1,6 @@
 import * as L from "leaflet";
-import { GeodesicGeometry, Statistics } from "./geodesic-geom"
-import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core"
+import { GeodesicGeometry, Statistics } from "./geodesic-geom";
+import {DEFAULT_GEODESIC_OPTIONS, GeodesicOptions, RawGeodesicOptions} from "./geodesic-core";
 import { latlngExpressiontoLatLng } from "./types-helper";
 
 /**
@@ -14,7 +14,7 @@ export class GeodesicCircleClass extends L.Polyline {
     /** Current radius in meters */
     radius: number;
     /** Use this if you need some details about the current geometry */
-    statistics: Statistics = {} as any;
+    statistics: Statistics = {} as Statistics;
 
     constructor(center?: L.LatLngExpression, options?: Partial<GeodesicOptions>) {
         super([], options);
@@ -49,8 +49,7 @@ export class GeodesicCircleClass extends L.Polyline {
         if ((this.options as GeodesicOptions).wrap) {
             const split = this.geom.splitCircle(circle);
             super.setLatLngs(split);
-        }
-        else {
+        } else {
             super.setLatLngs(circle);
         }
     }

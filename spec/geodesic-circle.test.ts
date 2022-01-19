@@ -4,41 +4,15 @@
 import * as L from "leaflet";
 import { GeodesicCircleClass } from "../src/geodesic-circle";
 import { expect } from "chai";
-
 import "jest";
-
-import { checkFixture, compareObject, eps } from "./test-toolbox";
-
-// test case with distance 54972.271 m
-const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
-const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
-
-const Berlin = new L.LatLng(52.5, 13.35);
-const LosAngeles = new L.LatLng(33.82, -118.38);
-
-const Seattle = new L.LatLng(47.56, -122.33);
-const Santiago = new L.LatLng(-33.44, -70.71);
-const Capetown = new L.LatLng(-33.94, 18.39);
-
-const Tokyo = new L.LatLng(35.47, 139.15);
-const Sydney = new L.LatLng(-33.91, 151.08);
-
-const Beijing = new L.LatLng(39.92, 116.39);
+import {Beijing, Buninyong, checkFixture, compareObject, eps, FlindersPeak, Seattle} from "./test-toolbox";
+import {mockMap} from "./mock-map";
 
 
 const defaultOptions = { wrap: true, steps: 24, fill: true, noClip: true };
 
 describe("Main functionality", function () {
-    let container: HTMLElement;
-    let map: L.Map;
-    const radius = 1000 * 1000;
-
-    beforeEach(function () {
-        container = document.createElement('div');
-        container.style.width = '400px';
-        container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
-    });
+    const radius = 1000 * 1000, map = mockMap();
 
     it("Create class w/o any parameters", function () {
         const circle = new GeodesicCircleClass();
@@ -135,15 +109,7 @@ describe("Main functionality", function () {
 });
 
 describe("Bugs", function () {
-    let container: HTMLElement;
-    let map: L.Map;
-
-    beforeEach(function () {
-        container = document.createElement('div');
-        container.style.width = '400px';
-        container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
-    });
+    const map = mockMap();
 
     it("Calling getBounds on a GeodesicCircle throws an error (#48)", async function () {
         const circle = new GeodesicCircleClass(Seattle, { radius: 10 });

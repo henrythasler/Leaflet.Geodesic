@@ -1,10 +1,12 @@
+/*eslint "@typescript-eslint/no-explicit-any": "off"*/
+
 import * as L from "leaflet";
 
 export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
     return ((typeof object === "object")
         && (object !== null)
-        && ('lat' in object)
-        && ('lng' in object)
+        && ("lat" in object)
+        && ("lng" in object)
         && (typeof object.lat === "number")
         && (typeof object.lng === "number"));
 }
@@ -22,11 +24,9 @@ export function instanceOfLatLngExpression(object: any): object is L.LatLngExpre
 export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
     if (input instanceof L.LatLng) {
         return input;
-    }
-    else if (instanceOfLatLngTuple(input)) {
+    } else if (instanceOfLatLngTuple(input)) {
         return new L.LatLng(input[0], input[1]);
-    }
-    else if (instanceOfLatLngLiteral(input)) {
+    } else if (instanceOfLatLngLiteral(input)) {
         return new L.LatLng(input.lat, input.lng);
     }
     throw new Error("L.LatLngExpression expected. Unknown object found.");

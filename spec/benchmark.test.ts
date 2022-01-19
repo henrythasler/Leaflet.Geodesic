@@ -1,17 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import Benchmark = require("benchmark");
+import Benchmark from "benchmark";
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 
 import L from "leaflet";
 
 import "jest";
-
-const Tokyo = new L.LatLng(35.47, 139.15);
-const Seattle = new L.LatLng(47.56, -122.33);
-const Berlin = new L.LatLng(52.5, 13.35);
+import {Berlin, Seattle, Tokyo} from "./test-toolbox";
 
 const geom = new GeodesicGeometry();
 
@@ -25,10 +22,10 @@ async function benchmark(start: L.LatLng, dest: L.LatLng): Promise<Benchmark.Sui
             .add("splitLine", () => {
                 geom.splitLine(start, dest);
             })
-            .on('cycle', (event: any) => {
+            .on("cycle", (event: Event) => {
                 console.log(String(event.target));
             })
-            .on('complete abort', () => {
+            .on("complete abort", () => {
                 resolve(suite);
             })
             .run();

@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/*eslint "@typescript-eslint/no-explicit-any": "off"*/
+
 import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 import { expect } from "chai";
 
@@ -62,20 +64,20 @@ describe("latlngExpressionArraytoLatLngArray", function () {
                 expect(point).to.be.instanceOf(L.LatLng);
                 expect(point.lat).to.be.closeTo(fixture.lat, eps);
                 expect(point.lng).to.be.closeTo(fixture.lng, eps);
-            })
+            });
         });
     }
 
     it("1D-Array - 1 Point - LatLng-Class", function () {
         const n = 1, m = 1;
         const latlng = latlngExpressionArraytoLatLngArray([new L.LatLng(Berlin.lat, Berlin.lng)]);
-        checkLatLng(latlng, n, m, Berlin)
+        checkLatLng(latlng, n, m, Berlin);
     });
 
     it("1D-Array - Multipoint - LatLng-Class", function () {
         const n = 1, m = 5;
         const latlng = latlngExpressionArraytoLatLngArray((new Array(m) as L.LatLngExpression[]).fill(new L.LatLng(Berlin.lat, Berlin.lng)));
-        checkLatLng(latlng, n, m, Berlin)
+        checkLatLng(latlng, n, m, Berlin);
     });
 
     it("1D-Array - 1 Point - LatLng-Literal", function () {
