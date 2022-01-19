@@ -4,14 +4,14 @@ import {GeodesicGeometry, Statistics} from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
 /**
- * Draw geodesic lines based on L.Polyline
+ * Draw geodesic line based on L.Polyline
  */
 export class GeodesicLine extends L.Polyline {
-    /** does the actual geometry calculations */
+    /** Does the actual geometry calculations */
     readonly geom: GeodesicGeometry;
-    /** use this if you need some detailled info about the current geometry */
+    /** Use this if you need some details about the current geometry */
     statistics: Statistics = {} as any;
-    /** stores all positions that are used to create the geodesic line */
+    /** Stores all positions that are used to create the geodesic line */
     points: L.LatLng[][] = [];
 
     constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: Partial<GeodesicOptions>) {
@@ -25,7 +25,7 @@ export class GeodesicLine extends L.Polyline {
         }
     }
 
-    /** calculates the geodesics and update the polyline-object accordingly */
+    /** Calculates the geodesics and update the polyline-object accordingly */
     private updateGeometry(updateStats = (this.options as RawGeodesicOptions).updateStatisticsAfterRedrawing): void {
         let geodesic = this.geom.multiLineString(this.points), opts = this.options as GeodesicOptions, latLngs;
 
@@ -47,39 +47,29 @@ export class GeodesicLine extends L.Polyline {
         super.setLatLngs(latLngs);
     }
 
+    /**
+     * Updates statistics of this line.
+     * You should call it only if you've set {@link GeodesicOptions.updateStatisticsAfterRedrawing} to `false`.
+     */
     updateStatistics() {
         this.updateGeometry(true);
+        return this;
     }
 
     /**
-     * overwrites the original function with additional functionality to create a geodesic line
+     * Overwrites the original function with additional functionality to create a geodesic line
      * @param latlngs an array (or 2d-array) of positions
      */
     setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
         this.points = latlngExpressionArraytoLatLngArray(latlngs);
         const opts = this.options as GeodesicOptions, fixSplit = opts.wrap && !opts.naturalDrawing;
-
-        // Fix split not working correctly when one point has -180 lng and the other -- +180. Also fix almost all
-        // cases when natural drawing is used, points lie on antimeridians, and changeLength() called.
-        if (fixSplit || opts.naturalDrawing) {
-            for (const linestring of this.points) {
-                for (let i = 1; i < linestring.length; i++) {
-
-                    const prevPoint = linestring[i - 1], point = linestring[i], absDiff = Math.abs(point.lng - prevPoint.lng);
-                    if ((fixSplit && absDiff === 360) || (opts.naturalDrawing && this.geom.geodesic.isEqual(absDiff % 180, 0))) {
-                        prevPoint.lng -= 0.0001;
-                    }
-
-                }
-            }
-        }
-
+        this.fixLatLngs();
         this.updateGeometry();
         return this;
     }
 
     /**
-     * add a given point to the geodesic line object
+     * Adds a given point to the geodesic line object
      * @param latlng point to add. The point will always be added to the last linestring of a multiline
      * @param latlngs define a linestring to add the new point to. Read from points-property before (e.g. `line.addLatLng(Beijing, line.points[0]);`)
      */
@@ -96,8 +86,35 @@ export class GeodesicLine extends L.Polyline {
                 latlngs.push(point);
             }
         }
+        this.fixLatLngs();
         this.updateGeometry();
         return this;
+    }
+
+    /**
+     * Fixes following edge cases:
+     *
+     * 1. Split not working correctly when one point has -180 lng and the other -- +180.
+     * 2. When natural drawing is used, points lie on antimeridians, and changeLength() called, wrong line is produced.
+     */
+    private fixLatLngs() {
+        const opts = this.options as GeodesicOptions, fixSplit = opts.wrap && !opts.naturalDrawing;
+        if (!fixSplit && !opts.naturalDrawing) {
+            return;
+        }
+
+        for (const linestring of this.points) {
+            for (let i = 1; i < linestring.length; i++) {
+                const prevPoint = linestring[i - 1], point = linestring[i],absDiff = Math.abs(point.lng - prevPoint.lng);
+
+                if (fixSplit && absDiff === 360) {
+                    prevPoint.lng -= 0.000001; // For split, even this small change helps
+                } else if (opts.naturalDrawing && this.geom.geodesic.isEqual(absDiff % 180, 0)) {
+                    prevPoint.lng -= 0.0001; // For natural drawing, less shift doesn't work for some reason
+                }
+
+            }
+        }
     }
 
     /**
@@ -121,10 +138,10 @@ export class GeodesicLine extends L.Polyline {
      * @param byFraction A fraction to change length by. It it's positive, line will be lengthened.
      * If negative - shortened. If 0, nothing will be done.
      */
-    changeLength(from: "start" | "end" | "both", byFraction: number) {
+    changeLength(from: "start" | "end" | "both", byFraction: number): this {
         // Split sometimes fail with distance really close to 0
         if (byFraction === 0 || this.geom.geodesic.isEqual(this.statistics.sphericalLengthRadians, 0)) {
-            return;
+            return this;
         }
 
         let isBoth = from === "both", doStart = isBoth || from === "start", doEnd = isBoth || from === "end",
@@ -162,8 +179,20 @@ export class GeodesicLine extends L.Polyline {
         }
 
         this.updateGeometry(true);
+        return this;
     }
 
+    /**
+     * Calls given line function defined by given points, passes given args to it and returns the last point of the
+     * produced line.
+     *
+     * @param fn Function to call
+     * @param start Start point
+     * @param end End point
+     * @param args Arguments to pass to the function. Should contain length to change by.
+     *
+     * @return Last point of the produced line
+     */
     private changeLengthAndGetLastElement(fn: string, start: L.LatLng, end: L.LatLng, args: any[]) {
         // @ts-ignore
         let line = this.geom[fn](start, end, ...args);
@@ -177,7 +206,7 @@ export class GeodesicLine extends L.Polyline {
 
     /**
      * Creates geodesic lines from a given GeoJSON-Object.
-     * @param input GeoJSON-Object
+     * @param input GeoJSON object
      */
     fromGeoJson(input: GeoJSON.GeoJSON): this {
         let latlngs: L.LatLngExpression[][] = [];
@@ -228,9 +257,9 @@ export class GeodesicLine extends L.Polyline {
 
     /**
      * Calculates the distance between two geo-positions
-     * @param start 1st position
-     * @param dest 2nd position
-     * @return the distance in meters
+     * @param start First position
+     * @param dest Second position
+     * @return Distance in meters
      */
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest));

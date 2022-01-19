@@ -33,9 +33,9 @@ export interface Statistics extends SphericalStatistics {
     distanceArray: number[],
     /** Overall distance of all lines */
     totalDistance: number,
-    /** number of positions that the geodesic lines are created from */
+    /** Number of positions that the geodesic lines are created from */
     points: number,
-    /** number vertices that were created during geometry calculation */
+    /** Number vertices that were created during geometry calculation */
     vertices: number
 }
 
@@ -364,18 +364,18 @@ export class GeodesicGeometry {
     }
 
     /**
+     * Splits a segment on antimeridians.
      *
-     * Is much (10x) faster than the previous implementation:
+     * @param startPosition Start segment point
+     * @param destPosition End segment point
      *
-     * ```
-     * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
-     * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
-     * ```
-     *
-     * @param startPosition
-     * @param destPosition
+     * @return Split segment
      */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
+        // It's much (10x) faster than the previous implementation:
+        // Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
+        // Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
+
         const antimeridianWest = {
             point: new L.LatLng(89.9, -180.0000001),    // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
@@ -558,9 +558,9 @@ export class GeodesicGeometry {
 
     /**
      * Calculates the distance between two positions on the earths surface
-     * @param start 1st position
-     * @param dest 2nd position
-     * @return the distance in **meters**
+     * @param start First position
+     * @param dest Second position
+     * @return Distance in **meters**
      */
     distance(start: L.LatLng, dest: L.LatLng): number {
         return this.geodesic.inverse(
@@ -581,6 +581,13 @@ export class GeodesicGeometry {
         return dist;
     }
 
+    /**
+     * Calculates and returns statistics **not** including spherical lengths
+     * @param points Points to calculate statistics of
+     * @param vertices Vertices to calculate statistics of
+     *
+     * @return Calculated statistics
+     */
     updateStatistics(points: L.LatLng[][], vertices: L.LatLng[][]): Statistics {
         const stats: Statistics = {} as any;
 

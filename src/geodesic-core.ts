@@ -105,6 +105,8 @@ export interface RawGeodesicOptions {
      *
      * Natural drawing greatly decreases performance, don't put many points or limit line length while using it.
      *
+     * **Warning**: When two endpoints are on antimeridians, their position precision is reduced to 0.0001.
+     *
      * Defaults to false.
      */
     naturalDrawing: boolean,
@@ -152,9 +154,14 @@ export interface RawGeodesicOptions {
     updateStatisticsAfterRedrawing: boolean,
 }
 
-export interface GeodesicOptions extends L.PolylineOptions, RawGeodesicOptions {
-}
+/**
+ * Combines geodesic options with polyline options
+ */
+export interface GeodesicOptions extends L.PolylineOptions, RawGeodesicOptions {}
 
+/**
+ * Default options for geodesic classes
+ */
 export const DEFAULT_GEODESIC_OPTIONS = {
     radius: 1000000,
     steps: 3,
@@ -186,35 +193,61 @@ export class GeodesicCore {
         f: 1 / 298.257223563
     }; // WGS-84
 
+    /**
+     * Precision to perform comparisons with
+     */
     precision = 0.00001;
 
     constructor(options?: Partial<GeodesicOptions>) {
         this.options = { ...DEFAULT_GEODESIC_OPTIONS, ...options };
     }
 
+    /**
+     * Converts degrees to radians
+     * @param degree Angle to convert
+     */
     toRadians(degree: number): number {
         return degree * Math.PI / 180;
     }
 
+    /**
+     * Converts radians to degrees
+     * @param radians Angle to convert
+     */
     toDegrees(radians: number): number {
         return radians * 180 / Math.PI;
     }
 
+    /**
+     * Returns true, if `n1 = n2` with precision of {@link GeodesicCore#precision}
+     * @param n1 First number to compare
+     * @param n2 Second number to compare
+     */
     isEqual(n1: number, n2: number) {
         return Math.abs(n1 - n2) <= this.precision;
     }
 
+    /**
+     * Returns true, if `n1 <= n2` with precision of {@link GeodesicCore#precision}
+     * @param n1 First number to compare
+     * @param n2 Second number to compare
+     */
     isLessThanOrEqualTo(n1: number, n2: number) {
         return n1 - n2 <= this.precision;
     }
 
+    /**
+     * Returns true, if `n1 >= n2` with precision of {@link GeodesicCore#precision}
+     * @param n1 First number to compare
+     * @param n2 Second number to compare
+     */
     isGreaterThanOrEqualTo(n1: number, n2: number) {
         return n1 - n2 >= -this.precision;
     }
 
     /**
-     * implements scientific modulus
-     * source: http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html 
+     * Implements scientific modulus.
+     * [Source](http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html).
      * @param n 
      * @param p 
      * @return 
@@ -225,9 +258,10 @@ export class GeodesicCore {
     }
 
     /**
-     * source: https://github.com/chrisveness/geodesy/blob/master/dms.js
-     * @param degrees arbitrary value
-     * @return degrees between 0..360
+     * Wraps given angle to `[0, 360]` degrees range
+     * Source: https://github.com/chrisveness/geodesy/blob/master/dms.js
+     * @param degrees Arbitrary value
+     * @return Degrees between `[0, 360]` range
      */
     wrap360(degrees: number): number {
         if (0 <= degrees && degrees < 360) {
@@ -238,10 +272,10 @@ export class GeodesicCore {
     }
 
     /**
-     * general wrap function with arbitrary max value
-     * @param degrees arbitrary value
-     * @param max
-     * @return degrees between `-max`..`+max`
+     * General wrap function with arbitrary max value
+     * @param degrees Arbitrary value
+     * @param max Defines range to wrap value too
+     * @return Degrees between `[-max, max]`
      */
     wrap(degrees: number, max = 360) {
         if (-max <= degrees && degrees <= max) {
@@ -256,9 +290,9 @@ export class GeodesicCore {
      * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
      * source: https://github.com/chrisveness/geodesy/blob/master/latlon-ellipsoidal-vincenty.js
      *
-     * @param start starting point 
-     * @param bearing initial bearing (in degrees)
-     * @param distance distance from starting point to calculate along given bearing in meters.
+     * @param start Starting point
+     * @param bearing Initial bearing (in degrees)
+     * @param distance Distance from starting point to calculate along given bearing in meters.
      * @param maxInterations How many iterations can be made to reach the allowed deviation (`ε`), before an error will be thrown.
      * @return Final point (destination point) and bearing (in degrees)
      */
@@ -402,17 +436,19 @@ export class GeodesicCore {
     }
 
     /**
-     * Returns the point of intersection of two paths defined by position and bearing. 
-     * This calculation uses a spherical model of the earth. This will lead to small errors compared to an ellipsiod model.
-     * based on the work of Chris Veness (https://github.com/chrisveness/geodesy)
-     * source: https://github.com/chrisveness/geodesy/blob/master/latlon-spherical.js
+     * Returns the point of intersection of two paths defined by position and bearing.
+     *
+     * It uses a spherical model of the earth. This will lead to small errors compared to an ellipsoid model.
+     * Based on the [work of Chris Veness](https://github.com/chrisveness/geodesy).
+     * [Source file](https://github.com/chrisveness/geodesy/blob/master/latlon-spherical.js).
      * 
-     * @param firstPos 1st path: position and bearing
-     * @param firstBearing
-     * @param secondPos 2nd path: position and bearing
-     * @param secondBearing
+     * @param firstPos First path's position
+     * @param firstBearing First path's bearing
+     * @param secondPos Second path's position
+     * @param secondBearing Second path's bearing
+     *
+     * @return Point of intersection or null, if there's infinite intersections, or paths are antipodal
      */
-
     intersection(firstPos: L.LatLng, firstBearing: number, secondPos: L.LatLng, secondBearing: number): L.LatLng | null {
         const φ1 = this.toRadians(firstPos.lat);
         const λ1 = this.toRadians(firstPos.lng);
@@ -458,6 +494,13 @@ export class GeodesicCore {
         return new L.LatLng(this.toDegrees(φ3), this.toDegrees(λ3));
     }
 
+    /**
+     * Midpoint on a geodesic line. It Splits a line defined by two given points into two lines with equal spherical length.
+     * @param start Start point
+     * @param dest End point
+     *
+     * @return Midpoint
+     */
     midpoint(start: L.LatLng, dest: L.LatLng): L.LatLng {
         // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ)² + cos²φ2⋅sin²Δλ ) )
         // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
