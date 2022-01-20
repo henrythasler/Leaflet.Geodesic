@@ -68,8 +68,8 @@
     "lint:fix": "eslint . --fix",
     "build:tools": "tsc tools/prebuild.ts && tsc tools/postbuild.ts",
     "prebuild": "node tools/prebuild.js",
-    "build": "npm run lint && rollup -c rollup.config.prod.js",
-    "build:dev": "npm run prebuild && rollup -c rollup.config.dev.js",
+    "build": "npm run lint && rollup -c rollup.config.js",
+    "build:dev": "npm run prebuild && rollup -c rollup.config.js --configDev",
     "postbuild": "node tools/postbuild.js"
   },
   "np": {
