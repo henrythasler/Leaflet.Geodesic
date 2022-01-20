@@ -2,14 +2,16 @@ import * as L from "leaflet";
 
 export interface RawGeodesicOptions {
     /**
-     * Wrap geodesic line at antimeridian. Set to false, to draw a line over the antimeridian. Defaults to true.
+     * Wrap geodesic line at antimeridian. Set to `false`, to draw a line over the antimeridian.
+     *
+     * Defaults to `true`.
      */
     wrap: boolean,
 
     /**
      * **Only for geodesic line.**
      *
-     * Controls behavior when {@link GeodesicOptions.wrap} is false.
+     * Controls behavior when {@link GeodesicOptions.wrap} is `false`.
      *
      * If set to anything other than number, line will be drawn from the starting point.
      *
@@ -29,7 +31,7 @@ export interface RawGeodesicOptions {
      *
      * More steps result in a smoother line.
      *
-     * Defaults to 3 for line and to 24 for circle.
+     * Defaults to `3` for line and to `24` for circle.
      *
      * @deprecated
      */
@@ -39,6 +41,8 @@ export interface RawGeodesicOptions {
      * **Only for geodesic circle.**
      *
      * Radius in meters.
+     *
+     * Defaults to `1000000`.
      */
     radius: number,
 
@@ -48,13 +52,13 @@ export interface RawGeodesicOptions {
      *
      * See {@link GeodesicOptions.breakPoints} for precise control over segments.
      *
-     * Values between 500 and 700 should be good enough. Values from 1000 and above will result in a jagged line
-     * because of Leaflet's generalization. However, for geodesic circle, values higher than 1000 will result in a
-     * better quality.
+     * Values between 500 and 700 should be good enough. Values from `1000` and above will result in a jagged line
+     * because of Leaflet's generalization. However, for geodesic circle, values higher than `1000` will result in a
+     * smoother circle.
      *
-     * **Warning:** If {@link GeodesicOptions.naturalDrawing} is true, this value should be at least 4.
+     * **Warning:** If {@link GeodesicOptions.naturalDrawing} is `true`, this value should be at least `4`.
      *
-     * If set, takes precedence over {@link GeodesicOptions.steps}
+     * If set, takes precedence over {@link GeodesicOptions.steps}.
      */
     segmentsNumber: number | undefined,
 
@@ -73,11 +77,11 @@ export interface RawGeodesicOptions {
      *
      * Array should meet following conditions (otherwise, an error will be thrown):
      *
-     * 1. Fractions should be in range [0; 1].
+     * 1. Fractions should be in range `[0; 1]`.
      * 2. Each fraction should be greater than previous.
      *
      * If set, takes precedence over {@link GeodesicOptions.segmentsNumber}.
-     * Doesn't take effect when {@link GeodesicOptions.naturalDrawing} is true.
+     * Doesn't take effect when {@link GeodesicOptions.naturalDrawing} is `true`.
      *
      * **Warning:** setting an array where not all differences between adjacent positions are same will result in
      * segments with different lengths!
@@ -87,35 +91,34 @@ export interface RawGeodesicOptions {
     /**
      * **Only for geodesic line.**
      *
-     * If true, lines will be drawn exactly through given points.
+     * If `true`, lines will be drawn exactly through given points.
      *
      * When points' longitudes require more than one revolution around the Earth
      * (for example, 50 and 580 will do 2 whole revolutions), line will do all that revolutions and will go exactly
      * from start to end longitudes.
      *
-     * To summarize, setting this option to true will enable you to draw geodesic lines the same way you would draw
+     * To summarize, setting this option to `true` will enable you to draw geodesic lines the same way you would draw
      * regular polylines.
      *
      * Takes precedence over {@link GeodesicOptions.wrap} and {@link GeodesicOptions.moveNoWrapTo}.
      *
-     * {@link GeodesicOptions.breakPoints} doesn't take effect when this option is true.
+     * {@link GeodesicOptions.breakPoints} doesn't take effect when this option is `true`.
      *
      * Number of segments can be dynamic or fixed.
      * See {@link GeodesicOptions.naturalDrawingFixedNumberOfSegments} for more info.
      *
      * Natural drawing greatly decreases performance, don't put many points or limit line length while using it.
      *
-     * **Warning**: When two endpoints are on antimeridians, their position precision is reduced to 0.0001.
+     * **Warning**: When two endpoints are on antimeridians, their position precision is reduced to `0.0001`.
      *
-     * Defaults to false.
+     * Defaults to `false`.
      */
     naturalDrawing: boolean,
 
     /**
      * **Only for geodesic line.**
      *
-     * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.naturalDrawing} is true.
-     * Defaults to false, i.e. number of segments is dynamic but predictable.
+     * Whether to dynamically increase number of segments or not when {@link GeodesicOptions.naturalDrawing} is `true`.
      *
      * # Available values
      *
@@ -137,11 +140,12 @@ export interface RawGeodesicOptions {
      *      numberOfSegments *= revolutions;
      * ```
      *
+     * Defaults to `false`.
      */
     naturalDrawingFixedNumberOfSegments: boolean,
 
     /**
-     * If true, will update statistics after redrawing. Set it to false to improve performance.
+     * If true, will update statistics after redrawing. Set it to `false` to improve performance.
      *
      * Fields from {@link SphericalStatistics} will still be updated since they're generated by the algorithms and won't
      * impose any performance impact.
@@ -149,7 +153,7 @@ export interface RawGeodesicOptions {
      * You can manually update statistics by calling {@link GeodesicLine#updateStatistics} or
      * {@link GeodesicCircle#updateStatistics}.
      *
-     * Defaults to true.
+     * Defaults to `true`.
      */
     updateStatisticsAfterRedrawing: boolean,
 }

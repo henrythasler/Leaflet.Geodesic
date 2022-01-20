@@ -118,14 +118,14 @@ export class GeodesicGeometry {
      *
      * @param start Start position
      * @param dest Destination
-     * @param useBigPart If both this and {@link RawGeodesicOptions.naturalDrawing} are true,
-     * will use big part of a great circle
+     * @param useLongPart If both this and {@link RawGeodesicOptions.naturalDrawing} are true,
+     * will use long part of a great circle
      * @param ignoreNaturalDrawing Internal use only. If true, will draw regular line but wrapped to the first point.
      * @param changeLengthBy Internal use only. If different from 0, will draw a draft line with the new length changed
      * from the dest point.
      * @return resulting linestring
      */
-    line(start: L.LatLng, dest: L.LatLng, useBigPart = false, ignoreNaturalDrawing = false, changeLengthBy = 0): Linestring {
+    line(start: L.LatLng, dest: L.LatLng, useLongPart = false, ignoreNaturalDrawing = false, changeLengthBy = 0): Linestring {
         let steps = this.segmentsNumber;
 
         // Do only last point for regular line and 20 for natural drawing for changing length to improve performance.
@@ -170,11 +170,11 @@ export class GeodesicGeometry {
 
         // I'm not sure if it's ever the case, but I'm too afraid to remove it.
         if (d === 0) {
-            d = useBigPart ? 0 : Math.PI * 2;
+            d = useLongPart ? 0 : Math.PI * 2;
         }
 
         // 100% of line length. Increasing this number will lengthen the line from dest point.
-        // Note: using negative fraction seem to lengthen only line by small part. It glitches with the big part.
+        // Note: using negative fraction seem to lengthen only line by short part. It glitches with the long part.
         let len = 1;
         if (this.options.naturalDrawing && !ignoreNaturalDrawing) {
             // Get the number of revolutions before actual line. See wrapMultilineString() for more info.
@@ -183,25 +183,25 @@ export class GeodesicGeometry {
             let fractionRev = Math.abs(dest.lng - start.lng) / 360, revolutions;
 
             if (fractionRev % 1 === 0.5) {
-                revolutions = useBigPart ? Math.ceil(fractionRev) : Math.floor(fractionRev);
+                revolutions = useLongPart ? Math.ceil(fractionRev) : Math.floor(fractionRev);
             } else {
                 revolutions = Math.round(fractionRev);
             }
 
             // This is passed by naturalDrawingLine() when regular line goes to wrong direction.
-            if (useBigPart) {
-                d = Math.PI * 2 - d; // Get length of a big part by subtracting current distance from 360 deg
+            if (useLongPart) {
+                d = Math.PI * 2 - d; // Get length of a long part by subtracting current distance from 360 deg
             }
 
             // Correct line length and steps for required revolutions
             if (revolutions > 0) {
-                // Recalculate steps regardless whether we follow big or small line to maintain predictability.
+                // Recalculate steps regardless of which part of a great circle we follow to maintain predictability.
                 if (!this.options.naturalDrawingFixedNumberOfSegments) {
                     steps *= revolutions;
                 }
 
                 // Using new length results in one redundant revolution
-                if (useBigPart) {
+                if (useLongPart) {
                     revolutions--;
                 }
 
@@ -287,23 +287,23 @@ export class GeodesicGeometry {
      * from the dest point.
      */
     naturalDrawingLine (start: L.LatLng, dest: L.LatLng, changeLengthBy = 0): Linestring {
-        // Generate a small (regular) line. We should ignore natural drawing for this to improve performance and solve
+        // Generate a short (regular) line. We should ignore natural drawing for this to improve performance and solve
         // an issue when difference between lngs is 180 degrees.
-        let smallLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0],
-            lngFrom, lngTo, forceSmallPart = false, absDiff = Math.abs(start.lng - dest.lng);
+        let shortLine = this.wrapMultiLineString([this.line(start, dest, false, true)])[0],
+            lngFrom, lngTo, forceShortPart = false, absDiff = Math.abs(start.lng - dest.lng);
 
         // If line won't be split, just return wrapped line to improve performance
         if (absDiff <= 180) {
             if (changeLengthBy === 0) {
-                return smallLine;
+                return shortLine;
             }
-            // If we're lengthening the line, we have to redraw it. ignoreNaturalDrawing = true makes small part work.
+            // If we're lengthening the line, we have to redraw it. ignoreNaturalDrawing = true makes short part work.
             // I have absolutely no idea on how it works, but at least, it fixes the issue.
-            forceSmallPart = true;
+            forceShortPart = true;
         }
 
-        // Determine whether small line follows the direction from start to dest, i.e. if its last point is between
-        // start lng and dest lng. Otherwise, we'll use big part of a great circle to get line in desired direction.
+        // Determine whether short line follows the direction from start to dest, i.e. if its last point is between
+        // start lng and dest lng. Otherwise, we'll use long part of a great circle to get line in desired direction.
         if (start.lng < dest.lng) {
             lngFrom = start.lng;
             lngTo = dest.lng;
@@ -313,9 +313,9 @@ export class GeodesicGeometry {
         }
 
         // Last lng should lie between start and dest, but don't touch any of it. If it touches any of these lngs,
-        // difference between lngs is multiple of 180 or 360. In this case, use big part which solves certain glitches.
-        let lastLng = smallLine[smallLine.length - 1].lng, useBigPart = !forceSmallPart && (lastLng <= lngFrom || lastLng >= lngTo);
-        return this.wrapMultiLineString([this.line(start, dest, useBigPart, false, changeLengthBy)])[0];
+        // difference between lngs is multiple of 180 or 360. In this case, use long part which solves certain glitches.
+        let lastLng = shortLine[shortLine.length - 1].lng, useLongPart = !forceShortPart && (lastLng <= lngFrom || lastLng >= lngTo);
+        return this.wrapMultiLineString([this.line(start, dest, useLongPart, false, changeLengthBy)])[0];
     }
 
     multiLineString(latlngs: L.LatLng[][]): Multilinestring {

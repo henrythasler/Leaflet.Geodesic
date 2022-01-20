@@ -125,7 +125,7 @@ export class GeodesicLine extends L.Polyline {
      * 1. This function will move original points to split or wrapped line, but won't modify original objects.
      * 2. If new spherical length in radians of a segment with affected point (start and/or end)
      * will exceed Pi (180 degrees), and {@link GeodesicOptions.naturalDrawing} is `false`, an error will be thrown,
-     * because in this case it's mandatory to follow big part of a great circle.
+     * because in this case it's mandatory to follow long part of a great circle.
      * Consider setting {@link GeodesicOptions.naturalDrawing} to `true` to fix it.
      * 3. If `byFraction` is less than 1 for `start` and `end` or it's less than 0.5 for `both`, an error will be thrown.
      * 4. Modification precision lies withing 0.0001 range in some edge cases.
@@ -258,5 +258,9 @@ export class GeodesicLine extends L.Polyline {
      */
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest));
+    }
+
+    getLatLngs() {
+        return super.getLatLngs() as L.LatLng[][]; // Fix type safety
     }
 }

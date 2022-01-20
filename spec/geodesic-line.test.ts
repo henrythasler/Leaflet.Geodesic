@@ -174,7 +174,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometry-line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -182,7 +182,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}feature-line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -190,7 +190,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -198,7 +198,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -206,7 +206,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon-hole.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}polygon-hole.fixture.json`, "utf8")));
     });
 
@@ -214,7 +214,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipoint.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -222,7 +222,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multiline.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multiline.fixture.json`, "utf8")));
     });
 
@@ -230,7 +230,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipolygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8")));
     });
 
@@ -238,7 +238,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line-multipolygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         const fixture = [
             ...JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")),
             ...JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8"))];
@@ -251,7 +251,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}point.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
@@ -263,7 +263,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}mixed.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}mixed.fixture.json`, "utf8")));
         expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
     });
@@ -274,7 +274,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs();
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "GeometryCollection" not supported/);

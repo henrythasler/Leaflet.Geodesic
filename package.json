@@ -64,13 +64,13 @@
     "test:solo": "jest --coverage --",
     "benchmark": "jest benchmark",
     "docs": "typedoc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "build:tools": "tsc tools/prebuild.ts && tsc tools/postbuild.ts",
     "prebuild": "node tools/prebuild.js",
-    "build": "rollup -c rollup.config.prod.js",
+    "build": "npm run lint && rollup -c rollup.config.prod.js",
     "build:dev": "npm run prebuild && rollup -c rollup.config.dev.js",
-    "postbuild": "node tools/postbuild.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "postbuild": "node tools/postbuild.js"
   },
   "np": {
     "publish": false

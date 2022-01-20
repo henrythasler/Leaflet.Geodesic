@@ -53,7 +53,6 @@ describe("Helper functions", function () {
 
 });
 
-
 describe("Vincenty direct - regular test cases", function () {
     it("Along the equator", function () {
         const dest = geodesic.direct(new L.LatLng(0, 0),
@@ -67,7 +66,7 @@ describe("Vincenty direct - regular test cases", function () {
         expect(dest.bearing).to.be.closeTo(90, eps);
     });
 
-    it("Equator circumfence", function () {
+    it("Equator circumference", function () {
         const dest = geodesic.direct(new L.LatLng(0, 0),
             90,
             6378137 * 2 * Math.PI
