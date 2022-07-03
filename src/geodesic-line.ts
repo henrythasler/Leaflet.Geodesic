@@ -135,4 +135,16 @@ export class GeodesicLine extends L.Polyline {
     distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest));
     }
+
+    /**
+     * Returns a position on the geodesic line between two positions that is a given percentage of the total distance 
+     * away from the 1st position.
+     * @param start 1st position
+     * @param dest 2nd position
+     * @param percentage percentage of the total distance between the two positions
+     * @return the position on that line
+     */
+    midPoint(start: L.LatLngExpression, dest: L.LatLngExpression, percentage: number = 0.5): L.LatLng {
+        return this.geom.midPoint(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest), percentage);
+    }
 }

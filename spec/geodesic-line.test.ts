@@ -388,5 +388,37 @@ describe("Usage of base-class functions", function () {
         line.addLatLng(Beijing, line.points[1]);
         checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown, Beijing], [Tokyo, Sydney]])
     });
+});
 
+describe("midPoint", function () {
+    const line = new GeodesicLine();
+    it("Still in Berlin", function () {
+        const fixture: L.LatLng[] = [Berlin];
+        const midpoint = line.midPoint(Berlin, LosAngeles, 0);
+        checkFixture([[midpoint]], [fixture]);
+    });
+
+    it("20% from Berlin to LosAngeles", function () {
+        const fixture: L.LatLng[] = [new L.LatLng(63.793666, -10.664541)];
+        const midpoint = line.midPoint(Berlin, LosAngeles, 0.2);
+        checkFixture([[midpoint]], [fixture]);
+    });
+
+    it("Halfways from Berlin to LosAngeles", function () {
+        const fixture: L.LatLng[] = [new L.LatLng(65.300812, -71.464341)];
+        const midpoint = line.midPoint(Berlin, LosAngeles);
+        checkFixture([[midpoint]], [fixture]);
+    });
+
+    it("Arrived in LosAngeles", function () {
+        const fixture: L.LatLng[] = [LosAngeles];
+        const midpoint = line.midPoint(Berlin, LosAngeles, 1);
+        checkFixture([[midpoint]], [fixture]);
+    });
+
+    it("20% from Tokyo to LosAngeles", function () {
+        const fixture: L.LatLng[] = [new L.LatLng(43.251392, 157.263955)];
+        const midpoint = line.midPoint(Tokyo, LosAngeles, 0.2);
+        checkFixture([[midpoint]], [fixture]);
+    });
 });

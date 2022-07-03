@@ -305,4 +305,18 @@ export class GeodesicGeometry {
         }
         return stats;
     }
+
+    /**
+     * Returns a position on the geodesic line between two positions that is a given percentage of the total distance 
+     * away from the 1st position.
+     * @param start 1st position
+     * @param dest 2nd position
+     * @param percentage percentage of the total distance between the two positions
+     * @return the position on that line
+     */    
+    midPoint(start: L.LatLng, dest: L.LatLng, percentage: number = 0.5): L.LatLng {
+        const properties = this.geodesic.inverse(start, dest);
+        const point: WGS84Vector = this.geodesic.direct(start, properties.initialBearing, properties.distance * percentage);
+        return new L.LatLng(point.lat, point.lng);
+    }
 }

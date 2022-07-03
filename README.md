@@ -301,6 +301,50 @@ const distance = circle.distanceTo(Beijing);
 console.log(`${Math.floor(distance/1000)} km`) // prints: 7379 km
 ```
 
+### Splitting Lines, Mid-points
+
+The `L.GeodesicCircle`-class also provides a `midPoint`-function to calculate an arbitrary mid-point between two locations:
+
+```Javascript
+const line = new L.Geodesic();
+const midPoint = line.midPoint(Berlin, LosAngeles, 0.2);    // 20%
+```
+
+The resulting `midPoint` is a `L.LatLng`-object that can be used to draw a line or place an icon:
+
+```Javascript
+const secondPart = new L.Geodesic([midPoint, LosAngeles], {
+  weight: 10,
+  color: "red",
+  opacity: 0.5
+}).addTo(map);
+
+const firstPart = new L.Geodesic([Berlin, midPoint], {
+  weight: 10,
+  color: "green",
+  opacity: 0.5
+}).addTo(map);
+```
+
+![line-midpoint](docs/img/line-midpoint.png)
+
+## Accessing Low-Level Functions
+
+You can even access the low-level [Vincenty functions](https://en.wikipedia.org/wiki/Vincenty%27s_formulae) (`direct` and `inverse`) of any `L.Geodesic` object:
+
+```Javascript
+const line = new L.Geodesic();
+const lineProperties = line.geom.geodesic.inverse(Tokyo, LosAngeles);
+```
+`lineProperties` will then be a `GeoDistance` object containing the `distance`, `initialBearing` and `finalBearing`.
+
+```Javascript
+const line = new L.Geodesic();
+const position = line.geom.geodesic.direct( Berlin, 90, 7000 * 1000);
+```
+
+`position` is then a `WGS84Vector` containing the `lat`, `lng` and `bearing` after we start heading east and go for 7000km w/o changing course
+
 ## Scientific background
 
 All calculations are based on the [WGS84-Ellipsoid](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84) (EPSG:4326) using [Vincenty's formulae](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). This method leads to very precise calculations but may fail for some corner-cases (e.g. [Antipodes](https://en.wikipedia.org/wiki/Antipodes)). I use some workarounds to mitigate these convergence errors. This may lead to reduced precision (a.k.a. slightly wrong results) in these cases.  This is good enough for a web mapping application but you shouldn't plan a space mission based on this data. OMG, this section has just become a disclaimer...
