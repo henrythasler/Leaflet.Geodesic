@@ -1,14 +1,15 @@
 language: node_js
+dist: jammy
 node_js:
-  - 12
+  - 18
 
 addons:
   sonarcloud:
     organization: "henrythasler"
-    
+
 script:
   - npm run test && sonar-scanner 
-  
+
 after_success:  
   - coveralls < coverage/lcov.info
 
