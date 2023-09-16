@@ -34,5 +34,5 @@ const bundle = (format, filename, options = {}) => ({
 });
 
 export default [
-  bundle('umd', pkg.browser, { resolve: true, minimize: true })
+  bundle('umd', pkg.browser, { resolve: true, minimize: false })
 ];
