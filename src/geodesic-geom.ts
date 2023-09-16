@@ -104,8 +104,8 @@ export class GeodesicGeometry {
         };
 
         // make a copy to work with
-        const start = new L.LatLng(startPosition.lat, startPosition.lng);
-        const dest = new L.LatLng(destPosition.lat, destPosition.lng);
+        const start = new L.LatLng(startPosition.lat, startPosition.lng, startPosition.alt);
+        const dest = new L.LatLng(destPosition.lat, destPosition.lng, destPosition.alt);
 
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
@@ -116,7 +116,7 @@ export class GeodesicGeometry {
             dest.lng = dest.lng + 360;
         }
 
-        let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180)), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180))]];
+        let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180), start.alt), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180), dest.alt)]];
 
         // crossing antimeridian from "this" side?
         if ((start.lng >= -180) && (start.lng <= 180)) {
@@ -125,7 +125,7 @@ export class GeodesicGeometry {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
                 if (intersection) {
-                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), new L.LatLng(dest.lat, dest.lng + 360)]];
+                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), new L.LatLng(dest.lat, dest.lng + 360, dest.alt)]];
                 }
             }
             // crossing the "eastern" antimeridian
@@ -133,7 +133,7 @@ export class GeodesicGeometry {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianEast.point, antimeridianEast.bearing);
                 if (intersection) {
-                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), new L.LatLng(dest.lat, dest.lng - 360)]];
+                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), new L.LatLng(dest.lat, dest.lng - 360, dest.alt)]];
                 }
             }
         }
@@ -144,7 +144,7 @@ export class GeodesicGeometry {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
                 if (intersection) {
-                    result = [[new L.LatLng(start.lat, start.lng + 360), new L.LatLng(intersection.lat, intersection.lng + 360)], [intersection, dest]];
+                    result = [[new L.LatLng(start.lat, start.lng + 360, start.alt), new L.LatLng(intersection.lat, intersection.lng + 360)], [intersection, dest]];
                 }
             }
 
@@ -153,7 +153,7 @@ export class GeodesicGeometry {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
                 const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
                 if (intersection) {
-                    result = [[new L.LatLng(start.lat, start.lng - 360), new L.LatLng(intersection.lat, intersection.lng - 360)], [intersection, dest]];
+                    result = [[new L.LatLng(start.lat, start.lng - 360, start.alt), new L.LatLng(intersection.lat, intersection.lng - 360)], [intersection, dest]];
                 }
             }
         }

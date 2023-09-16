@@ -17,11 +17,11 @@ const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
 const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
 
-const Seattle = new L.LatLng(47.56, -122.33);
+const Seattle = new L.LatLng(47.56, -122.33, 200);
 const Santiago = new L.LatLng(-33.44, -70.71);
 const Capetown = new L.LatLng(-33.94, 18.39);
 
-const Tokyo = new L.LatLng(35.47, 139.15);
+const Tokyo = new L.LatLng(35.47, 139.15, 100);
 const Sydney = new L.LatLng(-33.91, 151.08);
 const Singapore = new L.LatLng(1.34, 104.01);
 const Beijing = new L.LatLng(39.92, 116.39);
@@ -251,6 +251,13 @@ describe("splitLine function", function () {
         ];
         const split = geom.splitLine(new L.LatLng(Sydney.lat, Sydney.lng), new L.LatLng(LosAngeles.lat, LosAngeles.lng + 360));
         checkFixture(split, fixture);
+    });
+
+    it("Preserve alt properties", function () {
+        const split = geom.splitLine(new L.LatLng(Tokyo.lat, Tokyo.lng, Tokyo.alt), new L.LatLng(Seattle.lat, Seattle.lng, Seattle.alt));
+        checkFixture(split, TokyoSeattle);
+        expect(split[0][0].alt, "alt").to.be.equal(Tokyo.alt);
+        expect(split[1][1].alt, "alt").to.be.equal(Seattle.alt);
     });
 });
 

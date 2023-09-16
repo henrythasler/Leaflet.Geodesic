@@ -41,79 +41,29 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
         integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
         crossorigin=""></script>
-
+    
     <script src="leaflet.geodesic.umd.min.js"></script>
 
 </head>
 
 <body>
     <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
 
     <script type="text/javascript">
 
-        var map = L.map('map', {
-            maxBounds: [
-                [-90, -180],
-                [90, 180]
-            ],
-            center: [51.505, -0.09],
-            zoom: 2
-        });
-        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-            maxZoom: 15,
-            noWrap: true,
-            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
-        }).addTo(map);
+        // define some places
+        const path = [
+            new L.LatLng(50, 30, 10),
+            new L.LatLng(51, 31, 20),
+            new L.LatLng(52, 32, 30),
+        ];
 
-        var info = L.control();
-        info.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-            return this._div;
-        };
-        info.addTo(map);
+        const polyline = L.polyline(path);
+        console.log("polyline", polyline.getLatLngs());
 
-        // method that we will use to update the control based on feature properties passed
-        info.update = function (stats) {
-            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
-            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
-                '<br/><br/><b>Points</b><br/>' + stats.points + 
-                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
-        };
-
-        const Berlin = new L.LatLng(52.5, 13.35);
-        const LosAngeles = new L.LatLng(33.82, -118.38);
-        const Beijing = new L.LatLng(39.92, 116.39 );
-        const Capetown =  new L.LatLng(-33.94, 18.39 );
-        const Santiago = new L.LatLng(-33.44, -70.71);
-
-        var A = L.marker(LosAngeles, { draggable: true }).bindTooltip('Hi There!').addTo(map);
-        var B = L.marker(Berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
-
-        const geodesic = L.geodesic([A.getLatLng(), B.getLatLng()], {
-            weight: 7,
-            opacity: 0.5,
-            color: 'red',
-            steps: 5,
-        }).addTo(map);
-
-        info.update(geodesic.statistics);      
-
-        A.on('drag', (e) => {
-            // console.log(`A=${e.latlng}`);
-            A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            geodesic.setLatLngs([e.latlng, B.getLatLng()])
-            info.update(geodesic.statistics);
-        });
-        B.on('drag', (e) => {
-            // console.log(`B=${e.latlng}`);
-            // B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
-            B.setTooltipContent(`${map.latLngToLayerPoint(e.latlng)}`);
-            
-            geodesic.setLatLngs([A.getLatLng(), e.latlng])
-            info.update(geodesic.statistics);
-        });
-
-
+        const geodesic = L.geodesic(path, { steps: 1 });
+        console.log("geodesic", geodesic.getLatLngs());
 
     </script>
 </body>

@@ -66,6 +66,7 @@
     "prebuild": "node tools/prebuild.js",
     "build": "rollup -c rollup.config.prod.js",
     "build:dev": "npm run prebuild && rollup -c rollup.config.dev.js && npm run postbuild",
+    "build:debug": "npm run prebuild && rollup -c rollup.config.debug.js && npm run postbuild",
     "postbuild": "node tools/postbuild.js"
   },
   "np": {

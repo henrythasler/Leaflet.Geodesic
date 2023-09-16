@@ -12,8 +12,8 @@ import "jest";
 import { checkFixture, compareObject, eps } from "./test-toolbox";
 
 // test case with distance 54972.271 m
-const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
-const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778);
+const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889, 328);
+const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778, 745);
 
 const Berlin = new L.LatLng(52.5, 13.35);
 const LosAngeles = new L.LatLng(33.82, -118.38);
@@ -162,6 +162,13 @@ describe("Main functionality", function () {
         const distance = line.distance(FlindersPeak, Buninyong);
         expect(distance).to.be.closeTo(54972.271, 0.001);
     });
+
+    it("Preserve alt properties", async function () {
+        const line = new GeodesicLine([FlindersPeak, Buninyong], { steps: 1 });
+        const res = line.getLatLngs() as L.LatLng[][];
+        expect(res[0][0].alt).to.be.equal(FlindersPeak.alt);
+        expect(res[0][4].alt).to.be.equal(Buninyong.alt);
+    });    
 });
 
 describe("GeoJSON-Support", function () {
