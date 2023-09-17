@@ -5,6 +5,8 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { dts } from "rollup-plugin-dts";
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const pkg = JSON.parse(readFileSync('package.json').toString());
 
@@ -12,6 +14,7 @@ interface BundleOptions {
     minimize: boolean,
     resolve?: boolean,
     types?: boolean,
+    stats?: boolean,
 }
 
 function bundle(format: ModuleFormat, filename: string, minimize: boolean = false, resolve: boolean = true, types: boolean = false): RollupOptions {
@@ -20,7 +23,7 @@ function bundle(format: ModuleFormat, filename: string, minimize: boolean = fals
         output: {
             file: filename,
             format: format,
-            banner: `/*! Leaflet.Geodesic ${pkg.version} - (c) Henry Thasler - https://github.com/henrythasler/Leaflet.Geodesic */`,
+            banner: `/*! ${pkg.name} ${pkg.version} - (c) ${pkg.author} - ${pkg.homepage} */`,
             name: pkg.name,
             sourcemap: false,
             globals: {
@@ -36,6 +39,11 @@ function bundle(format: ModuleFormat, filename: string, minimize: boolean = fals
             commonjs(),
             typescript(),
             ...(minimize ? [terser()] : []),
+            ...(types ? [dts()] : []),
+            visualizer({
+                filename: filename + '.stats.html',
+                template: "treemap"
+            }),
         ]
     };
     return config;
