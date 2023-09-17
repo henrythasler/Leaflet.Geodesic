@@ -4,7 +4,7 @@ var crypto_1 = require("crypto");
 var fs_1 = require("fs");
 var process_1 = require("process");
 var path_1 = require("path");
-var pkg = require('../package.json');
+var pkg = JSON.parse((0, fs_1.readFileSync)('package.json').toString());
 if ((0, fs_1.existsSync)(pkg.browser)) {
     // calculate sha-sum of the plugin. See https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#using_subresource_integrity
     var content = (0, fs_1.readFileSync)(pkg.browser);
