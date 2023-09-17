@@ -11,13 +11,13 @@ import { visualizer } from 'rollup-plugin-visualizer';
 const pkg = JSON.parse(readFileSync('package.json').toString());
 
 interface BundleOptions {
-    minimize: boolean,
+    minimize?: boolean,
     resolve?: boolean,
     types?: boolean,
     stats?: boolean,
 }
 
-function bundle(format: ModuleFormat, filename: string, minimize: boolean = false, resolve: boolean = true, types: boolean = false): RollupOptions {
+export function bundle(format: ModuleFormat, filename: string, options: BundleOptions = {}): RollupOptions {
     const config: RollupOptions = {
         input: 'src/index.ts',
         output: {
@@ -31,27 +31,29 @@ function bundle(format: ModuleFormat, filename: string, minimize: boolean = fals
             },
         },
         external: [
-            ...Object.keys(pkg.peerDependencies),   // always exclude peerDependencies
-            ...(!resolve ? Object.keys(pkg.dependencies) : []),    // exclude dependencies, if resolve is not required
+            ...(pkg.peerDependencies ? Object.keys(pkg.peerDependencies) : []),   // always exclude peerDependencies
+            ...(options.resolve ? [] : (pkg.dependencies ? Object.keys(pkg.dependencies) : [])),    // exclude dependencies, if resolve is not required
         ],
         plugins: [
-            ...(resolve ? [nodeResolve()] : []),
+            ...(options.resolve ? [nodeResolve()] : []),
             commonjs(),
             typescript(),
-            ...(minimize ? [terser()] : []),
-            ...(types ? [dts()] : []),
-            visualizer({
-                filename: filename + '.stats.html',
-                template: "treemap"
-            }),
+            ...(options.minimize ? [terser()] : []),
+            ...(options.types ? [dts()] : []),
+            ...(options.stats ? [
+                visualizer({
+                    filename: filename + '.stats.html',
+                    template: "treemap"
+                })] : []),
         ]
     };
     return config;
 }
+
 export default [
     bundle('cjs', pkg.main),
     bundle('esm', pkg.module),
-    bundle("umd", pkg.browser.replace('.min', '')),
-    bundle("umd", pkg.browser, true),
-    bundle("es", pkg.types, false, true, true),
+    bundle("umd", pkg.browser.replace('.min', ''), { resolve: true, stats: true }),
+    bundle("umd", pkg.browser, { resolve: true, minimize: true }),
+    bundle("es", pkg.types, { types: true }),
 ];
