@@ -6,5 +6,5 @@ var pkg = require('../package.json');
 // clear target folder before bundling to get rid of old artefacts
 var distDir = (0, path_1.dirname)(pkg.main);
 if ((0, fs_1.existsSync)(distDir)) {
-    (0, fs_1.rmdirSync)(distDir, { recursive: true });
+    (0, fs_1.rmSync)(distDir, { recursive: true });
 }
