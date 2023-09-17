@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { GeodesicGeometry } from "../src/geodesic-geom";
 import { expect } from "chai";
 

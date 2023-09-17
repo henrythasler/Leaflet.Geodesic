@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 import { expect } from "chai";
 
