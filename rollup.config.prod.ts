@@ -11,9 +11,10 @@ const pkg = JSON.parse(readFileSync('package.json').toString());
 interface BundleOptions {
     minimize: boolean,
     resolve?: boolean,
+    types?: boolean,
 }
 
-function bundle(format: ModuleFormat, filename: string, options?: BundleOptions): RollupOptions {
+function bundle(format: ModuleFormat, filename: string, minimize: boolean = false, resolve: boolean = true, types: boolean = false): RollupOptions {
     const config: RollupOptions = {
         input: 'src/index.ts',
         output: {
@@ -28,20 +29,21 @@ function bundle(format: ModuleFormat, filename: string, options?: BundleOptions)
         },
         external: [
             ...Object.keys(pkg.peerDependencies),   // always exclude peerDependencies
-            ...(!options?.resolve ? Object.keys(pkg.dependencies) : []),    // exclude dependencies, if resolve is not required
+            ...(!resolve ? Object.keys(pkg.dependencies) : []),    // exclude dependencies, if resolve is not required
         ],
         plugins: [
-            ...(options?.resolve ? [nodeResolve()] : []),
+            ...(resolve ? [nodeResolve()] : []),
             commonjs(),
             typescript(),
-            ...(options?.minimize ? [terser()] : []),
+            ...(minimize ? [terser()] : []),
         ]
     };
     return config;
 }
 export default [
-    bundle('cjs', pkg.main, { minimize: false, resolve: true }),
-    bundle('esm', pkg.module, { minimize: false, resolve: true }),
-    bundle("umd", pkg.browser.replace('.min', ''), { minimize: false, resolve: true }),
-    bundle("umd", pkg.browser, { minimize: true, resolve: true }),
+    bundle('cjs', pkg.main),
+    bundle('esm', pkg.module),
+    bundle("umd", pkg.browser.replace('.min', '')),
+    bundle("umd", pkg.browser, true),
+    bundle("es", pkg.types, false, true, true),
 ];
