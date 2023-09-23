@@ -52,17 +52,28 @@
 
     <script type="text/javascript">
 
-        // define some places
-        const path = [
+        // define some paths
+        const path1 = [
             new L.LatLng(50, 30, 10),
-            new L.LatLng(51, 31, 20),
+            new L.LatLng(51, 31),
             new L.LatLng(52, 32, 30),
         ];
+        const path2 = [
+            {lat: 50, lng: 30, alt: 10},
+            {lat: 51, lng: 31},
+            {lat: 52, lng: 32, alt: 30},
+        ];
 
-        const polyline = L.polyline(path);
+        const path3 = [
+            [50, 30, 10],
+            [51, 31],
+            [52, 32, 30],
+        ];
+
+        const polyline = L.polyline(path3);
         console.log("polyline", polyline.getLatLngs());
 
-        const geodesic = L.geodesic(path, { steps: 1 });
+        const geodesic = L.geodesic(path3, { steps: 1 });
         console.log("geodesic", geodesic.getLatLngs());
 
     </script>

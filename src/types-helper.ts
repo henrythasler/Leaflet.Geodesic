@@ -24,10 +24,10 @@ export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
         return input;
     }
     else if (instanceOfLatLngTuple(input)) {
-        return new L.LatLng(input[0], input[1]);
+        return new L.LatLng(input[0], input[1], input.at(2));   // alt is optional
     }
     else if (instanceOfLatLngLiteral(input)) {
-        return new L.LatLng(input.lat, input.lng);
+        return new L.LatLng(input.lat, input.lng, input.alt);
     }
     throw new Error("L.LatLngExpression expected. Unknown object found.");
 }
