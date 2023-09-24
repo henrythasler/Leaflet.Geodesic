@@ -53,7 +53,7 @@ Geodesic(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: Geod
 GeodesicCircle(center?: L.LatLngExpression, options?: GeodesicOptions)
 ```
 
-Both classes are extended from [L.Polyline](http://leafletjs.com/reference.html#polyline), so all methods, events and options for `L.Polyline` can be used with `L.Geodesic` and `L.GeodesicCircle` here as well. Any alt-properties provided via L.LatLng() points are preserved by `L.Geodesic`.
+Both classes are extended from [L.Polyline](http://leafletjs.com/reference.html#polyline), so all methods, events and options for `L.Polyline` can be used with `L.Geodesic` and `L.GeodesicCircle` here as well. Any [alt-properties](https://leafletjs.com/reference.html#latlng-l-latlng) are preserved by `L.Geodesic`.
 
 ## Geodesic Lines
 
