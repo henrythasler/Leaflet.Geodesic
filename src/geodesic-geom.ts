@@ -18,7 +18,7 @@ export class GeodesicGeometry {
     steps: number;
 
     constructor(options?: GeodesicOptions) {
-        this.steps = (options && options.steps !== undefined) ? options.steps : 3;
+        this.steps = options?.steps ?? 3;
     }
 
     /**
@@ -291,7 +291,7 @@ export class GeodesicGeometry {
     }
 
     updateStatistics(points: L.LatLng[][], vertices: L.LatLng[][]): Statistics {
-        const stats: Statistics = {} as any;
+        const stats: Statistics = {distanceArray: [], totalDistance: 0, points: 0, vertices: 0};
 
         stats.distanceArray = this.multilineDistance(points);
         stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);

@@ -11,7 +11,7 @@ export class GeodesicCircleClass extends L.Polyline {
     readonly geom: GeodesicGeometry;
     center: L.LatLng;
     radius: number;
-    statistics: Statistics = {} as any;
+    statistics: Statistics = {distanceArray: [], totalDistance: 0, points: 0, vertices: 0};
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
         super([], options);
@@ -19,7 +19,7 @@ export class GeodesicCircleClass extends L.Polyline {
 
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;
-        this.radius = (extendedOptions.radius === undefined) ? 1000 * 1000 : extendedOptions.radius;
+        this.radius = extendedOptions.radius ?? 1000 * 1000;
         this.center = (center === undefined) ? new L.LatLng(0, 0) : latlngExpressiontoLatLng(center);
 
         this.geom = new GeodesicGeometry(this.options);
@@ -64,7 +64,7 @@ export class GeodesicCircleClass extends L.Polyline {
      */
     setLatLng(center: L.LatLngExpression, radius?: number): void {
         this.center = latlngExpressiontoLatLng(center);
-        this.radius = radius ? radius : this.radius;
+        this.radius = radius ?? this.radius;
         this.update();
     }
 

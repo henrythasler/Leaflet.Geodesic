@@ -12,7 +12,7 @@ export class GeodesicLine extends L.Polyline {
     /** does the actual geometry calculations */
     readonly geom: GeodesicGeometry;
     /** use this if you need some detailled info about the current geometry */
-    statistics: Statistics = {} as any;
+    statistics: Statistics = { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 };
     /** stores all positions that are used to create the geodesic line */
     points: L.LatLng[][] = [];
 
@@ -33,7 +33,7 @@ export class GeodesicLine extends L.Polyline {
 
         geodesic = this.geom.multiLineString(this.points);
         this.statistics = this.geom.updateStatistics(this.points, geodesic);
-        
+
         if ((this.options as GeodesicOptions).wrap) {
             const split = this.geom.splitMultiLineString(geodesic);
             super.setLatLngs(split);
@@ -63,14 +63,13 @@ export class GeodesicLine extends L.Polyline {
         if (this.points.length === 0) {
             this.points.push([point]);
         }
-        else {
-            if (latlngs === undefined) {
-                this.points[this.points.length - 1].push(point);
-            }
-            else {
-                latlngs.push(point);
-            }
+        else if (latlngs === undefined) {
+            this.points[this.points.length - 1].push(point);
         }
+        else {
+            latlngs.push(point);
+        }
+
         this.updateGeometry();
         return this;
     }
@@ -104,15 +103,15 @@ export class GeodesicLine extends L.Polyline {
             switch (feature.geometry.type) {
                 case "MultiPoint":
                 case "LineString":
-                    latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0)]];
+                    latlngs = [...latlngs, ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0) as L.LatLngExpression[]]];
                     break;
                 case "MultiLineString":
                 case "Polygon":
-                    latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1)];
+                    latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1) as L.LatLngExpression[][]];
                     break;
                 case "MultiPolygon":
                     feature.geometry.coordinates.forEach((item) => {
-                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1)]
+                        latlngs = [...latlngs, ...L.GeoJSON.coordsToLatLngs(item, 1) as L.LatLngExpression[][]]
                     })
                     break;
                 default:
