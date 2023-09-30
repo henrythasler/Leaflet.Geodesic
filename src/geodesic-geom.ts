@@ -1,16 +1,16 @@
 import * as L from "leaflet";
-import { GeodesicCore, GeodesicOptions, WGS84Vector } from "./geodesic-core"
+import { GeodesicCore, GeodesicOptions, WGS84Vector } from "./geodesic-core";
 
 /** detailled information of the current geometry */
 export interface Statistics {
     /** Stores the distance for each individual geodesic line */
-    distanceArray: number[],
+    distanceArray: number[];
     /** overall distance of all lines */
-    totalDistance: number,
+    totalDistance: number;
     /** number of positions that the geodesic lines are created from */
-    points: number,
+    points: number;
     /** number vertices that were created during geometry calculation */
-    vertices: number
+    vertices: number;
 }
 
 export class GeodesicGeometry {
@@ -22,23 +22,23 @@ export class GeodesicGeometry {
     }
 
     /**
-     * A geodesic line between `start` and `dest` is created with this recursive function. 
+     * A geodesic line between `start` and `dest` is created with this recursive function.
      * It calculates the geodesic midpoint between `start` and `dest` and uses this midpoint to call itself again (twice!).
-     * The results are then merged into one continuous linestring. 
-     * 
-     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations` 
-     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1) 
-     * 
+     * The results are then merged into one continuous linestring.
+     *
+     * The number of resulting vertices (incl. `start` and `dest`) depends on the initial value for `iterations`
+     * and can be calculated with: vertices == 1 + 2 ** (initialIterations + 1)
+     *
      * As this is an exponential function, be extra careful to limit the initial value for `iterations` (8 results in 513 vertices).
-     * 
-     * @param start start position 
+     *
+     * @param start start position
      * @param dest destination
-     * @param iterations 
+     * @param iterations
      * @return resulting linestring
      */
     recursiveMidpoint(start: L.LatLng, dest: L.LatLng, iterations: number): L.LatLng[] {
         const geom: L.LatLng[] = [start, dest];
-        const midpoint = this.geodesic.midpoint(start, dest)
+        const midpoint = this.geodesic.midpoint(start, dest);
 
         if (iterations > 0) {
             geom.splice(0, 1, ...this.recursiveMidpoint(start, midpoint, iterations - 1));
@@ -52,10 +52,10 @@ export class GeodesicGeometry {
     /**
      * This is the wrapper-function to generate a geodesic line. It's just for future backwards-compatibility
      * if there is another algorithm used to create the actual line.
-     * 
+     *
      * The `steps`-property is used to define the number of resulting vertices of the linestring: vertices == 1 + 2 ** (steps + 1)
      * The value for `steps` is currently limited to 8 (513 vertices) for performance reasons until another algorithm is found.
-     * 
+     *
      * @param start start position
      * @param dest destination
      * @return resulting linestring
@@ -82,24 +82,24 @@ export class GeodesicGeometry {
     }
 
     /**
-     * 
+     *
      * Is much (10x) faster than the previous implementation:
-     * 
+     *
      * ```
      * Benchmark (no split):  splitLine x 459,044 ops/sec ±0.53% (95 runs sampled)
      * Benchmark (split):     splitLine x 42,999 ops/sec ±0.51% (97 runs sampled)
      * ```
-     * 
-     * @param startPosition 
-     * @param destPosition 
+     *
+     * @param startPosition
+     * @param destPosition
      */
     splitLine(startPosition: L.LatLng, destPosition: L.LatLng): L.LatLng[][] {
         const antimeridianWest = {
-            point: new L.LatLng(89.9, -180.0000001),    // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
+            point: new L.LatLng(89.9, -180.0000001), // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
         const antimeridianEast = {
-            point: new L.LatLng(89.9, 180.0000001),     // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
+            point: new L.LatLng(89.9, 180.0000001), // lng is slightly off, to detect intersections with lines starting exactly on the antimeridian
             bearing: 180
         };
 
@@ -110,50 +110,99 @@ export class GeodesicGeometry {
         start.lng = this.geodesic.wrap(start.lng, 360);
         dest.lng = this.geodesic.wrap(dest.lng, 360);
 
-        if ((dest.lng - start.lng) > 180) {
+        if (dest.lng - start.lng > 180) {
             dest.lng = dest.lng - 360;
-        } else if ((dest.lng - start.lng) < -180) {
+        } else if (dest.lng - start.lng < -180) {
             dest.lng = dest.lng + 360;
         }
 
-        let result: L.LatLng[][] = [[new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180), start.alt), new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180), dest.alt)]];
+        let result: L.LatLng[][] = [
+            [
+                new L.LatLng(start.lat, this.geodesic.wrap(start.lng, 180), start.alt),
+                new L.LatLng(dest.lat, this.geodesic.wrap(dest.lng, 180), dest.alt)
+            ]
+        ];
 
         // crossing antimeridian from "this" side?
-        if ((start.lng >= -180) && (start.lng <= 180)) {
+        if (start.lng >= -180 && start.lng <= 180) {
             // crossing the "western" antimeridian
             if (dest.lng < -180) {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
-                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                const intersection = this.geodesic.intersection(
+                    start,
+                    bearing,
+                    antimeridianWest.point,
+                    antimeridianWest.bearing
+                );
                 if (intersection) {
-                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng + 360), new L.LatLng(dest.lat, dest.lng + 360, dest.alt)]];
+                    result = [
+                        [start, intersection],
+                        [
+                            new L.LatLng(intersection.lat, intersection.lng + 360),
+                            new L.LatLng(dest.lat, dest.lng + 360, dest.alt)
+                        ]
+                    ];
                 }
             }
             // crossing the "eastern" antimeridian
             else if (dest.lng > 180) {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
-                const intersection = this.geodesic.intersection(start, bearing, antimeridianEast.point, antimeridianEast.bearing);
+                const intersection = this.geodesic.intersection(
+                    start,
+                    bearing,
+                    antimeridianEast.point,
+                    antimeridianEast.bearing
+                );
                 if (intersection) {
-                    result = [[start, intersection], [new L.LatLng(intersection.lat, intersection.lng - 360), new L.LatLng(dest.lat, dest.lng - 360, dest.alt)]];
+                    result = [
+                        [start, intersection],
+                        [
+                            new L.LatLng(intersection.lat, intersection.lng - 360),
+                            new L.LatLng(dest.lat, dest.lng - 360, dest.alt)
+                        ]
+                    ];
                 }
             }
         }
         // coming back over the antimeridian from the "other" side?
-        else if ((dest.lng >= -180) && (dest.lng <= 180)) {
+        else if (dest.lng >= -180 && dest.lng <= 180) {
             // crossing the "western" antimeridian
             if (start.lng < -180) {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
-                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                const intersection = this.geodesic.intersection(
+                    start,
+                    bearing,
+                    antimeridianWest.point,
+                    antimeridianWest.bearing
+                );
                 if (intersection) {
-                    result = [[new L.LatLng(start.lat, start.lng + 360, start.alt), new L.LatLng(intersection.lat, intersection.lng + 360)], [intersection, dest]];
+                    result = [
+                        [
+                            new L.LatLng(start.lat, start.lng + 360, start.alt),
+                            new L.LatLng(intersection.lat, intersection.lng + 360)
+                        ],
+                        [intersection, dest]
+                    ];
                 }
             }
 
             // crossing the "eastern" antimeridian
             else if (start.lng > 180) {
                 const bearing: number = this.geodesic.inverse(start, dest).initialBearing;
-                const intersection = this.geodesic.intersection(start, bearing, antimeridianWest.point, antimeridianWest.bearing);
+                const intersection = this.geodesic.intersection(
+                    start,
+                    bearing,
+                    antimeridianWest.point,
+                    antimeridianWest.bearing
+                );
                 if (intersection) {
-                    result = [[new L.LatLng(start.lat, start.lng - 360, start.alt), new L.LatLng(intersection.lat, intersection.lng - 360)], [intersection, dest]];
+                    result = [
+                        [
+                            new L.LatLng(start.lat, start.lng - 360, start.alt),
+                            new L.LatLng(intersection.lat, intersection.lng - 360)
+                        ],
+                        [intersection, dest]
+                    ];
                 }
             }
         }
@@ -161,12 +210,12 @@ export class GeodesicGeometry {
     }
 
     /**
-     * Linestrings of a given multilinestring that cross the antimeridian will be split in two separate linestrings. 
+     * Linestrings of a given multilinestring that cross the antimeridian will be split in two separate linestrings.
      * This function is used to wrap lines around when they cross the antimeridian
-     * It iterates over all linestrings and reconstructs the step-by-step if no split is needed. 
-     * In case the line was split, the linestring ends at the antimeridian and a new linestring is created for the 
+     * It iterates over all linestrings and reconstructs the step-by-step if no split is needed.
+     * In case the line was split, the linestring ends at the antimeridian and a new linestring is created for the
      * remaining points of the original linestring.
-     * 
+     *
      * @param multilinestring
      * @return another multilinestring where segments crossing the antimeridian are split
      */
@@ -174,7 +223,7 @@ export class GeodesicGeometry {
         const result: L.LatLng[][] = [];
         for (const linestring of multilinestring) {
             if (linestring.length === 1) {
-                result.push(linestring);   // just a single point in linestring, no need to split
+                result.push(linestring); // just a single point in linestring, no need to split
                 continue;
             }
 
@@ -184,8 +233,8 @@ export class GeodesicGeometry {
                 segment.pop();
                 segment = segment.concat(split[0]);
                 if (split.length > 1) {
-                    result.push(segment);   // the line was split, so we end the linestring right here
-                    segment = split[1];     // begin the new linestring with the second part of the split line
+                    result.push(segment); // the line was split, so we end the linestring right here
+                    segment = split[1]; // begin the new linestring with the second part of the split line
                 }
             }
             result.push(segment);
@@ -212,8 +261,8 @@ export class GeodesicGeometry {
                     // the first point is the anchor of the linestring from which the line will always start (w/o any wrapping applied)
                     resultLine.push(new L.LatLng(point.lat, point.lng));
                     previous = new L.LatLng(point.lat, point.lng);
-                }
-                else {  // I prefer clearly defined branches over a continue-operation.
+                } else {
+                    // I prefer clearly defined branches over a continue-operation.
 
                     // if the difference between the current and *previous* point is greater than 360°, the current point needs to be shifted
                     // to be on the same 'sphere' as the previous one.
@@ -221,7 +270,7 @@ export class GeodesicGeometry {
                     // shift the point accordingly and add to the result
                     resultLine.push(new L.LatLng(point.lat, point.lng - offset * 360));
                     // use the wrapped point as the anchor for the next one
-                    previous = new L.LatLng(point.lat, point.lng - offset * 360);   // Need a new object here, to avoid changing the input data
+                    previous = new L.LatLng(point.lat, point.lng - offset * 360); // Need a new object here, to avoid changing the input data
                 }
             }
             result.push(resultLine);
@@ -232,7 +281,7 @@ export class GeodesicGeometry {
     /**
      * Creates a circular (constant radius), closed (1st pos == last pos) geodesic linestring.
      * The number of vertices is calculated with: `vertices == steps + 1` (where 1st == last)
-     * 
+     *
      * @param center
      * @param radius
      * @return resulting linestring
@@ -240,7 +289,7 @@ export class GeodesicGeometry {
     circle(center: L.LatLng, radius: number): L.LatLng[] {
         const vertices: L.LatLng[] = [];
         for (let i = 0; i < this.steps; i++) {
-            const point: WGS84Vector = this.geodesic.direct(center, 360 / this.steps * i, radius);
+            const point: WGS84Vector = this.geodesic.direct(center, (360 / this.steps) * i, radius);
             vertices.push(new L.LatLng(point.lat, point.lng));
         }
         // append first vertice to the end to close the linestring
@@ -256,7 +305,7 @@ export class GeodesicGeometry {
     splitCircle(linestring: L.LatLng[]): L.LatLng[][] {
         const result: L.LatLng[][] = this.splitMultiLineString([linestring]);
 
-        // If the circle was split, it results in exactly three linestrings where first and last  
+        // If the circle was split, it results in exactly three linestrings where first and last
         // must be re-assembled because they belong to the same "side" of the split circle.
         if (result.length === 3) {
             result[2] = [...result[2], ...result[0]];
@@ -291,7 +340,7 @@ export class GeodesicGeometry {
     }
 
     updateStatistics(points: L.LatLng[][], vertices: L.LatLng[][]): Statistics {
-        const stats: Statistics = {distanceArray: [], totalDistance: 0, points: 0, vertices: 0};
+        const stats: Statistics = { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 };
 
         stats.distanceArray = this.multilineDistance(points);
         stats.totalDistance = stats.distanceArray.reduce((x, y) => x + y, 0);

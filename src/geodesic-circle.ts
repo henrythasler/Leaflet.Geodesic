@@ -1,6 +1,6 @@
 import * as L from "leaflet";
-import { GeodesicGeometry, Statistics } from "./geodesic-geom"
-import { GeodesicOptions } from "./geodesic-core"
+import { GeodesicGeometry, Statistics } from "./geodesic-geom";
+import { GeodesicOptions } from "./geodesic-core";
 import { latlngExpressiontoLatLng } from "./types-helper";
 
 /**
@@ -11,7 +11,7 @@ export class GeodesicCircleClass extends L.Polyline {
     readonly geom: GeodesicGeometry;
     center: L.LatLng;
     radius: number;
-    statistics: Statistics = {distanceArray: [], totalDistance: 0, points: 0, vertices: 0};
+    statistics: Statistics = { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 };
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
         super([], options);
@@ -20,7 +20,7 @@ export class GeodesicCircleClass extends L.Polyline {
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;
         this.radius = extendedOptions.radius ?? 1000 * 1000;
-        this.center = (center === undefined) ? new L.LatLng(0, 0) : latlngExpressiontoLatLng(center);
+        this.center = center === undefined ? new L.LatLng(0, 0) : latlngExpressiontoLatLng(center);
 
         this.geom = new GeodesicGeometry(this.options);
 
@@ -35,14 +35,13 @@ export class GeodesicCircleClass extends L.Polyline {
         const circle = this.geom.circle(this.center, this.radius);
 
         this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
-        // circumfence must be re-calculated from geodesic 
+        // circumfence must be re-calculated from geodesic
         this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
         if ((this.options as GeodesicOptions).wrap) {
             const split = this.geom.splitCircle(circle);
             super.setLatLngs(split);
-        }
-        else {
+        } else {
             super.setLatLngs(circle);
         }
     }
