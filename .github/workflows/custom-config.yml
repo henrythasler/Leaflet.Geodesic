@@ -1,0 +1,4 @@
+name: "specify paths to scan"
+
+paths:
+  - src
