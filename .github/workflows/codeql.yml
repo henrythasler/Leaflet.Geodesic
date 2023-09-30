@@ -16,7 +16,9 @@ jobs:
       actions: read
       contents: read
       security-events: write
-
+    paths:
+      - src
+      
     strategy:
       fail-fast: false
       matrix:
@@ -39,5 +41,4 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{ matrix.language }}"
-          paths:
-            - src
+
