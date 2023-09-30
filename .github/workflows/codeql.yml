@@ -30,6 +30,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
+          config-file: custom-config.yml
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
@@ -38,5 +39,4 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{ matrix.language }}"
-          config-file: custom-config.yml
 
