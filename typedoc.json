@@ -1,0 +1,5 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src/index.ts", "src/geodesic-core.ts", "src/geodesic-line.ts", "src/geodesic-circle.ts", "src/geodesic-geom.ts"],
+    "out": "docs/api"
+}

@@ -63,9 +63,5 @@
   "include": [
     "src/**/*.ts",
     "rollup.config.*.ts",
-  ],
-  "typedocOptions": {
-    "entryPoints": ["src/index.ts", "src/geodesic-core.ts", "src/geodesic-line.ts", "src/geodesic-circle.ts", "src/geodesic-geom.ts"],
-    "out": "docs/api"
-  }  
+  ]  
 }
