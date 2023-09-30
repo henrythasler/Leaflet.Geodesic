@@ -18,7 +18,7 @@ interface BundleOptions {
 }
 
 export function bundle(format: ModuleFormat, filename: string, options: BundleOptions = {}): RollupOptions {
-    const config: RollupOptions = {
+    return {
         input: 'src/index.ts',
         output: {
             file: filename,
@@ -47,7 +47,6 @@ export function bundle(format: ModuleFormat, filename: string, options: BundleOp
                 })] : []),
         ]
     };
-    return config;
 }
 
 export default [
