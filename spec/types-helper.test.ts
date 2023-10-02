@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 import { expect } from "chai";
 
@@ -11,15 +7,17 @@ import L from "leaflet";
 import { eps } from "./test-toolbox";
 
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
+const MontBlanc: L.LatLngLiteral = { lat: 45.832778, lng: 6.865, alt: 4807 };
 
 describe("instanceOf-Functions", function () {
     it("instanceOfLatLngExpression", function () {
         expect(instanceOfLatLngExpression(new L.LatLng(Berlin.lat, Berlin.lng))).to.be.true;
         expect(instanceOfLatLngExpression(Berlin)).to.be.true;
+        expect(instanceOfLatLngExpression(MontBlanc)).to.be.true;
         expect(instanceOfLatLngExpression([Berlin.lat, Berlin.lng])).to.be.true;
+        expect(instanceOfLatLngExpression([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt])).to.be.true;
         expect(instanceOfLatLngExpression(new L.Point(Berlin.lat, Berlin.lng))).to.be.false;
         expect(instanceOfLatLngExpression({ some: "object", num: 33 })).to.be.false;
-        // expect(instanceOfLatLngExpression([{some:"object", num: 33}])).to.be.true;
     });
 });
 
@@ -38,12 +36,28 @@ describe("latlngExpressiontoLatLng", function () {
         expect(point.lng).to.be.closeTo(Berlin.lng, eps);
     });
 
+    it("LatLng-Array with alt", function () {
+        const point = latlngExpressiontoLatLng([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt]);
+        expect(point).to.be.instanceOf(L.LatLng);
+        expect(point.lat).to.be.closeTo(MontBlanc.lat, eps);
+        expect(point.lng).to.be.closeTo(MontBlanc.lng, eps);
+        expect(point.alt).to.be.closeTo(MontBlanc.alt!, eps);
+    });    
+
     it("LatLngLiteral", function () {
         const point = latlngExpressiontoLatLng(Berlin);
         expect(point).to.be.instanceOf(L.LatLng);
         expect(point.lat).to.be.closeTo(Berlin.lat, eps);
         expect(point.lng).to.be.closeTo(Berlin.lng, eps);
     });
+
+    it("LatLngLiteral with alt", function () {
+        const point = latlngExpressiontoLatLng(MontBlanc);
+        expect(point).to.be.instanceOf(L.LatLng);
+        expect(point.lat).to.be.closeTo(MontBlanc.lat, eps);
+        expect(point.lng).to.be.closeTo(MontBlanc.lng, eps);
+        expect(point.alt).to.be.closeTo(MontBlanc.alt!, eps);
+    });    
 
     it("unknown Object (string instead of number)", function () {
         expect(() => latlngExpressiontoLatLng({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any)).to.throw(/Unknown object found/);

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import L from "leaflet";
 import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicCircleClass } from "../src/geodesic-circle";

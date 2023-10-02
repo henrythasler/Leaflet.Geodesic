@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import L from "leaflet";
 import "../src/index";
 

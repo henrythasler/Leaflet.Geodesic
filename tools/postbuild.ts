@@ -3,7 +3,7 @@ import { readFileSync, existsSync, statSync, writeFileSync, copyFileSync } from 
 import { exit } from 'process';
 import { basename, join } from 'path';
 
-const pkg = require('../package.json');
+const pkg = JSON.parse(readFileSync('package.json').toString());
 
 if (existsSync(pkg.browser)) {
     // calculate sha-sum of the plugin. See https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#using_subresource_integrity

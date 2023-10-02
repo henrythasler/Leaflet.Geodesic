@@ -17,14 +17,20 @@ Leaflet.Geodesic is available via CDN. Add the following snippet to your html-fi
 
 ```html
 <!-- Make sure you put this AFTER leaflet.js -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic">
+        integrity="see-release-page-for-current-checksum" 
+        crossorigin=""></script>
 ```
 
-Leaflet.Geodesic is available from [unpkg](https://unpkg.com/browse/leaflet.geodesic/), [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic) and [npmjs](https://www.npmjs.com/package/leaflet.geodesic).
+Leaflet.Geodesic is available via the following CDNs:
+
+ - [unpkg](https://unpkg.com/browse/leaflet.geodesic/)
+ - [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic)
+ - [npmjs](https://www.npmjs.com/package/leaflet.geodesic)
 
 Add it in your nodejs-project with `npm i leaflet.geodesic`.
 
-If possible, pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha512` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512) and is shown in the [build-log](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
+It is good practice, to pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha512` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512) and is shown in the [build-log](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
 
 ## Basic usage
 
@@ -45,7 +51,7 @@ const geodesicLine = L.geodesic().addTo(map);   // lower-case, w/o new-keyword
 const geodesicCircle = L.geodesiccircle().addTo(map);   // lower-case, w/o new-keyword
 ```
 
-Make sure you add the geodesic-object to the map. It won't display otherwise.
+Make sure you add the geodesic-object to the map (`.addTo(map)`). It won't display otherwise.
 
 Each constructor is defined as:
 ```JavaScript
@@ -53,7 +59,7 @@ Geodesic(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: Geod
 GeodesicCircle(center?: L.LatLngExpression, options?: GeodesicOptions)
 ```
 
-Both classes are extended from [L.Polyline](http://leafletjs.com/reference.html#polyline), so all methods, events and options for `L.Polyline` can be used with `L.Geodesic` and `L.GeodesicCircle` here as well. Any alt-properties provided via L.LatLng() points are preserved by `L.Geodesic`.
+Both classes are extended from [L.Polyline](http://leafletjs.com/reference.html#polyline), so all methods, events and options for `L.Polyline` can be used with `L.Geodesic` and `L.GeodesicCircle` here as well. Any [alt-properties](https://leafletjs.com/reference.html#latlng-l-latlng) given with any points are preserved by `L.Geodesic`.
 
 ## Geodesic Lines
 
