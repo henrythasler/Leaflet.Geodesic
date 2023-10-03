@@ -17,9 +17,7 @@ Leaflet.Geodesic is available via CDN. Add the following snippet to your html-fi
 
 ```html
 <!-- Make sure you put this AFTER leaflet.js -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic">
-        integrity="see-release-page-for-current-checksum" 
-        crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
 ```
 
 Leaflet.Geodesic is available via the following CDNs:
