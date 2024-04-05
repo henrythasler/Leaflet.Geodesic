@@ -34,13 +34,8 @@
     </style>
     <title>Leaflet.Geodesic demo</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
-        crossorigin="" />
-
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
-        crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>    
 
     <script src="leaflet.geodesic.umd.min.js"></script>
 </head>
@@ -76,12 +71,15 @@
             opacity: 0.5,
             color: 'red',
             fill: true,
-            steps: 45,
-            wrap: true
+            steps: 4,
+            wrap: false
         }).bindTooltip("<Area>").bindPopup("GeodesicCircle").addTo(map);
 
         geodesiccircle.setRadius(geodesiccircle.distanceTo(B.getLatLng()));
         geodesiccircle.setTooltipContent(`Area: ${Math.round(geodesiccircle.radius ** 2 * Math.PI / 1000 ** 2)} km²`);
+        geodesiccircle.on('click', (e) => { 
+            console.log(geodesiccircle.getLatLngs());
+        });
 
         var info = L.control();
         info.onAdd = function (map) {
@@ -92,10 +90,10 @@
 
         // method that we will use to update the control based on feature properties passed
         info.update = function (stats) {
-            const circumfenceString = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            const circumferenceString = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
             const radiusString = (geodesiccircle.radius ? (geodesiccircle.radius > 10000) ? (geodesiccircle.radius / 1000).toFixed(0) + ' km' : (geodesiccircle.radius).toFixed(0) + ' m' : 'invalid')
             this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString +
-                '<br/><br/><b>Circumfence</b><br/>' + circumfenceString +
+                '<br/><br/><b>Circumference</b><br/>' + circumferenceString +
                 '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
         };
 

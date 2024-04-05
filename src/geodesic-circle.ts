@@ -11,11 +11,21 @@ export class GeodesicCircleClass extends L.Polyline {
     readonly geom: GeodesicGeometry;
     center: L.LatLng;
     radius: number;
+    fillPoly: L.Polygon | null = null;
+    fillPolyOptions: GeodesicOptions | null = null;
     statistics: Statistics = { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 };
 
     constructor(center?: L.LatLngExpression, options?: GeodesicOptions) {
         super([], options);
         L.Util.setOptions(this, { ...this.defaultOptions, ...options });
+
+        if(this.options.fill) {
+            this.fillPolyOptions = structuredClone(this.options);
+            // this.fillPolyOptions.stroke = false;
+            this.fillPoly = new L.Polygon([], this.fillPolyOptions);
+            this.options.fill = false;
+            super.setStyle(this.options);
+        }
 
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;
@@ -35,7 +45,7 @@ export class GeodesicCircleClass extends L.Polyline {
         const circle = this.geom.circle(this.center, this.radius);
 
         this.statistics = this.geom.updateStatistics([[this.center]], [circle]);
-        // circumfence must be re-calculated from geodesic
+        // circumference must be re-calculated from geodesic
         this.statistics.totalDistance = this.geom.multilineDistance([circle]).reduce((x, y) => x + y, 0);
 
         if ((this.options as GeodesicOptions).wrap) {
@@ -43,6 +53,9 @@ export class GeodesicCircleClass extends L.Polyline {
             super.setLatLngs(split);
         } else {
             super.setLatLngs(circle);
+            if(this.fillPoly) {
+                this.fillPoly.setLatLngs(circle);
+            }
         }
     }
 
@@ -76,5 +89,11 @@ export class GeodesicCircleClass extends L.Polyline {
         this.radius = radius;
         this.center = center ? latlngExpressiontoLatLng(center) : this.center;
         this.update();
+    }
+
+    onAdd(map: L.Map): this {
+        super.onAdd(map);
+        this.fillPoly?.addTo(map);
+        return this;
     }
 }
