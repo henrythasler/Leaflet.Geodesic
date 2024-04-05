@@ -255,7 +255,7 @@ The geometry of a circle can be updated with the following methods:
 - `setLatLng(latlng: L.LatLngExpression)` - set a new center
 - `setRadius(radius: number)` - update the radius
 
-Handling of **filled** circles crossing the antimeridian (wrapping) is not yet supported. Set `fill: false` in these cases to avoid display artefacts.
+Handling of **filled** circles crossing the antimeridian (wrapping) and very large circles near the poles are not yet supported. Set `fill: false` in these cases to avoid display artefacts.
 
 ### Circle Options
 
@@ -276,7 +276,7 @@ The `L.Geodesic` and `L.GeodesicCircle`-class provide a `statistics`-Object with
 
 Property | Type | Description
 ---|---|---
-`totalDistance` |	`Number` | The total distance of all geodesic lines in meters. (Circumfence for `L.GeodesicCircle`)
+`totalDistance` |	`Number` | The total distance of all geodesic lines in meters. (circumference for `L.GeodesicCircle`)
 `distanceArray` | `Number[]` | The distance for each separate linestring in meters
 `points` | `Number` | Number of points that were given on creation or with `setLatLngs()`
 `vertices` | `Number` | Number of vertices of all geodesic lines that were calculated
