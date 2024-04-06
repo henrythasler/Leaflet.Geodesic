@@ -46,7 +46,13 @@ jobs:
       - uses: actions/checkout@v4 # see https://github.com/actions/checkout
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0    
+          fetch-depth: 0
+      - uses: actions/setup-node@v4 # see https://github.com/actions/setup-node
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
       - name: Analyze with SonarCloud
         # You can pin the exact commit or the version.
         uses: SonarSource/sonarcloud-github-action@v2 # see https://github.com/SonarSource/sonarcloud-github-action
