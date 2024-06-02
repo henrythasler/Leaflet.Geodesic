@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <svg>
+        <defs>
+            <lineargradient id="NE" spreadMethod="pad" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f00" stop-opacity="1"></stop>
+                <stop offset="50%" stop-color="#ff0" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#0f0" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="NW" spreadMethod="pad" x1="100%" y1="100%" x2="0%" y2="0%">
+                <stop offset="25%" stop-color="#ff7111" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="SE" spreadMethod="pad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="25%" stop-color="#ff7111" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="SW" spreadMethod="pad" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="25%" stop-color="#ff7111" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1"></stop>
+            </lineargradient>
+            <filter id="myGradient" primitiveUnits="objectBoundingBox">
+                <feImage x="0%" y="0%" width="100%" height="100%" preserveAspectRatio="none" xlink:href="data:image/svg+xml;charset=utf8,%3Csvg%20width%3D%22200px%22%20height%3D%22200px%22%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20xmlns%3Axlink%3D'http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink'%3E%3Cdefs%3E%3ClinearGradient%20id%3D'lightGradient'%20gradientTransform%3D'rotate(-5)'%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.4'%20offset%3D'0%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.5'%20offset%3D'5%25'%2F%3E%3Cstop%20stop-color%3D'black'%20stop-opacity%3D'0.2'%20offset%3D'6%25'%2F%3E%3Cstop%20stop-color%3D'black'%20stop-opacity%3D'0.3'%20offset%3D'19%25'%2F%3E%3Cstop%20stop-color%3D'black'%20stop-opacity%3D'0.2'%20offset%3D'12%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.8'%20offset%3D'13%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.9'%20offset%3D'15%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0'%20offset%3D'15%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0'%20offset%3D'16%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.8'%20offset%3D'16%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0.9'%20offset%3D'18%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0'%20offset%3D'18%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'0'%20offset%3D'20%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'1'%20offset%3D'20%25'%2F%3E%3Cstop%20stop-color%3D'white'%20stop-opacity%3D'1'%20offset%3D'25%25'%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%0A%20%20%3Crect%20id%3D'recGradient'%20x%3D'0%25'%20y%3D'0%25'%20width%3D'100%25'%20height%3D'100%25'%20fill%3D'url(%23lightGradient)'%2F%3E%3C%2Fsvg%3E"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+            </filter>
+            <filter id="blurMe">
+                <feGaussianBlur stdDeviation="5" />
+              </filter>            
+        </defs>   
+     </svg>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
+
+        path.animatedDashes {
+            /* stroke: red; */
+            /* filter: url(#blurMe); */
+            filter: drop-shadow(1px 1px 0 #000) drop-shadow(-1px -1px 0 #000) drop-shadow(1px -1px 0 #000) drop-shadow(-1px 1px 0 #000);
+            stroke-dasharray: 10 20;
+            animation: dash 1s linear;
+            animation-iteration-count: infinite;
+        }
+        /* https://css-tricks.com/svg-line-animation-works/ */
+        @keyframes dash {
+            from {
+                stroke-dashoffset: 30;
+            }
+            to {
+                stroke-dashoffset: 0;
+                }
+            }   
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
+        crossorigin="" />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+        crossorigin=""></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.geodesic"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
+
+    <script type="text/javascript">
+
+        var map = L.map('map', {renderer: L.svg()}).setView([0, 0], 2);
+        L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        var info = L.control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };        
+
+        const segments = [
+            [
+                new L.LatLng(52.5, 13.35), // Berlin
+                new L.LatLng(33.82, -118.38), // Los Angeles
+            ],
+            [
+                new L.LatLng(52.5, 13.35), // Berlin
+                new L.LatLng(-33.44, -70.71), // Santiago
+            ],
+            [
+                new L.LatLng(52.5, 13.35), // Berlin
+                new L.LatLng(35.47, 139.15), // Tokyo
+            ],
+            [
+                new L.LatLng(52.5, 13.35), // Berlin
+                new L.LatLng(-33.94, 18.39), // Capetown
+            ],
+            [
+                new L.LatLng(52.5, 13.35), // Berlin
+                new L.LatLng(-33.91, 151.08), // Sydney
+            ],
+        ];
+
+        const myRenderer = L.svg({ attribution: "myRenderer" });
+        myRenderer.on('update', (event) => {
+            console.log("update");
+        });
+
+        const geodesic = L.geodesic(segments, {
+            weight: 7,
+            opacity: 1.0,
+            // color: "red",
+            // color: "url(#myGradient)",
+            color: "url(#NE)",
+            steps: 4,
+            // className: "stroke-polyline",
+            // className: "blur",
+            className: "animatedDashes"
+            // renderer: myRenderer,
+        }).addTo(map);     
+
+        info.update(geodesic.statistics);
+
+        var markers = [];
+
+        segments.forEach( (segment, index) => {
+            var marker = L.marker(segment.at(-1), { draggable: true, segment: segment }).addTo(map);
+            marker.on('drag', (e) => {
+                segment[1] = markers.at(index).getLatLng();
+                geodesic.setLatLngs(segments);
+                info.update(geodesic.statistics);
+            });
+            markers.push(marker);
+        });
+
+        markers[4].bindPopup("Drag me.").openPopup();
+
+    </script>
+</body>
+
+</html>

@@ -37,3 +37,7 @@ Click on an image to open the demo:
 ## Continuous Drawing
 
 [![multiline-nosplit](img/multiline-nosplit.png)](multiline-nosplit.html)
+
+## Animated Flightpath
+
+[![flightpath-animated](img/flightpath-animated.png)](flightpath-animated.html)
