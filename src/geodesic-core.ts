@@ -1,12 +1,12 @@
-import * as L from "leaflet";
+import { LatLng, PolylineOptions, LatLngLiteral } from "leaflet";
 
-export interface GeodesicOptions extends L.PolylineOptions {
+export interface GeodesicOptions extends PolylineOptions {
     wrap?: boolean;
     steps?: number;
     radius?: number;
 }
 
-export interface WGS84Vector extends L.LatLngLiteral {
+export interface WGS84Vector extends LatLngLiteral {
     bearing: number;
 }
 
@@ -86,7 +86,7 @@ export class GeodesicCore {
      * @param maxInterations How many iterations can be made to reach the allowed deviation (`ε`), before an error will be thrown.
      * @return Final point (destination point) and bearing (in degrees)
      */
-    direct(start: L.LatLng, bearing: number, distance: number, maxInterations = 100): WGS84Vector {
+    direct(start: LatLng, bearing: number, distance: number, maxInterations = 100): WGS84Vector {
         const φ1 = this.toRadians(start.lat);
         const λ1 = this.toRadians(start.lng);
         const α1 = this.toRadians(bearing);
@@ -160,7 +160,7 @@ export class GeodesicCore {
      * @param dest Latitude/longitude of destination point.
      * @return Object including distance, initialBearing, finalBearing.
      */
-    inverse(start: L.LatLng, dest: L.LatLng, maxInterations = 100, mitigateConvergenceError = true): GeoDistance {
+    inverse(start: LatLng, dest: LatLng, maxInterations = 100, mitigateConvergenceError = true): GeoDistance {
         const p1 = start,
             p2 = dest;
         const φ1 = this.toRadians(p1.lat),
@@ -225,7 +225,7 @@ export class GeodesicCore {
             if (mitigateConvergenceError) {
                 return this.inverse(
                     start,
-                    new L.LatLng(dest.lat, dest.lng - 0.01),
+                    new LatLng(dest.lat, dest.lng - 0.01),
                     maxInterations,
                     mitigateConvergenceError
                 );
@@ -274,11 +274,11 @@ export class GeodesicCore {
      */
 
     intersection(
-        firstPos: L.LatLng,
+        firstPos: LatLng,
         firstBearing: number,
-        secondPos: L.LatLng,
+        secondPos: LatLng,
         secondBearing: number
-    ): L.LatLng | null {
+    ): LatLng | null {
         const φ1 = this.toRadians(firstPos.lat);
         const λ1 = this.toRadians(firstPos.lng);
         const φ2 = this.toRadians(secondPos.lat);
@@ -332,10 +332,10 @@ export class GeodesicCore {
             Math.cos(δ13) - Math.sin(φ1) * Math.sin(φ3)
         );
         const λ3 = λ1 + Δλ13;
-        return new L.LatLng(this.toDegrees(φ3), this.toDegrees(λ3));
+        return new LatLng(this.toDegrees(φ3), this.toDegrees(λ3));
     }
 
-    midpoint(start: L.LatLng, dest: L.LatLng): L.LatLng {
+    midpoint(start: LatLng, dest: LatLng): LatLng {
         // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ)² + cos²φ2⋅sin²Δλ ) )
         // λm = λ1 + atan2(cosφ2⋅sinΔλ, cosφ1 + cosφ2⋅cosΔλ)
         // midpoint is sum of vectors to two points: mathforum.org/library/drmath/view/51822.html
@@ -355,6 +355,6 @@ export class GeodesicCore {
         const φm = Math.atan2(C.z, Math.sqrt(C.x * C.x + C.y * C.y));
         const λm = λ1 + Math.atan2(C.y, C.x);
 
-        return new L.LatLng(this.toDegrees(φm), this.toDegrees(λm));
+        return new LatLng(this.toDegrees(φm), this.toDegrees(λm));
     }
 }

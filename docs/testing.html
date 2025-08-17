@@ -34,47 +34,58 @@
     </style>
     <title>Leaflet.Geodesic demo</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.css" 
         crossorigin="" />
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
-        crossorigin=""></script>
-    
-    <script src="leaflet.geodesic.umd.min.js"></script>
-
+    <script type="importmap">
+        {
+            "imports": {
+                "leaflet": "https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js"
+            }
+        }
+    </script>
 </head>
 
 <body>
     <div id="map"></div>
     <div id='distance' class='distance-container'></div>
 
-    <script type="text/javascript">
+      <script type="module">
+        import L, {Map, TileLayer, Marker, LatLng} from 'leaflet';
+        import { GeodesicLine } from "./leaflet.geodesic.esm.js";
 
-        // define some paths
-        const path1 = [
-            new L.LatLng(50, 30, 10),
-            new L.LatLng(51, 31),
-            new L.LatLng(52, 32, 30),
-        ];
-        const path2 = [
-            {lat: 50, lng: 30, alt: 10},
-            {lat: 51, lng: 31},
-            {lat: 52, lng: 32, alt: 30},
-        ];
+        const map = new Map('map').setView([0, 0], 2);
 
-        const path3 = [
-            [50, 30, 10],
-            [51, 31],
-            [52, 32, 30],
-        ];
+        const tiles = new TileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);        
 
-        const polyline = L.polyline(path3);
-        console.log("polyline", polyline.getLatLngs());
+        // define some places
+        var Berlin = new LatLng(52.5, 13.35);
+        var LosAngeles = new LatLng(33.82, -118.38);
 
-        const geodesic = L.geodesic(path3, { steps: 1 });
-        console.log("geodesic", geodesic.getLatLngs());
+        var myLine = new GeodesicLine();
+
+        // var myLine = new GeodesicLine([Berlin, LosAngeles], {
+        //     weight: 20,
+        //     opacity: 0.5,
+        //     color: 'red',
+        //     steps: 4
+        // });
+
+        // create a marker at each place
+        // var A = new Marker(LosAngeles, { draggable: true }).addTo(map);
+        // var B = new Marker(Berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
+
+        // draw a geodesic line between these places
+        // const geodesic1 = geodesic([Berlin, LosAngeles], {
+        //     weight: 20,
+        //     opacity: 0.5,
+        //     color: 'red',
+        //     steps: 4
+        // }).addTo(map);
 
     </script>
 </body>

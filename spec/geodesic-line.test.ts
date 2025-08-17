@@ -1,43 +1,51 @@
-import L from "leaflet";
+import { LatLng, LatLngBounds, FeatureGroup, Map, SVG } from "leaflet";
 import { GeodesicOptions } from "../src/geodesic-core"
 import { GeodesicLine } from "../src/geodesic-line";
 import { readFileSync } from "fs";
 import { expect } from "chai";
 
-import "jest";
+import { jest } from "@jest/globals";
 
 import { checkFixture, compareObject, eps } from "./test-toolbox";
 
 // test case with distance 54972.271 m
-const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889, 328);
-const Buninyong = new L.LatLng(-37.6528211388889, 143.926495527778, 745);
+const FlindersPeak = new LatLng(-37.9510334166667, 144.424867888889, 328);
+const Buninyong = new LatLng(-37.6528211388889, 143.926495527778, 745);
 
-const Berlin = new L.LatLng(52.5, 13.35);
-const LosAngeles = new L.LatLng(33.82, -118.38);
+const Berlin = new LatLng(52.5, 13.35);
+const LosAngeles = new LatLng(33.82, -118.38);
 
-const Seattle = new L.LatLng(47.56, -122.33);
-const Santiago = new L.LatLng(-33.44, -70.71);
-const Capetown = new L.LatLng(-33.94, 18.39);
+const Seattle = new LatLng(47.56, -122.33);
+const Santiago = new LatLng(-33.44, -70.71);
+const Capetown = new LatLng(-33.94, 18.39);
 
-const Tokyo = new L.LatLng(35.47, 139.15);
-const Sydney = new L.LatLng(-33.91, 151.08);
+const Tokyo = new LatLng(35.47, 139.15);
+const Sydney = new LatLng(-33.91, 151.08);
 
-const Beijing = new L.LatLng(39.92, 116.39);
+const Beijing = new LatLng(39.92, 116.39);
 
 
 const fixturesPath = "spec/fixtures/";
 
 const defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
 
+window.ResizeObserver =
+    window.ResizeObserver ||
+    jest.fn().mockImplementation(() => ({
+        disconnect: jest.fn(),
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+    }));
+
 describe("Main functionality", function () {
     let container: HTMLElement;
-    let map: L.Map;
+    let map: Map;
 
     beforeEach(function () {
         container = document.createElement('div');
         container.style.width = '400px';
         container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
+        map = new Map(container, { renderer: new SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("Create class w/o any parameters", function () {
@@ -162,7 +170,7 @@ describe("Main functionality", function () {
 
     it("Preserve alt properties", async function () {
         const line = new GeodesicLine([FlindersPeak, Buninyong], { steps: 1 });
-        const res = line.getLatLngs() as L.LatLng[][];
+        const res = line.getLatLngs() as LatLng[][];
         expect(res[0][0].alt).to.be.equal(FlindersPeak.alt);
         expect(res[0][4].alt).to.be.equal(Buninyong.alt);
     });    
@@ -170,7 +178,7 @@ describe("Main functionality", function () {
 
 describe("GeoJSON-Support", function () {
     let container: HTMLElement;
-    let map: L.Map;
+    let map: Map;
     const mockLog = jest.fn();
     const originalLog = console.log;
 
@@ -178,7 +186,7 @@ describe("GeoJSON-Support", function () {
         container = document.createElement('div');
         container.style.width = '400px';
         container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
+        map = new Map(container, { renderer: new SVG(), center: [0, 0], zoom: 12 });
 
         mockLog.mockClear();
     });
@@ -191,7 +199,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometry-line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -199,7 +207,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}feature-line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -207,7 +215,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -215,7 +223,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -223,7 +231,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon-hole.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}polygon-hole.fixture.json`, "utf8")));
     });
 
@@ -231,7 +239,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipoint.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
@@ -239,7 +247,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multiline.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multiline.fixture.json`, "utf8")));
     });
 
@@ -247,7 +255,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}multipolygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8")));
     });
 
@@ -255,7 +263,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}line-multipolygon.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         const fixture = [
             ...JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")),
             ...JSON.parse(readFileSync(`${fixturesPath}multipolygon.fixture.json`, "utf8"))];
@@ -268,7 +276,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}point.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
@@ -280,7 +288,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}mixed.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}mixed.fixture.json`, "utf8")));
         expect(mockLog.mock.calls[0][0]).to.match(/Type "Point" not supported/);
     });
@@ -291,7 +299,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         expect(latlngs).to.be.an("array");
         expect(latlngs).to.be.length(0);
         expect(mockLog.mock.calls[0][0]).to.match(/Type "GeometryCollection" not supported/);
@@ -300,13 +308,13 @@ describe("GeoJSON-Support", function () {
 
 describe("Usage of base-class functions", function () {
     let container: HTMLElement;
-    let map: L.Map;
+    let map: Map;
 
     beforeEach(function () {
         container = document.createElement('div');
         container.style.width = '400px';
         container.style.height = '400px';
-        map = L.map(container, { renderer: new L.SVG(), center: [0, 0], zoom: 12 });
+        map = new Map(container, { renderer: new SVG(), center: [0, 0], zoom: 12 });
     });
 
     it("getBounds()", async function () {
@@ -316,7 +324,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).to.be.true;
 
         const bounds = line.getBounds();
-        expect(bounds).to.be.instanceOf(L.LatLngBounds);
+        expect(bounds).to.be.instanceOf(LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
     });
 
@@ -325,11 +333,11 @@ describe("Usage of base-class functions", function () {
         expect(line).to.be.instanceOf(GeodesicLine);
         compareObject(line.options, defaultOptions);
 
-        const group = new L.FeatureGroup([line]).addTo(map);
+        const group = new FeatureGroup([line]).addTo(map);
         expect(map.hasLayer(group)).to.be.true;
 
         const bounds = group.getBounds();
-        expect(bounds).to.be.instanceOf(L.LatLngBounds);
+        expect(bounds).to.be.instanceOf(LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
     });
 
