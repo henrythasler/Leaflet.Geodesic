@@ -1,6 +1,5 @@
 import Benchmark from "benchmark";
 import { GeodesicGeometry } from "../src/geodesic-geom";
-import { expect } from "chai";
 
 import L from "leaflet";
 
@@ -36,13 +35,13 @@ describe("function benchmarks", function () {
     it("Seattle -> Berlin (no split)", async function () {
         const res = await benchmark(Seattle, Berlin);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(fastest.hz).to.be.closeTo(770000, 50000);
+        expect(Math.abs(fastest.hz - 770000)).toBeLessThan(50000);
     });
 
     it("Seattle -> Tokyo (with split)", async function () {
         const res = await benchmark(Seattle, Tokyo);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(fastest.hz).to.be.closeTo(80000, 10000);
+        expect(Math.abs(fastest.hz - 80000)).toBeLessThan(10000);
     });
     
 });

@@ -1,66 +1,65 @@
 import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
-import { expect } from "chai";
 
 import "jest";
 import L from "leaflet";
 
-import { eps } from "./test-toolbox";
+import { closeToDigits_5 } from "./test-toolbox";
 
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
 const MontBlanc: L.LatLngLiteral = { lat: 45.832778, lng: 6.865, alt: 4807 };
 
 describe("instanceOf-Functions", function () {
     it("instanceOfLatLngExpression", function () {
-        expect(instanceOfLatLngExpression(new L.LatLng(Berlin.lat, Berlin.lng))).to.be.true;
-        expect(instanceOfLatLngExpression(Berlin)).to.be.true;
-        expect(instanceOfLatLngExpression(MontBlanc)).to.be.true;
-        expect(instanceOfLatLngExpression([Berlin.lat, Berlin.lng])).to.be.true;
-        expect(instanceOfLatLngExpression([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt])).to.be.true;
-        expect(instanceOfLatLngExpression(new L.Point(Berlin.lat, Berlin.lng))).to.be.false;
-        expect(instanceOfLatLngExpression({ some: "object", num: 33 })).to.be.false;
+        expect(instanceOfLatLngExpression(new L.LatLng(Berlin.lat, Berlin.lng))).toBeTrue();
+        expect(instanceOfLatLngExpression(Berlin)).toBeTrue();
+        expect(instanceOfLatLngExpression(MontBlanc)).toBeTrue();
+        expect(instanceOfLatLngExpression([Berlin.lat, Berlin.lng])).toBeTrue();
+        expect(instanceOfLatLngExpression([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt])).toBeTrue();
+        expect(instanceOfLatLngExpression(new L.Point(Berlin.lat, Berlin.lng))).toBeFalse();
+        expect(instanceOfLatLngExpression({ some: "object", num: 33 })).toBeFalse();
     });
 });
 
 describe("latlngExpressiontoLatLng", function () {
     it("LatLng-Class", function () {
         const point = latlngExpressiontoLatLng(new L.LatLng(Berlin.lat, Berlin.lng));
-        expect(point).to.be.instanceOf(L.LatLng);
-        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
-        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+        expect(point).toBeInstanceOf(L.LatLng);
+        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
+        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
     });
 
     it("LatLng-Array", function () {
         const point = latlngExpressiontoLatLng([Berlin.lat, Berlin.lng]);
-        expect(point).to.be.instanceOf(L.LatLng);
-        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
-        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+        expect(point).toBeInstanceOf(L.LatLng);
+        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
+        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
     });
 
     it("LatLng-Array with alt", function () {
         const point = latlngExpressiontoLatLng([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt]);
-        expect(point).to.be.instanceOf(L.LatLng);
-        expect(point.lat).to.be.closeTo(MontBlanc.lat, eps);
-        expect(point.lng).to.be.closeTo(MontBlanc.lng, eps);
-        expect(point.alt).to.be.closeTo(MontBlanc.alt!, eps);
+        expect(point).toBeInstanceOf(L.LatLng);
+        expect(point.lat).toBeCloseTo(MontBlanc.lat, closeToDigits_5);
+        expect(point.lng).toBeCloseTo(MontBlanc.lng, closeToDigits_5);
+        expect(point.alt).toBeCloseTo(MontBlanc.alt!, closeToDigits_5);
     });    
 
     it("LatLngLiteral", function () {
         const point = latlngExpressiontoLatLng(Berlin);
-        expect(point).to.be.instanceOf(L.LatLng);
-        expect(point.lat).to.be.closeTo(Berlin.lat, eps);
-        expect(point.lng).to.be.closeTo(Berlin.lng, eps);
+        expect(point).toBeInstanceOf(L.LatLng);
+        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
+        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
     });
 
     it("LatLngLiteral with alt", function () {
         const point = latlngExpressiontoLatLng(MontBlanc);
-        expect(point).to.be.instanceOf(L.LatLng);
-        expect(point.lat).to.be.closeTo(MontBlanc.lat, eps);
-        expect(point.lng).to.be.closeTo(MontBlanc.lng, eps);
-        expect(point.alt).to.be.closeTo(MontBlanc.alt!, eps);
+        expect(point).toBeInstanceOf(L.LatLng);
+        expect(point.lat).toBeCloseTo(MontBlanc.lat, closeToDigits_5);
+        expect(point.lng).toBeCloseTo(MontBlanc.lng, closeToDigits_5);
+        expect(point.alt).toBeCloseTo(MontBlanc.alt!, closeToDigits_5);
     });    
 
     it("unknown Object (string instead of number)", function () {
-        expect(() => latlngExpressiontoLatLng({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any)).to.throw(/Unknown object found/);
+        expect(() => latlngExpressiontoLatLng({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any)).toThrow(/Unknown object found/);
     });
 });
 
@@ -68,14 +67,14 @@ describe("latlngExpressiontoLatLng", function () {
 describe("latlngExpressionArraytoLatLngArray", function () {
 
     function checkLatLng(latlng: L.LatLng[][], n: number, m: number, fixture: L.LatLngLiteral): void {
-        expect(latlng).to.be.length(n);
-        expect(latlng).to.be.an("array");
+        expect(latlng).toHaveLength(n);
+        expect(latlng).toBeInstanceOf(Array);
         latlng.forEach((items) => {
-            expect(items).to.be.length(m);
+            expect(items).toHaveLength(m);
             items.forEach((point) => {
-                expect(point).to.be.instanceOf(L.LatLng);
-                expect(point.lat).to.be.closeTo(fixture.lat, eps);
-                expect(point.lng).to.be.closeTo(fixture.lng, eps);
+                expect(point).toBeInstanceOf(L.LatLng);
+                expect(point.lat).toBeCloseTo(fixture.lat, closeToDigits_5);
+                expect(point.lng).toBeCloseTo(fixture.lng, closeToDigits_5);
             })
         });
     }
@@ -139,17 +138,17 @@ describe("latlngExpressionArraytoLatLngArray", function () {
     });
 
     it("1D-Array - unknown Object (string instead of number)", function () {
-        expect(() => latlngExpressionArraytoLatLngArray([{ lat: Berlin.lat, lng: "matafokka" } as any])).to.throw(/Unknown object found/);
+        expect(() => latlngExpressionArraytoLatLngArray([{ lat: Berlin.lat, lng: "matafokka" } as any])).toThrow(/Unknown object found/);
     });
 
     it("1D-Array - unknown Object (object instead of array)", function () {
-        expect(() => latlngExpressionArraytoLatLngArray({ lat: Berlin.lat, lng: Berlin.lng } as any)).to.throw(/Unknown object found/);
+        expect(() => latlngExpressionArraytoLatLngArray({ lat: Berlin.lat, lng: Berlin.lng } as any)).toThrow(/Unknown object found/);
     });
 
     it("2D-Array - unknown Object (string instead of number)", function () {
         const n = 2, m = 2;
         const input = new Array(n).fill((new Array(m) as L.LatLngExpression[]).fill({ lat: Berlin.lat, lng: `${Berlin.lng}` } as any));
-        expect(() => latlngExpressionArraytoLatLngArray(input)).to.throw(/Unknown object found/);
+        expect(() => latlngExpressionArraytoLatLngArray(input)).toThrow(/Unknown object found/);
     });
 
 });
