@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x, 24.x, 25.x, 26.x]
+        node-version: [18.x, 20.x, 22.x, 24.x] # Define the Node.js versions to test against
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
