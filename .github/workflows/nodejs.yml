@@ -50,6 +50,27 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./coverage/lcov.info # Adjust this path if your coverage report is located elsewhere
 
+  sonarcloud:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Disabling shallow clone is recommended for improving relevancy of reporting
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Analyze with SonarCloud
+      uses: SonarSource/sonarqube-scan-action@v5.3.0 # see https://github.com/marketplace/actions/official-sonarqube-scan
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
+
   build:
     runs-on: ubuntu-latest
     needs: test
@@ -69,26 +90,3 @@ jobs:
       run: npm ci
     - name: Build project
       run: npm run build      
-
-  # build:
-  #   runs-on: ubuntu-latest
-
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.x, 20.x, 22.x, 24.x] # Define the Node.js versions to test against
-  #       # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-  #   steps:
-  #   - uses: actions/checkout@v4 # see https://github.com/actions/checkout
-  #   - name: Use Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v4 # see https://github.com/actions/setup-node
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
-  #       cache: 'npm'
-  #   - run: npm ci
-  #   - run: npm run build --if-present
-  #   - run: npm test
-  #   - name: Coveralls
-  #     uses: coverallsapp/github-action@v2 # https://github.com/coverallsapp/github-action
-  #     with:
-  #       github-token: ${{ secrets.GITHUB_TOKEN }}
