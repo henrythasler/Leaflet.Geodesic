@@ -1,7 +1,10 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node CI
+name: Node.js CI
+
+permissions:
+  contents: read # This is required to allow the workflow to read the repository contents
 
 on:
   push:
