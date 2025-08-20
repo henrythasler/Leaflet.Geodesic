@@ -4,7 +4,7 @@ import L from "leaflet";
 
 import "jest";
 
-import { checkFixture, eps } from "./test-toolbox";
+import { checkFixture } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);

@@ -1,5 +1,6 @@
 import * as L from "leaflet";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
     return (
         typeof object === "object" &&
@@ -11,10 +12,12 @@ export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral 
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function instanceOfLatLngTuple(object: any): object is L.LatLngTuple {
     return object instanceof Array && typeof object[0] === "number" && typeof object[1] === "number";
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function instanceOfLatLngExpression(object: any): object is L.LatLngExpression {
     return object instanceof L.LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
 }
@@ -23,7 +26,7 @@ export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
     if (input instanceof L.LatLng) {
         return input;
     } else if (instanceOfLatLngTuple(input)) {
-        return new L.LatLng(input[0], input[1], input.at(2)); // alt is optional
+        return new L.LatLng(input[0], input[1], input[2]); // alt is optional
     } else if (instanceOfLatLngLiteral(input)) {
         return new L.LatLng(input.lat, input.lng, input.alt);
     }

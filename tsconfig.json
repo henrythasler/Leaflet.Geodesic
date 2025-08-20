@@ -60,6 +60,7 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
     // "resolveJsonModule": true
   },
+  "files": ["global.d.ts"],
   "include": [
     "src/**/*.ts",
     "rollup.config.*.ts",
