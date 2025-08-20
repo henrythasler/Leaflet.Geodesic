@@ -116,7 +116,7 @@ jobs:
       run: npm run build
 
     - name: Publish package
-      run: npm publish --dry-run
+      run: npm publish #--dry-run
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Ensure you have set this secret in your repository settings
 
