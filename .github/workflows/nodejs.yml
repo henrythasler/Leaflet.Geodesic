@@ -78,6 +78,14 @@ jobs:
     needs: build
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
+    - name: Get existing release info
+      id: get_release
+      run: |
+        release=$(gh api repos/${{ github.repository }}/releases/tags/${{ github.ref_name }})
+        release_body=$(echo "$release" | jq -r .body | sed ':a;N;$!ba;s/\n/\\n/g')
+        echo "release_body=$release_body" >> $GITHUB_OUTPUT
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Use Node.js 22
@@ -88,8 +96,34 @@ jobs:
     - name: Install dependencies
       run: npm ci
     - name: Build project
-      run: npm run build      
+      run: npm run build
     - name: Publish package
-      run: npm publish # --dry-run
+      run: npm publish --dry-run
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Ensure you have set this secret in your repository settings
+    - name: get artefact hashes
+      id: get_hashes
+      run: |
+        umd_hash=$(cat dist/leaflet.geodesic.umd.min.js.sha512)
+        echo "umd_hash=$umd_hash" >> $GITHUB_OUTPUT
+    - name: Update github release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.release.tag_name }}
+        body: |
+          ${{ steps.get_release.outputs.release_body }}
+          
+          ## CDN and download links
+
+          * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ github.event.release.tag_name }}/dist/leaflet.geodesic.umd.min.js
+          * https://unpkg.com/browse/leaflet.geodesic@${{ github.event.release.tag_name }}/dist/leaflet.geodesic.umd.min.js
+
+          ## Subresource Integrity
+
+          [Learn more about Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
+
+          `integrity="sha512-{{ steps.get_hashes.umd_hash }}"` ([verify](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds/266307512#L613))
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is automatically provided by GitHub Actions
+        GITHUB_REPOSITORY: ${{ github.repository }} # The repository where the release will be created

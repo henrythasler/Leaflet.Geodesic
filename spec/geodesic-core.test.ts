@@ -3,7 +3,7 @@ import { GeodesicCore } from "../src/geodesic-core";
 import "jest";
 import L from "leaflet";
 
-import { closeToDigits_5, closeToDigits_3, closeToDigits_4 } from "./test-toolbox";
+import { closeToDigits_5, closeToDigits_3, closeToDigits_4, expectCloseTo } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -157,7 +157,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
         const res = geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 180));
         expect(res).toBeObject();
         expect(res).toContainAllKeys(["distance", "initialBearing", "finalBearing"]);
-        expect(Math.abs(res.distance - 20004000)).toBeLessThan(1000);
+        expectCloseTo(res.distance, 20004000, 1000); // verified via http://www.ga.gov.au/geodesy/datums/vincenty_inverse.jsp
         expect(res.initialBearing).toBeCloseTo(0, closeToDigits_5);   // the formula has special handling for antipodals (going only north/south)
         expect(res.finalBearing).toBeCloseTo(180, closeToDigits_5);
     });

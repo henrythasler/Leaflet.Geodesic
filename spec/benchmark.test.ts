@@ -4,6 +4,7 @@ import { GeodesicGeometry } from "../src/geodesic-geom";
 import L from "leaflet";
 
 import "jest";
+import { expectCloseTo } from "./test-toolbox";
 
 const Tokyo = new L.LatLng(35.47, 139.15);
 const Seattle = new L.LatLng(47.56, -122.33);
@@ -35,13 +36,17 @@ describe("function benchmarks", function () {
     it("Seattle -> Berlin (no split)", async function () {
         const res = await benchmark(Seattle, Berlin);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(Math.abs(fastest.hz - 770000)).toBeLessThan(50000);
+        // The hz value can vary a lot, so we allow a margin of 50k
+        // This is because the benchmark is run on a different machine
+        // than the one used for development.
+        // The hz value is the number of times the function can be called per second.
+        expectCloseTo(fastest.hz, 770000, 50000);
     });
 
     it("Seattle -> Tokyo (with split)", async function () {
         const res = await benchmark(Seattle, Tokyo);
         const fastest = ((res.filter("fastest").pop()) as unknown as Benchmark);
-        expect(Math.abs(fastest.hz - 80000)).toBeLessThan(10000);
+        expectCloseTo(fastest.hz, 80000, 10000);
     });
     
 });

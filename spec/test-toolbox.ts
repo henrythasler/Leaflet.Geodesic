@@ -24,3 +24,7 @@ export function compareObject(specimen: object, fixture: object): void {
         expect(specimen).toHaveProperty(key, value);
     }
 }
+
+export function expectCloseTo(specimen: number, fixture: number, eps: number = 1e-6): void {
+    expect(Math.abs(specimen - fixture)).toBeLessThanOrEqual(eps);
+}
