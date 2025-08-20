@@ -2,6 +2,10 @@
 
 These are my notes on how to develop this plug-in.
 
+## Upgrade npm packages
+
+Run `npm outdated` and then upgrade with `npm i typescript@latest`.
+
 ## local installations
 
 ```

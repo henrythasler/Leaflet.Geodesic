@@ -1,6 +1,7 @@
 import { LatLng, LatLngLiteral, LatLngTuple, LatLngExpression } from "leaflet";
 
-export function instanceOfLatLngLiteral(object: any): object is LatLngLiteral {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
     return (
         typeof object === "object" &&
         object !== null &&
@@ -11,19 +12,21 @@ export function instanceOfLatLngLiteral(object: any): object is LatLngLiteral {
     );
 }
 
-export function instanceOfLatLngTuple(object: any): object is LatLngTuple {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function instanceOfLatLngTuple(object: any): object is L.LatLngTuple {
     return object instanceof Array && typeof object[0] === "number" && typeof object[1] === "number";
 }
 
-export function instanceOfLatLngExpression(object: any): object is LatLngExpression {
-    return object instanceof LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function instanceOfLatLngExpression(object: any): object is L.LatLngExpression {
+    return object instanceof L.LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
 }
 
 export function latlngExpressiontoLatLng(input: LatLngExpression): LatLng {
     if (input instanceof LatLng) {
         return input;
     } else if (instanceOfLatLngTuple(input)) {
-        return new LatLng(input[0], input[1], input.at(2)); // alt is optional
+        return new L.LatLng(input[0], input[1], input[2]); // alt is optional
     } else if (instanceOfLatLngLiteral(input)) {
         return new LatLng(input.lat, input.lng, input.alt);
     }

@@ -1,7 +1,5 @@
 import "../src/index";
 
-import { expect } from "chai";
-
 import "jest";
 
 describe("Object creation", function () {
