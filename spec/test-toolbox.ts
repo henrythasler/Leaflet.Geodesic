@@ -1,4 +1,4 @@
-import L from "leaflet";
+import { LatLng, LatLngLiteral } from "leaflet";
 
 import "jest";
 
@@ -6,13 +6,13 @@ export const highPrecisionDigits = 5;
 export const medPrecisionDigits = 4;
 export const lowPrecisionDigits = 3;
 
-export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
+export function checkFixture(specimen: LatLng[][], fixture: LatLngLiteral[][]): void {
     expect(specimen).toBeInstanceOf(Array);
     expect(specimen).toHaveLength(fixture.length);
     specimen.forEach((line, k) => {
         expect(line).toHaveLength(fixture[k].length);
         line.forEach((point, l) => {
-            expect(point).toBeInstanceOf(L.LatLng);
+            expect(point).toBeInstanceOf(LatLng);
             expect(point.lat).toBeCloseTo(fixture[k][l].lat, highPrecisionDigits);
             expect(point.lng).toBeCloseTo(fixture[k][l].lng, highPrecisionDigits);
         });

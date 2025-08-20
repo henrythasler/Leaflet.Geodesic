@@ -107,7 +107,7 @@ describe("Vincenty direct - regular test cases", function () {
 
 describe("Vincenty direct - Corner-cases and error handling", function () {
     it("antipodal position along equator", function () {
-        const dest = geodesic.direct(new L.LatLng(0, 0), 90, 6378137 * Math.PI);
+        const dest = geodesic.direct(new LatLng(0, 0), 90, 6378137 * Math.PI);
         expect(dest).toBeObject();
         expect(dest).toContainAllKeys(["lat", "lng", "bearing"]);
         expect(dest.lat).toBeCloseTo(0, highPrecisionDigits);
@@ -116,7 +116,7 @@ describe("Vincenty direct - Corner-cases and error handling", function () {
     });
 
     it("zero distance", function () {
-        const dest = geodesic.direct(new L.LatLng(0, 0), 90, 0);
+        const dest = geodesic.direct(new LatLng(0, 0), 90, 0);
         expect(dest).toBeObject();
         expect(dest).toContainAllKeys(["lat", "lng", "bearing"]);
         expect(dest.lat).toBeCloseTo(0, highPrecisionDigits);
@@ -154,7 +154,7 @@ describe("Vincenty inverse - regular test cases", function () {
 
 describe("Vincenty inverse - Corner-cases and error handling", function () {
     it("Antipodal (opposite)", function () {
-        const res = geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 180));
+        const res = geodesic.inverse(new LatLng(0, 0), new LatLng(0, 180));
         expect(res).toBeObject();
         expect(res).toContainAllKeys(["distance", "initialBearing", "finalBearing"]);
         expectCloseTo(res.distance, 20004000, 1000); // verified via http://www.ga.gov.au/geodesy/datums/vincenty_inverse.jsp
@@ -172,11 +172,11 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     });
 
     it("no convergence", function () {
-        expect(() => geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 179.5), 50, false)).toThrow(/vincenty formula failed to converge/);
+        expect(() => geodesic.inverse(new LatLng(0, 0), new LatLng(0, 179.5), 50, false)).toThrow(/vincenty formula failed to converge/);
     });
 
     it("mitigate convergence Error", function () {
-        let res = geodesic.inverse(new L.LatLng(0, 0), new L.LatLng(0, 179.5));
+        let res = geodesic.inverse(new LatLng(0, 0), new LatLng(0, 179.5));
         expect(res).toBeObject();
         expect(res).toContainAllKeys(["distance", "initialBearing", "finalBearing"]);
         expect(res.distance).toBeCloseTo(19969603.453263, highPrecisionDigits);
@@ -185,7 +185,7 @@ describe("Vincenty inverse - Corner-cases and error handling", function () {
     });
 
     it("λ > π", function () {
-        expect(() => geodesic.inverse(new L.LatLng(-84, -172), new L.LatLng(-70, 190))).toThrow(/λ > π/);
+        expect(() => geodesic.inverse(new LatLng(-84, -172), new LatLng(-70, 190))).toThrow(/λ > π/);
     });
 });
 
@@ -195,7 +195,7 @@ describe("Intersection - regular test cases", function () {
             new LatLng(0, -1), 90,
             new LatLng(-1, 0), 0);
         if (res) {
-            expect(res).toBeInstanceOf(L.LatLng);
+            expect(res).toBeInstanceOf(LatLng);
             expect(res.lat).toBeCloseTo(0, highPrecisionDigits);
             expect(res.lng).toBeCloseTo(0, highPrecisionDigits);
         }
@@ -212,7 +212,7 @@ describe("Intersection - regular test cases", function () {
             Seattle, path2.initialBearing
         );
         if (res) {
-            expect(res).toBeInstanceOf(L.LatLng);
+            expect(res).toBeInstanceOf(LatLng);
             expect(res.lat).toBeCloseTo(17.099091, highPrecisionDigits);  // checked with QGIS
             expect(res.lng).toBeCloseTo(-33.681335, highPrecisionDigits);
         }
@@ -227,7 +227,7 @@ describe("Intersection - regular test cases", function () {
             new LatLng(49.0034, 2.5735), 32.435
         );
         if (res) {
-            expect(res).toBeInstanceOf(L.LatLng);
+            expect(res).toBeInstanceOf(LatLng);
             expect(res.lat).toBeCloseTo(50.9078, medPrecisionDigits);
             expect(res.lng).toBeCloseTo(4.5084, medPrecisionDigits);
         }
@@ -243,7 +243,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             Berlin, 0,
             Berlin, 0);
         if (res) {
-            expect(res).toBeInstanceOf(L.LatLng);
+            expect(res).toBeInstanceOf(LatLng);
             expect(res.lat).toBeCloseTo(Berlin.lat, highPrecisionDigits);
             expect(res.lng).toBeCloseTo(Berlin.lng, highPrecisionDigits);
         }
@@ -254,8 +254,8 @@ describe("Intersection - Corner-cases and error handling", function () {
 
     it("Antipodal (from Chris Veness)", function () {
         const res = geodesic.intersection(
-            new L.LatLng(2, 1), 0,
-            new L.LatLng(1, 0), 90);
+            new LatLng(2, 1), 0,
+            new LatLng(1, 0), 90);
         expect(res).toBeNull();
     });
 
@@ -265,7 +265,7 @@ describe("Intersection - Corner-cases and error handling", function () {
             new LatLng(89, 180), 180);
 
         if (res) {
-            expect(res).toBeInstanceOf(L.LatLng);
+            expect(res).toBeInstanceOf(LatLng);
             expect(res.lat).toBeCloseTo(-90, highPrecisionDigits);
             expect(res.lng).toBeCloseTo(196.00983852008366, highPrecisionDigits);
         }
@@ -280,7 +280,7 @@ describe("Intersection - Corner-cases and error handling", function () {
 describe("midpoint - regular test cases", function () {
     it("Seattle and Capetown", function () {
         const res = geodesic.midpoint(Seattle, Capetown);
-        expect(res).toBeInstanceOf(L.LatLng);
+        expect(res).toBeInstanceOf(LatLng);
         expect(res.lat).toBeCloseTo(18.849527, highPrecisionDigits);
         expect(res.lng).toBeCloseTo(-35.885828, highPrecisionDigits);
     });

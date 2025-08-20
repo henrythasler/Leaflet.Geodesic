@@ -161,7 +161,7 @@ describe("Bugs", function () {
         expect(map.hasLayer(group)).toBe(true);
 
         const bounds = group.getBounds();
-        expect(bounds).toBeInstanceOf(L.LatLngBounds);
+        expect(bounds).toBeInstanceOf(LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[Seattle]]);
     });
 });

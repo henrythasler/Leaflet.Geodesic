@@ -396,7 +396,7 @@ describe("distance function (wrapper for vincenty inverse)", function () {
     });
 
     it("λ > π", function () {
-        const res = geom.distance(new L.LatLng(24.206889622398023, 223.94531250000003), new L.LatLng(33.43144133557529, -136.75781250000003));
+        const res = geom.distance(new LatLng(24.206889622398023, 223.94531250000003), new LatLng(33.43144133557529, -136.75781250000003));
         expect(res).toBeNumber();
         expect(res).toBeCloseTo(1024686.1978118686, highPrecisionDigits);
     });

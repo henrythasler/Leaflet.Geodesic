@@ -169,7 +169,7 @@ describe("Main functionality", function () {
 
     it("Preserve alt properties", async function () {
         const line = new GeodesicLine([FlindersPeak, Buninyong], { steps: 1 });
-        const res = line.getLatLngs() as L.LatLng[][];
+        const res = line.getLatLngs() as LatLng[][];
         expect(res[0][0].alt).toEqual(FlindersPeak.alt);
         expect(res[0][4].alt).toEqual(Buninyong.alt);
     });    
@@ -226,7 +226,7 @@ describe("GeoJSON-Support", function () {
         checkFixture(latlngs, JSON.parse(readFileSync(`${fixturesPath}line.fixture.json`, "utf8")));
     });
 
-    it("FeatureCollection with Polygon incl. hole", async function () {
+    it("FeatureCollection with Polygon inc hole", async function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}polygon-hole.geojson`, "utf8"));
         line.fromGeoJson(geojson);
@@ -275,7 +275,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}point.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         expect(latlngs).toBeInstanceOf(Array);
         expect(latlngs).toHaveLength(0);
         expect(mockLog.mock.calls[0][0]).toMatch(/Type "Point" not supported/);
@@ -298,7 +298,7 @@ describe("GeoJSON-Support", function () {
         const line = new GeodesicLine([], { steps: 0 }).addTo(map);
         const geojson: GeoJSON.GeoJSON = JSON.parse(readFileSync(`${fixturesPath}geometrycollection.geojson`, "utf8"));
         line.fromGeoJson(geojson);
-        const latlngs = line.getLatLngs() as L.LatLng[][]; // FIXME: This is NOT typesafe!!
+        const latlngs = line.getLatLngs() as LatLng[][]; // FIXME: This is NOT typesafe!!
         expect(latlngs).toBeInstanceOf(Array);
         expect(latlngs).toHaveLength(0);
         expect(mockLog.mock.calls[0][0]).toMatch(/Type "GeometryCollection" not supported/);
@@ -323,7 +323,7 @@ describe("Usage of base-class functions", function () {
         expect(map.hasLayer(line)).toBeTrue();
 
         const bounds = line.getBounds();
-        expect(bounds).toBeInstanceOf(L.LatLngBounds);
+        expect(bounds).toBeInstanceOf(LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
     });
 
@@ -332,11 +332,11 @@ describe("Usage of base-class functions", function () {
         expect(line).toBeInstanceOf(GeodesicLine);
         compareObject(line.options, defaultOptions);
 
-        const group = new L.FeatureGroup([line]).addTo(map);
+        const group = new FeatureGroup([line]).addTo(map);
         expect(map.hasLayer(group)).toBeTrue();
 
         const bounds = group.getBounds();
-        expect(bounds).toBeInstanceOf(L.LatLngBounds);
+        expect(bounds).toBeInstanceOf(LatLngBounds);
         checkFixture([[bounds.getCenter()]], [[{ lat: (FlindersPeak.lat + Buninyong.lat) / 2, lng: (FlindersPeak.lng + Buninyong.lng) / 2 }]]);
     });
 
