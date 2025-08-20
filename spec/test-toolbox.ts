@@ -2,9 +2,9 @@ import L from "leaflet";
 
 import "jest";
 
-export const closeToDigits_5 = 5;
-export const closeToDigits_4 = 4;
-export const closeToDigits_3 = 3;
+export const highPrecisionDigits = 5;
+export const medPrecisionDigits = 4;
+export const lowPrecisionDigits = 3;
 
 export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][]): void {
     expect(specimen).toBeInstanceOf(Array);
@@ -13,8 +13,8 @@ export function checkFixture(specimen: L.LatLng[][], fixture: L.LatLngLiteral[][
         expect(line).toHaveLength(fixture[k].length);
         line.forEach((point, l) => {
             expect(point).toBeInstanceOf(L.LatLng);
-            expect(point.lat).toBeCloseTo(fixture[k][l].lat, closeToDigits_5);
-            expect(point.lng).toBeCloseTo(fixture[k][l].lng, closeToDigits_5);
+            expect(point.lat).toBeCloseTo(fixture[k][l].lat, highPrecisionDigits);
+            expect(point.lng).toBeCloseTo(fixture[k][l].lng, highPrecisionDigits);
         });
     });
 }

@@ -3,7 +3,7 @@ import { instanceOfLatLngExpression, latlngExpressiontoLatLng, latlngExpressionA
 import "jest";
 import L from "leaflet";
 
-import { closeToDigits_5 } from "./test-toolbox";
+import { highPrecisionDigits } from "./test-toolbox";
 
 const Berlin: L.LatLngLiteral = { lat: 52.5, lng: 13.35 };
 const MontBlanc: L.LatLngLiteral = { lat: 45.832778, lng: 6.865, alt: 4807 };
@@ -24,38 +24,38 @@ describe("latlngExpressiontoLatLng", function () {
     it("LatLng-Class", function () {
         const point = latlngExpressiontoLatLng(new L.LatLng(Berlin.lat, Berlin.lng));
         expect(point).toBeInstanceOf(L.LatLng);
-        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
-        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
+        expect(point.lat).toBeCloseTo(Berlin.lat, highPrecisionDigits);
+        expect(point.lng).toBeCloseTo(Berlin.lng, highPrecisionDigits);
     });
 
     it("LatLng-Array", function () {
         const point = latlngExpressiontoLatLng([Berlin.lat, Berlin.lng]);
         expect(point).toBeInstanceOf(L.LatLng);
-        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
-        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
+        expect(point.lat).toBeCloseTo(Berlin.lat, highPrecisionDigits);
+        expect(point.lng).toBeCloseTo(Berlin.lng, highPrecisionDigits);
     });
 
     it("LatLng-Array with alt", function () {
         const point = latlngExpressiontoLatLng([MontBlanc.lat, MontBlanc.lng, MontBlanc.alt]);
         expect(point).toBeInstanceOf(L.LatLng);
-        expect(point.lat).toBeCloseTo(MontBlanc.lat, closeToDigits_5);
-        expect(point.lng).toBeCloseTo(MontBlanc.lng, closeToDigits_5);
-        expect(point.alt).toBeCloseTo(MontBlanc.alt!, closeToDigits_5);
+        expect(point.lat).toBeCloseTo(MontBlanc.lat, highPrecisionDigits);
+        expect(point.lng).toBeCloseTo(MontBlanc.lng, highPrecisionDigits);
+        expect(point.alt).toBeCloseTo(MontBlanc.alt!, highPrecisionDigits);
     });    
 
     it("LatLngLiteral", function () {
         const point = latlngExpressiontoLatLng(Berlin);
         expect(point).toBeInstanceOf(L.LatLng);
-        expect(point.lat).toBeCloseTo(Berlin.lat, closeToDigits_5);
-        expect(point.lng).toBeCloseTo(Berlin.lng, closeToDigits_5);
+        expect(point.lat).toBeCloseTo(Berlin.lat, highPrecisionDigits);
+        expect(point.lng).toBeCloseTo(Berlin.lng, highPrecisionDigits);
     });
 
     it("LatLngLiteral with alt", function () {
         const point = latlngExpressiontoLatLng(MontBlanc);
         expect(point).toBeInstanceOf(L.LatLng);
-        expect(point.lat).toBeCloseTo(MontBlanc.lat, closeToDigits_5);
-        expect(point.lng).toBeCloseTo(MontBlanc.lng, closeToDigits_5);
-        expect(point.alt).toBeCloseTo(MontBlanc.alt!, closeToDigits_5);
+        expect(point.lat).toBeCloseTo(MontBlanc.lat, highPrecisionDigits);
+        expect(point.lng).toBeCloseTo(MontBlanc.lng, highPrecisionDigits);
+        expect(point.alt).toBeCloseTo(MontBlanc.alt!, highPrecisionDigits);
     });    
 
     it("unknown Object (string instead of number)", function () {
@@ -73,8 +73,8 @@ describe("latlngExpressionArraytoLatLngArray", function () {
             expect(items).toHaveLength(m);
             items.forEach((point) => {
                 expect(point).toBeInstanceOf(L.LatLng);
-                expect(point.lat).toBeCloseTo(fixture.lat, closeToDigits_5);
-                expect(point.lng).toBeCloseTo(fixture.lng, closeToDigits_5);
+                expect(point.lat).toBeCloseTo(fixture.lat, highPrecisionDigits);
+                expect(point.lng).toBeCloseTo(fixture.lng, highPrecisionDigits);
             })
         });
     }

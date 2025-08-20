@@ -4,7 +4,7 @@ import L from "leaflet";
 
 import "jest";
 
-import { checkFixture, closeToDigits_5, compareObject } from "./test-toolbox";
+import { checkFixture, highPrecisionDigits, compareObject } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -398,7 +398,7 @@ describe("distance function (wrapper for vincenty inverse)", function () {
     it("λ > π", function () {
         const res = geom.distance(new L.LatLng(24.206889622398023, 223.94531250000003), new L.LatLng(33.43144133557529, -136.75781250000003));
         expect(res).toBeNumber();
-        expect(res).toBeCloseTo(1024686.1978118686, closeToDigits_5);
+        expect(res).toBeCloseTo(1024686.1978118686, highPrecisionDigits);
     });
 });
 
@@ -418,7 +418,7 @@ describe("multilineDistance()", function () {
         expect(res).toBeInstanceOf(Array);
         expect(res).toHaveLength(1);
         const sum = res.reduce((x, y) => x + y, 0);
-        expect(sum).toBeCloseTo(24569051.081048, closeToDigits_5);
+        expect(sum).toBeCloseTo(24569051.081048, highPrecisionDigits);
     });
 
     it("Just a point (invalid)", function () {
@@ -426,7 +426,7 @@ describe("multilineDistance()", function () {
         expect(res).toBeInstanceOf(Array);
         expect(res).toHaveLength(1);
         const sum = res.reduce((x, y) => x + y, 0);
-        expect(sum).toBeCloseTo(0, closeToDigits_5);
+        expect(sum).toBeCloseTo(0, highPrecisionDigits);
     });
 
     it("empty input", function () {
@@ -434,7 +434,7 @@ describe("multilineDistance()", function () {
         expect(res).toBeInstanceOf(Array);
         expect(res).toHaveLength(1);
         const sum = res.reduce((x, y) => x + y, 0);
-        expect(sum).toBeCloseTo(0, closeToDigits_5);
+        expect(sum).toBeCloseTo(0, highPrecisionDigits);
     });
 });
 

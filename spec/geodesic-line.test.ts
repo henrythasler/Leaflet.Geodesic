@@ -5,7 +5,7 @@ import { readFileSync } from "fs";
 
 import "jest";
 
-import { checkFixture, compareObject, closeToDigits_5 } from "./test-toolbox";
+import { checkFixture, compareObject, highPrecisionDigits } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889, 328);
@@ -136,7 +136,7 @@ describe("Main functionality", function () {
     it("Statistics calculation (simple)", async function () {
         const line = new GeodesicLine([[Berlin, Seattle, Capetown]], { steps: 0 }).addTo(map);
         checkFixture(line.points, [[Berlin, Seattle, Capetown]])
-        expect(line.statistics.totalDistance).toBeCloseTo(24569051.081048, closeToDigits_5);
+        expect(line.statistics.totalDistance).toBeCloseTo(24569051.081048, highPrecisionDigits);
         expect(line.statistics.distanceArray).toBeInstanceOf(Array);
         expect(line.statistics.distanceArray).toHaveLength(1);
         expect(line.statistics.points).toEqual(3);
@@ -146,7 +146,7 @@ describe("Main functionality", function () {
     it("Statistics calculation (complex)", async function () {
         const line = new GeodesicLine([[Berlin, LosAngeles], [Santiago, Capetown]], { steps: 1 }).addTo(map);
         checkFixture(line.points, [[Berlin, LosAngeles], [Santiago, Capetown]])
-        expect(line.statistics.totalDistance).toBeCloseTo(17319123.023856, closeToDigits_5);
+        expect(line.statistics.totalDistance).toBeCloseTo(17319123.023856, highPrecisionDigits);
         expect(line.statistics.distanceArray).toBeInstanceOf(Array);
         expect(line.statistics.distanceArray).toHaveLength(2);
         expect(line.statistics.points).toEqual(4);

@@ -4,7 +4,7 @@ import { GeodesicCircleClass } from "../src/geodesic-circle";
 
 import "jest";
 
-import { checkFixture, compareObject, closeToDigits_5, closeToDigits_3 } from "./test-toolbox";
+import { checkFixture, compareObject, highPrecisionDigits, lowPrecisionDigits } from "./test-toolbox";
 
 // test case with distance 54972.271 m
 const FlindersPeak = new L.LatLng(-37.9510334166667, 144.424867888889);
@@ -63,9 +63,9 @@ describe("Main functionality", function () {
         expect(map.hasLayer(circle)).toBe(true);
 
         circle.setLatLng(Beijing);
-        expect(circle.center.lat).toBeCloseTo(Beijing.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Beijing.lng, closeToDigits_5);
-        expect(circle.radius).toBeCloseTo(radius, closeToDigits_5);
+        expect(circle.center.lat).toBeCloseTo(Beijing.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Beijing.lng, highPrecisionDigits);
+        expect(circle.radius).toBeCloseTo(radius, highPrecisionDigits);
     });
 
     it("update center with radius", async function () {
@@ -75,9 +75,9 @@ describe("Main functionality", function () {
         expect(map.hasLayer(circle)).toBe(true);
 
         circle.setLatLng(Beijing, 2 * radius);
-        expect(circle.center.lat).toBeCloseTo(Beijing.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Beijing.lng, closeToDigits_5);
-        expect(circle.radius).toBeCloseTo(2 * radius, closeToDigits_5);
+        expect(circle.center.lat).toBeCloseTo(Beijing.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Beijing.lng, highPrecisionDigits);
+        expect(circle.radius).toBeCloseTo(2 * radius, highPrecisionDigits);
     });
 
     it("update radius", async function () {
@@ -86,10 +86,10 @@ describe("Main functionality", function () {
         compareObject(circle.options, { ...defaultOptions, ...{ radius: radius } });
         expect(map.hasLayer(circle)).toBe(true);
 
-        expect(circle.center.lat).toBeCloseTo(Seattle.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Seattle.lng, closeToDigits_5);
+        expect(circle.center.lat).toBeCloseTo(Seattle.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Seattle.lng, highPrecisionDigits);
         circle.setRadius(2 * radius);
-        expect(circle.radius).toBeCloseTo(2 * radius, closeToDigits_5);
+        expect(circle.radius).toBeCloseTo(2 * radius, highPrecisionDigits);
     });
 
     it("update radius with center", async function () {
@@ -98,12 +98,12 @@ describe("Main functionality", function () {
         compareObject(circle.options, { ...defaultOptions, ...{ radius: radius } });
         expect(map.hasLayer(circle)).toBe(true);
 
-        expect(circle.center.lat).toBeCloseTo(Seattle.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Seattle.lng, closeToDigits_5);
+        expect(circle.center.lat).toBeCloseTo(Seattle.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Seattle.lng, highPrecisionDigits);
         circle.setRadius(2 * radius, Beijing);
-        expect(circle.radius).toBeCloseTo(2 * radius, closeToDigits_5);
-        expect(circle.center.lat).toBeCloseTo(Beijing.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Beijing.lng, closeToDigits_5);
+        expect(circle.radius).toBeCloseTo(2 * radius, highPrecisionDigits);
+        expect(circle.center.lat).toBeCloseTo(Beijing.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Beijing.lng, highPrecisionDigits);
     });
 
     it("Add non-wrapped circle", function () {
@@ -117,12 +117,12 @@ describe("Main functionality", function () {
         const circle = new GeodesicCircleClass(FlindersPeak);
         const res = circle.distanceTo(Buninyong);
         expect(res).toBeNumber();
-        expect(res).toBeCloseTo(54972.271, closeToDigits_3);   // epsilon is larger, because precision of reference value is only 3 digits
+        expect(res).toBeCloseTo(54972.271, lowPrecisionDigits);   // epsilon is larger, because precision of reference value is only 3 digits
     });
 
     it("Statistics calculation (simple)", async function () {
         const circle = new GeodesicCircleClass(Beijing, { radius: 1000, steps: 24 });
-        expect(circle.statistics.totalDistance).toBeCloseTo(6265.257177, closeToDigits_5);
+        expect(circle.statistics.totalDistance).toBeCloseTo(6265.257177, highPrecisionDigits);
         expect(circle.statistics.distanceArray).toBeInstanceOf(Array);
         expect(circle.statistics.distanceArray).toHaveLength(1);
         expect(circle.statistics.points).toEqual(1);
@@ -147,8 +147,8 @@ describe("Bugs", function () {
         const group = new L.FeatureGroup([circle]).addTo(map);
 
         compareObject(circle.options, { ...defaultOptions, ...{ radius: 10 } });
-        expect(circle.center.lat).toBeCloseTo(Seattle.lat, closeToDigits_5);
-        expect(circle.center.lng).toBeCloseTo(Seattle.lng, closeToDigits_5);
+        expect(circle.center.lat).toBeCloseTo(Seattle.lat, highPrecisionDigits);
+        expect(circle.center.lng).toBeCloseTo(Seattle.lng, highPrecisionDigits);
 
         expect(map.hasLayer(group)).toBe(true);
 
