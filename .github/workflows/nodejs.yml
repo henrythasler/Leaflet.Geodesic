@@ -86,28 +86,38 @@ jobs:
         release=$(gh api repos/${{ github.repository }}/releases/tags/${{ github.ref_name }})
         release_body=$(echo "$release" | jq -r .body | sed ':a;N;$!ba;s/\n/\\n/g')
         echo "release_body=$release_body" >> $GITHUB_OUTPUT
+        stripped_version=${{ github.event.release.tag_name }}
+        stripped_version=${stripped_version/v/}
+        echo "stripped_version=$stripped_version" >> $GITHUB_OUTPUT
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Checkout code
       uses: actions/checkout@v4
+
     - name: Use Node.js 22
       uses: actions/setup-node@v4
       with:
         node-version: 22
         registry-url: https://registry.npmjs.org/
+
     - name: Install dependencies
       run: npm ci
+
     - name: Build project
       run: npm run build
+
     - name: Publish package
       run: npm publish --dry-run
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Ensure you have set this secret in your repository settings
+
     - name: get artefact hashes
       id: get_hashes
       run: |
         umd_hash=$(cat dist/leaflet.geodesic.umd.min.js.sha512)
         echo "umd_hash=$umd_hash" >> $GITHUB_OUTPUT
+
     - name: Update github release
       uses: softprops/action-gh-release@v2
       with:
@@ -117,14 +127,14 @@ jobs:
           
           ## CDN and download links
 
-          * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ github.event.release.tag_name }}/dist/leaflet.geodesic.umd.min.js
-          * https://unpkg.com/browse/leaflet.geodesic@${{ github.event.release.tag_name }}/dist/leaflet.geodesic.umd.min.js
+          * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.umd.min.js
+          * https://unpkg.com/browse/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.umd.min.js
 
           ## Subresource Integrity
 
           [Learn more about Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
 
-          `integrity="sha512-{{ steps.get_hashes.umd_hash }}"` ([verify](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds/266307512#L613))
+          `integrity="sha512-${{ steps.get_hashes.outputs.umd_hash }}"`
 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is automatically provided by GitHub Actions
