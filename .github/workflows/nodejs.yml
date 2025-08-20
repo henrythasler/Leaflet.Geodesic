@@ -95,6 +95,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Check version in package.json
+      run: |
+        version=$(jq -r .version package.json)
+        if [[ "$version" != "${{ steps.get_release.outputs.stripped_version }}" ]]; then
+          echo "Version in package.json ($version) does not match release tag (${{ steps.get_release.outputs.stripped_version }})"
+          exit 1
+        fi
+
     - name: Use Node.js 22
       uses: actions/setup-node@v4
       with:
