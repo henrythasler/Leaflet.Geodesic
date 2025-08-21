@@ -62,13 +62,10 @@
             attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         }).addTo(map);
 
-
-
         // define some places
         var Berlin = new LatLng(52.5, 13.35);
         var LosAngeles = new LatLng(33.82, -118.38);
 
-        const polyline = new Polyline([Berlin, LosAngeles]);
         const geodesicLine = new GeodesicLine([Berlin, LosAngeles], {
             weight: 20,
             opacity: 0.5,
@@ -80,24 +77,12 @@
             radius: 1000000,
         });
 
-        console.log(geodesicLine.statistics);
-
-        polyline.addTo(map)
         geodesicLine.addTo(map);
         geodesicCircle.addTo(map);
 
         // create a marker at each place
-        // var A = new Marker(LosAngeles, { draggable: true }).addTo(map);
-        // var B = new Marker(Berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
-
-        // draw a geodesic line between these places
-        // const geodesic1 = geodesic([Berlin, LosAngeles], {
-        //     weight: 20,
-        //     opacity: 0.5,
-        //     color: 'red',
-        //     steps: 4
-        // }).addTo(map);
-
+        var A = new Marker(LosAngeles, { draggable: true }).addTo(map);
+        var B = new Marker(Berlin, { draggable: true }).addTo(map).bindPopup("Drag me.").openPopup();
     </script>
 </body>
 
