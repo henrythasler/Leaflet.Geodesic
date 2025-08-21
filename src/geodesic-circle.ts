@@ -1,4 +1,4 @@
-import { LatLng, Polyline, LatLngExpression } from "leaflet";
+import { LatLng, Polyline, LatLngExpression, Util } from "leaflet";
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { GeodesicOptions } from "./geodesic-core";
 import { latlngExpressiontoLatLng } from "./types-helper";
@@ -6,7 +6,7 @@ import { latlngExpressiontoLatLng } from "./types-helper";
 /**
  * Can be used to create a geodesic circle based on Polyline
  */
-export class GeodesicCircleClass extends Polyline {
+export class GeodesicCircle extends Polyline {
     defaultOptions: GeodesicOptions = { wrap: true, steps: 24, fill: true, noClip: true };
     readonly geom: GeodesicGeometry;
     center: LatLng;
@@ -15,7 +15,7 @@ export class GeodesicCircleClass extends Polyline {
 
     constructor(center?: LatLngExpression, options?: GeodesicOptions) {
         super([], options);
-        this.options = { ...this.defaultOptions, ...options };
+        Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         // merge/set options
         const extendedOptions = this.options as GeodesicOptions;

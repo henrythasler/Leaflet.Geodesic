@@ -1,4 +1,4 @@
-import { LatLng, Polyline, LatLngExpression, GeoJSON } from "leaflet";
+import { LatLng, Polyline, LatLngExpression, GeoJSON, Util } from "leaflet";
 import { GeodesicOptions } from "./geodesic-core";
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
@@ -18,7 +18,7 @@ export class GeodesicLine extends Polyline {
 
     constructor(latlngs?: LatLngExpression[] | LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
-        this.options = { ...this.defaultOptions, ...options };
+        Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         this.geom = new GeodesicGeometry(this.options);
 

@@ -51,8 +51,8 @@
     <div id='distance' class='distance-container'></div>
 
       <script type="module">
-        import L, {Map, TileLayer, Marker, LatLng, Polyline} from 'leaflet';
-        import { GeodesicLine } from "./leaflet.geodesic.esm.js";
+        import { Map, TileLayer, Marker, LatLng, Polyline } from 'leaflet';
+        import { GeodesicLine, GeodesicCircle } from "./leaflet.geodesic.esm.js";
 
         const map = new Map('map').setView([0, 0], 2);
 
@@ -69,17 +69,22 @@
         var LosAngeles = new LatLng(33.82, -118.38);
 
         const polyline = new Polyline([Berlin, LosAngeles]);
-        const geodesic = new GeodesicLine([Berlin, LosAngeles], {
+        const geodesicLine = new GeodesicLine([Berlin, LosAngeles], {
             weight: 20,
             opacity: 0.5,
             color: 'red',
             steps: 4
         });
 
-        console.log(geodesic.statistics);
+        const geodesicCircle = new GeodesicCircle(Berlin, {
+            radius: 1000000,
+        });
+
+        console.log(geodesicLine.statistics);
 
         polyline.addTo(map)
-        geodesic.addTo(map);
+        geodesicLine.addTo(map);
+        geodesicCircle.addTo(map);
 
         // create a marker at each place
         // var A = new Marker(LosAngeles, { draggable: true }).addTo(map);
