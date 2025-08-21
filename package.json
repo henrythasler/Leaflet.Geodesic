@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "Add-on to draw geodesic lines with leaflet",
   "main": "dist/leaflet.geodesic.js",
-  "module": "dist/leaflet.geodesic.esm.js",
+  "module": "dist/leaflet.geodesic.esm.min.js",
   "browser": "dist/leaflet.geodesic.umd.min.js",
   "types": "dist/leaflet.geodesic.d.ts",
   "files": [

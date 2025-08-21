@@ -50,9 +50,6 @@ export function bundle(format: ModuleFormat, filename: string, options: BundleOp
 }
 
 export default [
-    bundle('cjs', pkg.main),
-    bundle('esm', pkg.module),
-    bundle("umd", pkg.browser.replace('.min', ''), { resolve: true, stats: true }),
-    bundle("umd", pkg.browser, { resolve: true, minimize: true }),
+    bundle('esm', pkg.module, { minimize: true }),
     bundle("es", pkg.types, { types: true }),
 ];
