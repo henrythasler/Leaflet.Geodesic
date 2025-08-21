@@ -2,15 +2,15 @@ import "leaflet";
 import { GeodesicLine } from "./geodesic-line";
 import { GeodesicCircleClass } from "./geodesic-circle";
 
-// declare module "leaflet" {
-//     type Geodesic = GeodesicLine;
-//     let Geodesic: typeof GeodesicLine;
-//     let geodesic: (...args: ConstructorParameters<typeof GeodesicLine>) => GeodesicLine;
+declare module "leaflet" {
+    type Geodesic = GeodesicLine;
+    let Geodesic: typeof GeodesicLine;
+    let geodesic: (...args: ConstructorParameters<typeof GeodesicLine>) => GeodesicLine;
 
-//     type GeodesicCircle = GeodesicCircleClass;
-//     let GeodesicCircle: typeof GeodesicCircleClass;
-//     let geodesiccircle: (...args: ConstructorParameters<typeof GeodesicCircleClass>) => GeodesicCircleClass;
-// }
+    type GeodesicCircle = GeodesicCircleClass;
+    let GeodesicCircle: typeof GeodesicCircleClass;
+    let geodesiccircle: (...args: ConstructorParameters<typeof GeodesicCircleClass>) => GeodesicCircleClass;
+}
 
 // if (typeof window.L !== "undefined") {
 //     window.L.Geodesic = GeodesicLine;
