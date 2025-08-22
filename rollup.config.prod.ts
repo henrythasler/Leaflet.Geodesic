@@ -26,9 +26,6 @@ export function bundle(format: ModuleFormat, filename: string, options: BundleOp
             banner: `/*! ${pkg.name} ${pkg.version} - (c) ${pkg.author} - ${pkg.homepage} */`,
             name: pkg.name,
             sourcemap: false,
-            globals: {
-                leaflet: 'L',
-            },
         },
         external: [
             ...(pkg.peerDependencies ? Object.keys(pkg.peerDependencies) : []),   // always exclude peerDependencies
@@ -50,9 +47,6 @@ export function bundle(format: ModuleFormat, filename: string, options: BundleOp
 }
 
 export default [
-    bundle('cjs', pkg.main),
-    bundle('esm', pkg.module),
-    bundle("umd", pkg.browser.replace('.min', ''), { resolve: true, stats: true }),
-    bundle("umd", pkg.browser, { resolve: true, minimize: true }),
+    bundle('esm', pkg.module, { minimize: true }),
     bundle("es", pkg.types, { types: true }),
 ];

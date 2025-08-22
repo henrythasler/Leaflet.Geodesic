@@ -1,7 +1,7 @@
-import * as L from "leaflet";
+import { LatLng, LatLngLiteral, LatLngTuple, LatLngExpression } from "leaflet";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral {
+export function instanceOfLatLngLiteral(object: any): object is LatLngLiteral {
     return (
         typeof object === "object" &&
         object !== null &&
@@ -13,43 +13,43 @@ export function instanceOfLatLngLiteral(object: any): object is L.LatLngLiteral 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function instanceOfLatLngTuple(object: any): object is L.LatLngTuple {
+export function instanceOfLatLngTuple(object: any): object is LatLngTuple {
     return object instanceof Array && typeof object[0] === "number" && typeof object[1] === "number";
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function instanceOfLatLngExpression(object: any): object is L.LatLngExpression {
-    return object instanceof L.LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
+export function instanceOfLatLngExpression(object: any): object is LatLngExpression {
+    return object instanceof LatLng || instanceOfLatLngTuple(object) || instanceOfLatLngLiteral(object);
 }
 
-export function latlngExpressiontoLatLng(input: L.LatLngExpression): L.LatLng {
-    if (input instanceof L.LatLng) {
+export function latlngExpressiontoLatLng(input: LatLngExpression): LatLng {
+    if (input instanceof LatLng) {
         return input;
     } else if (instanceOfLatLngTuple(input)) {
-        return new L.LatLng(input[0], input[1], input[2]); // alt is optional
+        return new LatLng(input[0], input[1], input[2]); // alt is optional
     } else if (instanceOfLatLngLiteral(input)) {
-        return new L.LatLng(input.lat, input.lng, input.alt);
+        return new LatLng(input.lat, input.lng, input.alt);
     }
-    throw new Error("L.LatLngExpression expected. Unknown object found.");
+    throw new Error("LatLngExpression expected. Unknown object found.");
 }
 
-export function latlngExpressionArraytoLatLngArray(input: L.LatLngExpression[] | L.LatLngExpression[][]): L.LatLng[][] {
-    const latlng: L.LatLng[][] = [];
+export function latlngExpressionArraytoLatLngArray(input: LatLngExpression[] | LatLngExpression[][]): LatLng[][] {
+    const latlng: LatLng[][] = [];
     const iterateOver = instanceOfLatLngExpression(input[0]) ? [input] : input;
     const unknownObjectError = new Error(
-        "L.LatLngExpression[] | L.LatLngExpression[][] expected. Unknown object found."
+        "LatLngExpression[] | LatLngExpression[][] expected. Unknown object found."
     );
 
     if (!(iterateOver instanceof Array)) {
         throw unknownObjectError;
     }
 
-    for (const group of iterateOver as L.LatLngExpression[][]) {
+    for (const group of iterateOver as LatLngExpression[][]) {
         if (!(group instanceof Array)) {
             throw unknownObjectError;
         }
 
-        const sub: L.LatLng[] = [];
+        const sub: LatLng[] = [];
         for (const point of group) {
             if (!instanceOfLatLngExpression(point)) {
                 throw unknownObjectError;

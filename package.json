@@ -1,9 +1,9 @@
 {
   "name": "leaflet.geodesic",
-  "version": "2.7.1",
+  "version": "3.0.0",
   "description": "Add-on to draw geodesic lines with leaflet",
   "main": "dist/leaflet.geodesic.js",
-  "module": "dist/leaflet.geodesic.esm.js",
+  "module": "dist/leaflet.geodesic.esm.min.js",
   "browser": "dist/leaflet.geodesic.umd.min.js",
   "types": "dist/leaflet.geodesic.d.ts",
   "files": [
@@ -29,7 +29,7 @@
     "test": "./spec"
   },
   "peerDependencies": {
-    "leaflet": "^1.9.4"
+    "leaflet": "^2.0.0-alpha.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
@@ -48,7 +48,7 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "jest-extended": "^6.0.0",
-    "leaflet": "^1.9.4",
+    "leaflet": "^2.0.0-alpha.1",
     "prettier": "^3.6.2",
     "rollup": "^4.46.3",
     "rollup-plugin-dts": "^6.2.3",
@@ -60,8 +60,8 @@
     "typescript-eslint": "^8.40.0"
   },
   "scripts": {
-    "test": "jest \"^(?!.*benchmark).*$\" --coverage --",
-    "test:solo": "jest --coverage --",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js \"^(?!.*benchmark).*$\" --coverage --",
+    "test:solo": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --",
     "benchmark": "jest benchmark",
     "linter": "eslint src/**/*.ts",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",

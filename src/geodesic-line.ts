@@ -1,12 +1,12 @@
-import * as L from "leaflet";
+import { LatLng, Polyline, LatLngExpression, GeoJSON, Util } from "leaflet";
 import { GeodesicOptions } from "./geodesic-core";
 import { GeodesicGeometry, Statistics } from "./geodesic-geom";
 import { latlngExpressiontoLatLng, latlngExpressionArraytoLatLngArray } from "../src/types-helper";
 
 /**
- * Draw geodesic lines based on L.Polyline
+ * Draw geodesic lines based on Polyline
  */
-export class GeodesicLine extends L.Polyline {
+export class GeodesicLine extends Polyline {
     /** these should be good for most use-cases */
     defaultOptions: GeodesicOptions = { wrap: true, steps: 3 };
     /** does the actual geometry calculations */
@@ -14,11 +14,11 @@ export class GeodesicLine extends L.Polyline {
     /** use this if you need some detailled info about the current geometry */
     statistics: Statistics = { distanceArray: [], totalDistance: 0, points: 0, vertices: 0 };
     /** stores all positions that are used to create the geodesic line */
-    points: L.LatLng[][] = [];
+    points: LatLng[][] = [];
 
-    constructor(latlngs?: L.LatLngExpression[] | L.LatLngExpression[][], options?: GeodesicOptions) {
+    constructor(latlngs?: LatLngExpression[] | LatLngExpression[][], options?: GeodesicOptions) {
         super([], options);
-        L.Util.setOptions(this, { ...this.defaultOptions, ...options });
+        Util.setOptions(this, { ...this.defaultOptions, ...options });
 
         this.geom = new GeodesicGeometry(this.options);
 
@@ -29,7 +29,7 @@ export class GeodesicLine extends L.Polyline {
 
     /** calculates the geodesics and update the polyline-object accordingly */
     private updateGeometry(): void {
-        let geodesic: L.LatLng[][] = [];
+        let geodesic: LatLng[][] = [];
 
         geodesic = this.geom.multiLineString(this.points);
         this.statistics = this.geom.updateStatistics(this.points, geodesic);
@@ -46,7 +46,7 @@ export class GeodesicLine extends L.Polyline {
      * overwrites the original function with additional functionality to create a geodesic line
      * @param latlngs an array (or 2d-array) of positions
      */
-    setLatLngs(latlngs: L.LatLngExpression[] | L.LatLngExpression[][]): this {
+    setLatLngs(latlngs: LatLngExpression[] | LatLngExpression[][]): this {
         this.points = latlngExpressionArraytoLatLngArray(latlngs);
         this.updateGeometry();
         return this;
@@ -57,7 +57,7 @@ export class GeodesicLine extends L.Polyline {
      * @param latlng point to add. The point will always be added to the last linestring of a multiline
      * @param latlngs define a linestring to add the new point to. Read from points-property before (e.g. `line.addLatLng(Beijing, line.points[0]);`)
      */
-    addLatLng(latlng: L.LatLngExpression, latlngs?: L.LatLng[]): this {
+    addLatLng(latlng: LatLngExpression, latlngs?: LatLng[]): this {
         const point = latlngExpressiontoLatLng(latlng);
         if (this.points.length === 0) {
             this.points.push([point]);
@@ -76,7 +76,7 @@ export class GeodesicLine extends L.Polyline {
      * @param input GeoJSON-Object
      */
     fromGeoJson(input: GeoJSON.GeoJSON): this {
-        let latlngs: L.LatLngExpression[][] = [];
+        let latlngs: LatLngExpression[][] = [];
         let features: GeoJSON.Feature[] = [];
 
         if (input.type === "FeatureCollection") {
@@ -101,19 +101,19 @@ export class GeodesicLine extends L.Polyline {
                 case "LineString":
                     latlngs = [
                         ...latlngs,
-                        ...[L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0) as L.LatLngExpression[]]
+                        ...[GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 0) as LatLngExpression[]]
                     ];
                     break;
                 case "MultiLineString":
                 case "Polygon":
                     latlngs = [
                         ...latlngs,
-                        ...(L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1) as L.LatLngExpression[][])
+                        ...(GeoJSON.coordsToLatLngs(feature.geometry.coordinates, 1) as LatLngExpression[][])
                     ];
                     break;
                 case "MultiPolygon":
                     feature.geometry.coordinates.forEach((item) => {
-                        latlngs = [...latlngs, ...(L.GeoJSON.coordsToLatLngs(item, 1) as L.LatLngExpression[][])];
+                        latlngs = [...latlngs, ...(GeoJSON.coordsToLatLngs(item, 1) as LatLngExpression[][])];
                     });
                     break;
                 default:
@@ -133,7 +133,7 @@ export class GeodesicLine extends L.Polyline {
      * @param dest 2nd position
      * @return the distance in meters
      */
-    distance(start: L.LatLngExpression, dest: L.LatLngExpression): number {
+    distance(start: LatLngExpression, dest: LatLngExpression): number {
         return this.geom.distance(latlngExpressiontoLatLng(start), latlngExpressiontoLatLng(dest));
     }
 }

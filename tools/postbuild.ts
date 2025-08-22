@@ -5,23 +5,32 @@ import { basename, join } from 'path';
 
 const pkg = JSON.parse(readFileSync('package.json').toString());
 
-if (existsSync(pkg.browser)) {
+function processFile(filename: string): void {
     // calculate sha-sum of the plugin. See https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity#using_subresource_integrity
-    const content = readFileSync(pkg.browser);
+    const content = readFileSync(filename);
     const hash = createHash('sha512').update(content).digest('base64');
 
     // show filesize in bytes and the full integrity-property
-    console.log(`${pkg.browser}: ${statSync(pkg.browser).size} Bytes`);
+    console.log(`${filename}: ${statSync(filename).size} Bytes`);
     console.log(`integrity="sha512-${hash}"`);
 
     // store the sha-sum in a file for distribution
-    writeFileSync(`${pkg.browser}.sha512`, hash);
+    writeFileSync(`${filename}.sha512`, hash);
 
     // used for local testing
-    copyFileSync(pkg.browser, join("docs", basename(pkg.browser)));
+    copyFileSync(filename, join("docs", basename(filename)));
 }
-else {
-    // The file *should* be there after the build.
-    console.log(`${pkg.browser} not found!`);
-    exit(1);
-}
+
+const fileList = [
+    pkg.module,
+];
+
+fileList.forEach((file) => {
+    if (existsSync(file)) {
+        processFile(file);
+    } else {
+        // The file *should* be there after the build.
+        console.log(`${file} not found!`);
+        exit(1);
+    }
+});
