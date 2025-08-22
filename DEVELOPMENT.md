@@ -6,26 +6,13 @@ These are my notes on how to develop this plug-in.
 
 Run `npm outdated` and then upgrade with `npm i typescript@latest`.
 
-## local installations
-
-```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-sudo npm install -g np npm
-
-```
-
-## creating a new release
-
-- log-in to github
-- type `np --no-publish` and follow the instructions
-- push the tagged version an let Travis-CI do it's magic
-
 ## References
 
 ## Typescript, Javascript 
 
 - ['this' in TypeScript](https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript)
 - [Building and publishing a module with TypeScript and Rollup.js](https://hackernoon.com/building-and-publishing-a-module-with-typescript-and-rollup-js-faa778c85396)
+- [Setting Up a Modern TypeScript Project with Rollup (No Framework) by Robin Viktorsson](https://medium.com/@robinviktorsson/setting-up-a-modern-typescript-project-with-rollup-no-framework-e24a7564394c)
 - [Debugging with TypeScript, Jest, ts-jest and Visual Studio Code](https://medium.com/@mtiller/debugging-with-typescript-jest-ts-jest-and-visual-studio-code-ef9ca8644132)
 - [JavaScript Modulo operation and the Caesar Cipher](http://www.codeavenger.com/2017/05/19/JavaScript-Modulo-operation-and-the-Caesar-Cipher.html)
 

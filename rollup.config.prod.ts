@@ -26,9 +26,6 @@ export function bundle(format: ModuleFormat, filename: string, options: BundleOp
             banner: `/*! ${pkg.name} ${pkg.version} - (c) ${pkg.author} - ${pkg.homepage} */`,
             name: pkg.name,
             sourcemap: false,
-            globals: {
-                leaflet: 'L',
-            },
         },
         external: [
             ...(pkg.peerDependencies ? Object.keys(pkg.peerDependencies) : []),   // always exclude peerDependencies
