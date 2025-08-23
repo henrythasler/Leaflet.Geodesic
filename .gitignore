@@ -62,5 +62,6 @@ typings/
 
 dist
 docs/*umd*
+docs/*esm*
 .coveralls.yml
 .scannerwork

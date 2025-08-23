@@ -28,7 +28,7 @@ Leaflet.Geodesic is available via the following CDNs:
 
 Add it in your nodejs-project with `npm i leaflet.geodesic`.
 
-It is good practice, to pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha512` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512) and is shown in the [build-log](https://app.travis-ci.com/github/henrythasler/Leaflet.Geodesic/builds) for a tagged version.
+It is good practice, to pin the plug-in to a specific version and use [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity). Check the [release page](https://github.com/henrythasler/Leaflet.Geodesic/releases) for the latest version, links and checksum. A checksum can by verified with `npm run build`, is stored in `dist/leaflet.geodesic.umd.min.js.sha512` on [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet.geodesic?path=dist) and [unpkg](https://unpkg.com/browse/leaflet.geodesic/dist/leaflet.geodesic.umd.min.js.sha512) and is shown in the [release notes](https://github.com/henrythasler/Leaflet.Geodesic/releases).
 
 ## Basic usage
 
