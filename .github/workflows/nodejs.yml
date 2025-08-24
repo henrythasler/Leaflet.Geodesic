@@ -123,8 +123,8 @@ jobs:
     - name: get artefact hashes
       id: get_hashes
       run: |
-        umd_hash=$(cat dist/leaflet.geodesic.umd.min.js.sha512)
-        echo "umd_hash=$umd_hash" >> $GITHUB_OUTPUT
+        esm_hash=$(cat dist/leaflet.geodesic.esm.min.js.sha512)
+        echo "esm_hash=$esm_hash" >> $GITHUB_OUTPUT
 
     - name: Update github release
       uses: softprops/action-gh-release@v2
@@ -135,14 +135,14 @@ jobs:
           
           ## CDN and download links
 
-          * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.umd.min.js
-          * https://unpkg.com/browse/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.umd.min.js
+          * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.esm.min.js
+          * https://unpkg.com/browse/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.esm.min.js
 
           ## Subresource Integrity
 
           [Learn more about Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
 
-          `integrity="sha512-${{ steps.get_hashes.outputs.umd_hash }}"`
+          `integrity="sha512-${{ steps.get_hashes.outputs.esm_hash }}"`
 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is automatically provided by GitHub Actions
