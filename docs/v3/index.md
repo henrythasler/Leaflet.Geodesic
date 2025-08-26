@@ -6,10 +6,10 @@ use-site-title: true
 
 Click on an image to open the demo:
 
-## Basic interactive
+## Basic Interactive
 
 [![basic-interactive](../img/basic-interactive.png)](basic-interactive.html)
 
-## Interactive Linestring
+## Interactive Circle
 
-[![complex-interactive](../img/complex-interactive.png)](complex-interactive.html)
+[![circle-interactive](../img/circle-interactive.png)](circle-interactive.html)
