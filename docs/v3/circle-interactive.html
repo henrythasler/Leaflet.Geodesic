@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.css" 
+        crossorigin="" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "leaflet": "https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js",
+                "leaflet.geodesic": "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js"
+            },
+            "integrity": {
+                "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js": "sha512-5lUYcVPLuTl2uEsodxmC2AJQ/uFqQ2mEWPtHGL8ktTr5f212ddNqR1iGyuT0Gy8HY8V4KZmVX6PsEOuFBHZD3Q=="
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
+
+    <script type="module">
+        import { LeafletMap, TileLayer, Marker, LatLng, Polyline, Control, DomUtil } from 'leaflet';
+        import { GeodesicCircle } from "leaflet.geodesic";
+
+        const map = new LeafletMap('map', {
+            maxBounds: [
+                [-90, -200],
+                [90, 200]
+            ],
+            center: [50, 0],
+            zoom: 4
+        });
+        const tileLayer = new TileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        const Berlin = new LatLng(52.5, 13.35);
+        const Paris = new LatLng(48, 2);
+
+        const A = new Marker(Berlin, { draggable: true }).bindTooltip('Hi There!').addTo(map);
+        const B = new Marker(Paris, { draggable: true }).bindTooltip('Hi There!').addTo(map).bindPopup("Drag me.").openPopup();
+
+        const geodesicCircle = new GeodesicCircle(A.getLatLng(), {
+            weight: 7,
+            opacity: 0.5,
+            color: 'red',
+            fill: true,
+            steps: 80
+        }).addTo(map);
+
+        geodesicCircle.setRadius(geodesicCircle.distanceTo(B.getLatLng()));
+
+        const info = new Control();
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const circumferenceString = (stats.totalDistance ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            const radiusString = (geodesicCircle.radius ? (geodesicCircle.radius > 10000) ? (geodesicCircle.radius / 1000).toFixed(0) + ' km' : (geodesicCircle.radius).toFixed(0) + ' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>Radius</b><br/>' + radiusString +
+                '<br/><br/><b>Circumference</b><br/>' + circumferenceString +
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
+
+        info.update(geodesicCircle.statistics);
+
+        var diff = { lat: 0, lng: 0 };
+        A.on('dragstart', function () {
+            diff = { lat: A.getLatLng().lat - B.getLatLng().lat, lng: A.getLatLng().lng - B.getLatLng().lng };	// remember difference between A and B
+        });
+
+        A.on('drag', (e) => {
+            A.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
+            B.setLatLng({
+                lat: Math.max(-90, Math.min(90, A.getLatLng().lat - diff.lat)),
+                lng: A.getLatLng().lng - diff.lng
+            });	// move B parallel to A            
+
+            const radius = geodesicCircle.geom.distance(e.latlng, B.getLatLng());
+            geodesicCircle.setLatLng(e.latlng, radius);
+            info.update(geodesicCircle.statistics);
+        });
+        B.on('drag', (e) => {
+            B.setTooltipContent(`${Math.round(10000 * e.latlng.lat) / 10000} ${Math.round(10000 * e.latlng.lng) / 10000}`);
+            geodesicCircle.setRadius(geodesicCircle.distanceTo(e.latlng));
+            info.update(geodesicCircle.statistics);
+        });
+
+    </script>
+</body>
+
+</html>
