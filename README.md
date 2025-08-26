@@ -15,6 +15,8 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 
 Leaflet is planning to [release a new major version](https://leafletjs.com/2025/05/18/leaflet-2.0.0-alpha.html) by the end of this year. Leaflet.Geodesic already supports this with a new release: [v3.0.0-alpha.2](https://github.com/henrythasler/Leaflet.Geodesic/releases/tag/v3.0.0-alpha.2).
 
+see [Leaflet.Geodesic 3 Demos](https://blog.cyclemap.link/Leaflet.Geodesic/v3) on how to use Leaflet.Geodesic 3 with Leaflet 2.  
+
 ## Add the plugin to your project
 
 Leaflet.Geodesic is available via CDN. Add the following snippet to your html-file after you have [included leaflet.js](https://leafletjs.com/examples/quick-start/).
