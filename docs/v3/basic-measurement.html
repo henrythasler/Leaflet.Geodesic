@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
+
+        .trash {
+            background: rgba(255, 255, 255, 0.8);
+            width: 30px;
+            height: 30px;
+            background-position: center center;
+            background-size: 70%;
+            background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='iso-8859-1'%3F%3E%3C!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='792.024px' height='792.024px' viewBox='0 0 792.024 792.024' style='enable-background:new 0 0 792.024 792.024;' xml:space='preserve'%3E%3Cg%3E%3Cg id='_x34_3'%3E%3Cg%3E%3Cpath d='M585.817,235.853H209.213c-39.622,0-71.729,32.107-71.729,71.729l38.841,412.664c0,39.622,32.107,71.778,71.729,71.778 h304.924c39.622,0,71.729-32.156,71.729-71.778l32.888-412.664C657.596,267.96,625.439,235.853,585.817,235.853z M301.876,666.375c0,19.762-16.054,35.913-35.865,35.913s-35.865-16.151-35.865-35.913V343.349 c0-19.762,16.054-35.816,35.865-35.816s35.865,16.005,35.865,35.816V666.375z M427.427,666.375 c0,19.762-16.053,35.913-35.865,35.913c-19.811,0-35.865-16.151-35.865-35.913V343.349c0-19.762,16.054-35.816,35.865-35.816 c19.812,0,35.865,16.005,35.865,35.816V666.375z M552.979,666.375c0,19.762-16.054,35.913-35.865,35.913 c-19.811,0-35.864-16.151-35.864-35.913V343.349c0-19.762,16.054-35.816,35.864-35.816c19.812,0,35.865,16.005,35.865,35.816 V666.375z M190.037,199.939L624.317,88.246c24.007-6.148,38.45-30.644,32.254-54.602c-6.197-24.007-30.595-38.402-54.603-32.205 L468.172,35.84c-12.346-18.347-34.89-28.106-57.53-22.3l-52.114,13.468c-22.641,5.807-37.67,25.227-39.67,47.234l-151.168,38.89 c-23.959,6.1-38.402,30.595-32.254,54.553C141.631,191.644,166.078,206.087,190.037,199.939z'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3C/svg%3E%0A");
+            background-repeat: no-repeat;
+        }
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.css" 
+        crossorigin="" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "leaflet": "https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js",
+                "leaflet.geodesic": "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js"
+            },
+            "integrity": {
+                "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js": "sha512-5lUYcVPLuTl2uEsodxmC2AJQ/uFqQ2mEWPtHGL8ktTr5f212ddNqR1iGyuT0Gy8HY8V4KZmVX6PsEOuFBHZD3Q=="
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script type="module">
+        import { LeafletMap, TileLayer, Marker, LatLng, Polyline, Control, DomUtil } from 'leaflet';
+        import { GeodesicLine } from "leaflet.geodesic";
+
+        const map = new LeafletMap('map').setView([0, 0], 2);
+        const tileLayer = new TileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        // define some places
+        const Berlin = new LatLng(52.5, 13.35);
+        const LosAngeles = new LatLng(33.82, -118.38);
+
+        // create a marker at each place
+        const startMarker = new Marker(LosAngeles, { draggable: true }).addTo(map);
+        const destinationMarker = new Marker(Berlin, { draggable: true }).addTo(map)
+            .bindTooltip('Hi There!', {permanent: true});
+
+        const geodesicLine = new GeodesicLine([startMarker.getLatLng(), destinationMarker.getLatLng()], {
+            weight: 7,
+            opacity: 0.75,
+            steps: 4,
+        }).addTo(map);
+
+        const info = new Control();
+        info.onAdd = function (map) {
+            this._div = DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance !== undefined ? (stats.totalDistance > 10000) ? (stats.totalDistance / 1000).toFixed(0) + ' km' : (stats.totalDistance).toFixed(0) + ' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance +
+                '<br/><br/><b>Points</b><br/>' + stats.points +
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
+
+        updateTooltip();
+        info.update(geodesicLine.statistics);
+
+        startMarker.on('drag', () => {geodesicLine.update()});
+        destinationMarker.on('drag', () => {geodesicLine.update()});
+
+        geodesicLine.update = function() {
+            geodesicLine.setLatLngs([startMarker.getLatLng(), destinationMarker.getLatLng()]);
+            updateTooltip();
+            info.update(geodesicLine.statistics);
+        }
+
+        function updateTooltip() {
+            const vector = geodesicLine.geom.geodesic.inverse(startMarker.getLatLng(), destinationMarker.getLatLng());
+            const totalDistance = (vector.distance !== undefined ? (vector.distance > 10000) ? (vector.distance / 1000).toFixed(0) + ' km' : (vector.distance).toFixed(0) + ' m' : 'invalid')
+            destinationMarker.setTooltipContent(`<b>Segment</b></br>Distance: ${totalDistance}</br>final Bearing: ${vector.finalBearing.toFixed(0)}°`);
+        }
+
+    </script>
+</body>
+
+</html>
