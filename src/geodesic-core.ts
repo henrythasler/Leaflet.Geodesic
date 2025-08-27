@@ -158,6 +158,8 @@ export class GeodesicCore {
      *
      * @param start Latitude/longitude of starting point.
      * @param dest Latitude/longitude of destination point.
+     * @param maxInterations How many iterations can be made to reach the allowed deviation (`ε`), before the calculation is aborted with a convergence error.
+     * @param mitigateConvergenceError If true, will try to mitigate convergence errors by slightly changing the destination longitude and retrying the calculation. 
      * @return Object including distance, initialBearing, finalBearing.
      */
     inverse(start: LatLng, dest: LatLng, maxInterations = 100, mitigateConvergenceError = true): GeoDistance {
