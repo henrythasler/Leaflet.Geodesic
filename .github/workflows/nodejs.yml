@@ -136,7 +136,7 @@ jobs:
           ## CDN and download links
 
           * https://cdn.jsdelivr.net/npm/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.esm.min.js
-          * https://unpkg.com/browse/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.esm.min.js
+          * https://unpkg.com/leaflet.geodesic@${{ steps.get_release.outputs.stripped_version }}/dist/leaflet.geodesic.esm.min.js
 
           ## Subresource Integrity
 
