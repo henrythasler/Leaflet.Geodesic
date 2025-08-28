@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <svg>
+        <defs>
+            <!-- made with https://waldyrious.net/viridis-palette-generator/ -->
+            <lineargradient id="west" spreadMethod="pad" x1="1" y1="0" x2="0" y2="0">
+                <stop offset="0%" stop-color="#440154" stop-opacity="1"></stop>
+                <stop offset="25%" stop-color="#3b528b" stop-opacity="1"></stop>
+                <stop offset="50%" stop-color="#21918c" stop-opacity="1"></stop>
+                <stop offset="75%" stop-color="#5ec962" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#fde725" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="east" spreadMethod="pad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#440154" stop-opacity="1"></stop>
+                <stop offset="25%" stop-color="#3b528b" stop-opacity="1"></stop>
+                <stop offset="50%" stop-color="#21918c" stop-opacity="1"></stop>
+                <stop offset="75%" stop-color="#5ec962" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#fde725" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="north" spreadMethod="pad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#440154" stop-opacity="1"></stop>
+                <stop offset="25%" stop-color="#3b528b" stop-opacity="1"></stop>
+                <stop offset="50%" stop-color="#21918c" stop-opacity="1"></stop>
+                <stop offset="75%" stop-color="#5ec962" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#fde725" stop-opacity="1"></stop>
+            </lineargradient>
+            <lineargradient id="south" spreadMethod="pad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#440154" stop-opacity="1"></stop>
+                <stop offset="25%" stop-color="#3b528b" stop-opacity="1"></stop>
+                <stop offset="50%" stop-color="#21918c" stop-opacity="1"></stop>
+                <stop offset="75%" stop-color="#5ec962" stop-opacity="1"></stop>
+                <stop offset="100%" stop-color="#fde725" stop-opacity="1"></stop>
+            </lineargradient>
+            <filter id="blur">
+                <feGaussianBlur stdDeviation="2" />
+            </filter>            
+        </defs>   
+     </svg>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .info h4 {
+            margin: 0 0 5px;
+            font: 22px/24px Arial, Helvetica, sans-serif;
+            color: #777;
+        }
+
+        path.animatedDashes {
+            /* stroke: red; */
+            /* filter: url(#blur); */
+            filter: drop-shadow(1px 1px 0 #000) drop-shadow(-1px -1px 0 #000) drop-shadow(1px -1px 0 #000) drop-shadow(-1px 1px 0 #000);
+            stroke-dasharray: 10 20;
+            animation: dash 1s linear;
+            animation-iteration-count: infinite;
+        }
+        /* https://css-tricks.com/svg-line-animation-works/ */
+        @keyframes dash {
+            from {
+                stroke-dashoffset: 30;
+            }
+            to {
+                stroke-dashoffset: 0;
+                }
+            }   
+    </style>
+    <title>Leaflet.Geodesic demo</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.css" 
+        crossorigin="" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "leaflet": "https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js",
+                "leaflet.geodesic": "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js"
+            },
+            "integrity": {
+                "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js": "sha512-5lUYcVPLuTl2uEsodxmC2AJQ/uFqQ2mEWPtHGL8ktTr5f212ddNqR1iGyuT0Gy8HY8V4KZmVX6PsEOuFBHZD3Q=="
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id='distance' class='distance-container'></div>
+
+    <script type="module">
+        import { LeafletMap, TileLayer, Marker, LatLng, Polyline, Control, DomUtil } from 'leaflet';
+        import { GeodesicLine } from "leaflet.geodesic";
+
+        const map = new LeafletMap('map').setView([0, 0], 2);
+        const tileLayer = new TileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            maxZoom: 15,
+            noWrap: true,
+            attribution: 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+        }).addTo(map);
+
+        const info = new Control();
+        info.onAdd = function (map) {
+            this._div = DomUtil.create('div', 'info'); // create a div with a class "info"
+            return this._div;
+        };
+        info.addTo(map);
+
+        // method that we will use to update the control based on feature properties passed
+        info.update = function (stats) {
+            const totalDistance = (stats.totalDistance ? (stats.totalDistance>10000)?(stats.totalDistance/1000).toFixed(0)+' km':(stats.totalDistance).toFixed(0)+' m' : 'invalid')
+            this._div.innerHTML = '<h4>Statistics</h4><b>totalDistance</b><br/>' + totalDistance + 
+                '<br/><br/><b>Points</b><br/>' + stats.points + 
+                '<br/><br/><b>Vertices</b><br/>' + stats.vertices;
+        };
+
+        function updateGradient(path) {
+            const deltaLng = flightPath[0].lng - flightPath[1].lng;
+            const deltaLat = flightPath[0].lat - flightPath[1].lat;
+
+            // determine the rough direction to select the correct gradient
+            let direction = "west";
+            if(Math.abs(deltaLng) > Math.abs(deltaLat)) {
+                direction = deltaLng > 0 ? "west" : "east";
+            }
+            else {
+                direction = deltaLat > 0 ? "north" : "south";
+            }
+            path.setStyle({color: `url(#${direction})`});
+        }
+
+        const flightPath = [
+            new LatLng(52.5, 13.35), // Berlin
+            new LatLng(33.82, -118.38), // Los Angeles
+        ];
+
+        const geodesicLine = new GeodesicLine(flightPath, {
+            weight: 7,
+            opacity: 1.0,
+            color: "url(#west)",
+            steps: 4,
+            className: "animatedDashes"
+        }).addTo(map);
+
+        updateGradient(geodesicLine);
+        info.update(geodesicLine.statistics);
+
+        const markers = [];
+        flightPath.forEach( (waypoint, index) => {
+            const marker = new Marker(waypoint, { draggable: true }).addTo(map);
+            marker.on('drag', (e) => {
+                flightPath[index] = markers.at(index).getLatLng();
+                geodesicLine.setLatLngs(flightPath);
+                updateGradient(geodesicLine);
+                info.update(geodesicLine.statistics);
+            });
+            markers.push(marker);
+        });
+
+        markers[1].bindPopup("Drag me.").openPopup();
+
+    </script>
+</body>
+
+</html>

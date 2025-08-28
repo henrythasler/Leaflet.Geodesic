@@ -14,9 +14,17 @@ Click on an image to open the demo:
 
 [![complex-interactive](../img/complex-interactive.png)](complex-interactive.html)
 
+## Interactive Multi-Linestring
+
+[![multiline-interactive](img/multiline-interactive.png)](multiline-interactive.html)
+
 ## Interactive Circle
 
 [![circle-interactive](../img/circle-interactive.png)](circle-interactive.html)
+
+## Animated Flightpath
+
+[![flightpath-animated](img/flightpath-animated.png)](flightpath-animated.html)
 
 ## Basic Measurement
 
