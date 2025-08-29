@@ -38,7 +38,7 @@ Leaflet.Geodesic requires Leaflet 2 to work.
     }
 </script>
 ```
-> [!TIP]
+
 > The `integrity` property is optional but recommended ([Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)).
 
 
@@ -51,7 +51,7 @@ Leaflet.Geodesic requires Leaflet 2 to work.
     // ...
 </script>
 ```
-> [!IMPORTANT]
+
 > Leaflet.Geodsic provides two classes: `GeodesicLine` and `GeodesicCircle`. Make sure to import the class you need.
 
 3. Classes provided by Leaflet and Leaflet.Geodesic must be instanciated using `new` as follows:
@@ -66,7 +66,6 @@ const geodesicLine = new GeodesicLine().addTo(map);
 const geodesicCircle = new GeodesicCircle().addTo(map);
 ```
 
-> [!IMPORTANT]
 > Please note that the global `L` object is no longer used.
 
 Everything else is unchanged and the existing documentation is still valid.
