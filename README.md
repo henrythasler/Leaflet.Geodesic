@@ -15,7 +15,65 @@ Add-on for [Leaflet](http://leafletjs.com/) to draw [geodesic](http://en.wikiped
 
 Leaflet is planning to [release a new major version](https://leafletjs.com/2025/05/18/leaflet-2.0.0-alpha.html) by the end of this year. Leaflet.Geodesic already supports this with a new release: [v3.0.0-alpha.2](https://github.com/henrythasler/Leaflet.Geodesic/releases/tag/v3.0.0-alpha.2).
 
-see [Leaflet.Geodesic 3 Demos](https://blog.cyclemap.link/Leaflet.Geodesic/v3) on how to use Leaflet.Geodesic 3 with Leaflet 2.  
+<details>
+
+<summary>Migration Guide</summary>
+
+### Migrate from Leaflet.Geodesic 2.x to 3.x
+
+Leaflet.Geodesic requires Leaflet 2 to work.
+
+1. Replace the `<script src=...` for Leaflet and Leaflet.Geodesic with an `importmap` as follows:
+
+```html
+<script type="importmap">
+    {
+        "imports": {
+            "leaflet": "https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js",
+            "leaflet.geodesic": "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js"
+        },
+        "integrity": {
+            "https://unpkg.com/leaflet.geodesic@3.0.0-alpha.2/dist/leaflet.geodesic.esm.min.js": "sha512-5lUYcVPLuTl2uEsodxmC2AJQ/uFqQ2mEWPtHGL8ktTr5f212ddNqR1iGyuT0Gy8HY8V4KZmVX6PsEOuFBHZD3Q=="
+        }
+    }
+</script>
+```
+> [!TIP]
+> The `integrity` property is optional but recommended ([Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)).
+
+
+2. Replace the `<script type="text/javascript">` of your map setup with
+
+```html
+<script type="module">
+    import { LeafletMap, TileLayer, Marker, LatLng, Polyline, Control, DomUtil } from 'leaflet';
+    import { GeodesicLine } from "leaflet.geodesic";
+    // ...
+</script>
+```
+> [!IMPORTANT]
+> Leaflet.Geodsic provides two classes: `GeodesicLine` and `GeodesicCircle`. Make sure to import the class you need.
+
+3. Classes provided by Leaflet and Leaflet.Geodesic must be instanciated using `new` as follows:
+
+```JavaScript
+// Leaflet setup
+const map = new LeafletMap(/* your arguments */)
+const tileLayer = new TileLayer(/* your arguments */).addTo(map);
+
+// Leaflet.Geodesic setup
+const geodesicLine = new GeodesicLine().addTo(map);
+const geodesicCircle = new GeodesicCircle().addTo(map);
+```
+
+> [!IMPORTANT]
+> Please note that the global `L` object is no longer used.
+
+Everything else is unchanged and the existing documentation is still valid.
+
+</details>
+
+See [Leaflet.Geodesic 3 Demos](https://blog.cyclemap.link/Leaflet.Geodesic/v3) on how to use Leaflet.Geodesic 3 with Leaflet 2.
 
 ## Add the plugin to your project
 
